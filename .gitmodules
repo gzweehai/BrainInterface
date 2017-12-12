@@ -1,3 +1,6 @@
 [submodule "InteractiveDataDisplay.WPF"]
 	path = InteractiveDataDisplay.WPF
 	url = https://github.com/Microsoft/InteractiveDataDisplay.WPF.git
+[submodule "JetBlack.Network"]
+	path = JetBlack.Network
+	url = https://github.com/DragonLi/JetBlack.Network.git
