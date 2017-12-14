@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="BrainDeviceProtocol\BrainDeviceClientProtocol.cs" />
     <Compile Include="BrainDeviceProtocol\BrainDeviceManager.cs" />
+    <Compile Include="BrainDeviceProtocol\BrainDevState.cs" />
     <Compile Include="BrainDeviceProtocol\CommadContent.cs" />
     <Compile Include="BrainDeviceProtocol\CommandTask.cs" />
     <Compile Include="BrainDeviceProtocol\DevCommandSender.cs" />

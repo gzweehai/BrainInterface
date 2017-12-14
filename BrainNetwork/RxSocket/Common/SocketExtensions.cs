@@ -17,7 +17,16 @@ namespace BrainNetwork.RxSocket.Common
 
         public static async Task ConnectAsync(this Socket socket, IPEndPoint endpoint)
         {
-            await Task.Factory.FromAsync((callback, state) => socket.BeginConnect(endpoint, callback, state), ias => socket.EndConnect(ias), null);
+            await Task.Factory.FromAsync(
+                (callback, state) =>
+                {
+                    return socket.BeginConnect(endpoint, callback, state);
+                }, 
+                ias =>
+                {
+                    socket.EndConnect(ias);
+                }, 
+                null);
         }
 
         public static async Task<int> SendAsync(this Socket socket, byte[] buffer, int offset, int size, SocketFlags flags)

@@ -14,7 +14,8 @@ namespace BrainNetwork.BrainDeviceProtocol
         byte FuncId { get; }
         bool DontCheckResponse { get; }
         bool ReponseHasErrorFlag { get; }
-        void FillCnt(byte[] buffer, object[] args);
+        object FillCnt(byte[] buffer, object[] args);
+        void HandlerSuccess(object cmdCnt);
     }
 
     public sealed partial class DevCommandSender

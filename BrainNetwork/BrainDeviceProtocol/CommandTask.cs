@@ -54,12 +54,13 @@ namespace BrainNetwork.BrainDeviceProtocol
             
             var buf = new RecycleBuffer(handler.CntSize, _bufMgr);
             var buffer = buf.Buffer;
-            handler.FillCnt(buffer, args);
+            var cmdState = handler.FillCnt(buffer, args);
             buffer[0] = handler.FuncId;
 
             if (handler.DontCheckResponse)
             {
                 _clientFrameSender.OnNext(DisposableValue.Create(new ArraySegment<byte>(buffer), buf));
+                handler.HandlerSuccess(cmdState);
                 return CommandError.Success;
             }
 
@@ -69,8 +70,11 @@ namespace BrainNetwork.BrainDeviceProtocol
 #if !DisableDevTimeout
             ScheduleTimeout();
 #endif
-            
-            return await _currentTaskCtl.Task;
+
+            var result = await _currentTaskCtl.Task;
+            if (result == CommandError.Success)
+                handler.HandlerSuccess(cmdState);
+            return result;
         }
 
         private async void ScheduleTimeout()

@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using BrainCommon;
 
 namespace BrainNetwork.BrainDeviceProtocol
 {
@@ -12,8 +13,14 @@ namespace BrainNetwork.BrainDeviceProtocol
         QueryParam,
     }
 
-    public sealed partial class DevCommandSender
+    public static partial class BrainDeviceManager
     {
+        private static void CommiteState()
+        {
+            AppLogger.Debug(_devState.ToString());
+            _stateStream.OnNext(_devState);
+        }
+        
         #region Start Command
 
         public class FillStartCommadContent : ICommandContent
@@ -24,19 +31,20 @@ namespace BrainNetwork.BrainDeviceProtocol
             public bool DontCheckResponse => false;
             public bool ReponseHasErrorFlag => false;
 
-            public void FillCnt(byte[] buffer, object[] args)
+            public object FillCnt(byte[] buffer, object[] args)
             {
                 buffer[1] = 1;
+                return null;
+            }
+
+            public void HandlerSuccess(object cmdCnt)
+            {
+                _devState.IsStart = true;
+                CommiteState();
             }
         }
 
-        public async Task<CommandError> Start()
-        {
-            return await ExecCmd(DevCommandEnum.Start);
-        }
-
         #endregion
-
         #region Stop Command
 
         public class FillStopCommadContent : ICommandContent
@@ -47,19 +55,21 @@ namespace BrainNetwork.BrainDeviceProtocol
             public bool DontCheckResponse => true;
             public bool ReponseHasErrorFlag => false;
 
-            public void FillCnt(byte[] buffer, object[] args)
+            public object FillCnt(byte[] buffer, object[] args)
             {
                 buffer[1] = 0;
+                return null;
+            }
+
+            public async void HandlerSuccess(object cmdCnt)
+            {//set stop tag
+                await Task.Delay(50);
+                _devState.IsStart = false;
+                CommiteState();
             }
         }
 
-        public async Task<CommandError> Stop()
-        {
-            return await ExecCmd(DevCommandEnum.Stop);
-        }
-
         #endregion
-
         #region Set Sampling Rate Command
 
         public class FillSetSampleRateCommadContent : ICommandContent
@@ -70,7 +80,7 @@ namespace BrainNetwork.BrainDeviceProtocol
             public bool DontCheckResponse => false;
             public bool ReponseHasErrorFlag => true;
 
-            public void FillCnt(byte[] buffer, object[] args)
+            public object FillCnt(byte[] buffer, object[] args)
             {
                 var rate = (SampleRateEnum) args[0];
                 byte rateB = 0;
@@ -90,24 +100,18 @@ namespace BrainNetwork.BrainDeviceProtocol
                         break;
                 }
                 buffer[1] = rateB;
+                return rate;
+            }
+
+            public void HandlerSuccess(object cmdCnt)
+            {
+                var rateB = (SampleRateEnum)cmdCnt;
+                _devState.SampleRate = rateB;
+                CommiteState();
             }
         }
 
-        public enum SampleRateEnum
-        {
-            SPS_250,
-            SPS_500,
-            SPS_1k,
-            SPS_2k,
-        }
-
-        public async Task<CommandError> SetSampleRate(SampleRateEnum sampleRate)
-        {
-            return await ExecCmd(DevCommandEnum.SetSampleRate, sampleRate);
-        }
-
         #endregion
-
         #region Set Trap Command
 
         public class FillSetTrapCommadContent : ICommandContent
@@ -118,7 +122,7 @@ namespace BrainNetwork.BrainDeviceProtocol
             public bool DontCheckResponse => false;
             public bool ReponseHasErrorFlag => true;
 
-            public void FillCnt(byte[] buffer, object[] args)
+            public object FillCnt(byte[] buffer, object[] args)
             {
                 var trapOpt = (TrapSettingEnum) args[0];
                 byte opt = 0;
@@ -135,19 +139,15 @@ namespace BrainNetwork.BrainDeviceProtocol
                         break;
                 }
                 buffer[1] = opt;
+                return trapOpt;
             }
-        }
 
-        public enum TrapSettingEnum
-        {
-            NoTrap,
-            Trap_50,
-            Trap_60,
-        }
-
-        public async Task<CommandError> SetTrap(TrapSettingEnum trapOption)
-        {
-            return await ExecCmd(DevCommandEnum.SetTrap, trapOption);
+            public void HandlerSuccess(object cmdCnt)
+            {
+                var trapOpt = (TrapSettingEnum)cmdCnt;
+                _devState.TrapOption = trapOpt;
+                CommiteState();
+            }
         }
 
         #endregion
@@ -162,11 +162,44 @@ namespace BrainNetwork.BrainDeviceProtocol
             public bool DontCheckResponse => false;
             public bool ReponseHasErrorFlag => true;
 
-            public void FillCnt(byte[] buffer, object[] args)
+            public object FillCnt(byte[] buffer, object[] args)
             {
                 var useFilter = (bool) args[0];
                 buffer[1] = useFilter ? (byte)1 : (byte)0;
+                return useFilter;
             }
+
+            public void HandlerSuccess(object cmdCnt)
+            {
+                var useFilter = (bool) cmdCnt;
+                _devState.EnalbeFilter = useFilter;
+                CommiteState();
+            }
+        }
+
+        #endregion
+    }
+
+    public sealed partial class DevCommandSender
+    {
+        public async Task<CommandError> Start()
+        {
+            return await ExecCmd(DevCommandEnum.Start);
+        }
+
+        public async Task<CommandError> Stop()
+        {
+            return await ExecCmd(DevCommandEnum.Stop);
+        }
+
+        public async Task<CommandError> SetSampleRate(SampleRateEnum sampleRate)
+        {
+            return await ExecCmd(DevCommandEnum.SetSampleRate, sampleRate);
+        }
+
+        public async Task<CommandError> SetTrap(TrapSettingEnum trapOption)
+        {
+            return await ExecCmd(DevCommandEnum.SetTrap, trapOption);
         }
 
         public async Task<CommandError> SetFilter(bool useFilter)
@@ -174,7 +207,6 @@ namespace BrainNetwork.BrainDeviceProtocol
             return await ExecCmd(DevCommandEnum.SetFilter, useFilter);
         }
 
-        #endregion
         
         #region Query Parameters Command
 
@@ -186,7 +218,12 @@ namespace BrainNetwork.BrainDeviceProtocol
             public bool DontCheckResponse => false;
             public bool ReponseHasErrorFlag => true;
 
-            public void FillCnt(byte[] buffer, object[] args)
+            public object FillCnt(byte[] buffer, object[] args)
+            {
+                return null;
+            }
+
+            public void HandlerSuccess(object cmdCnt)
             {
             }
         }
