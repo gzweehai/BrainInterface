@@ -1,0 +1,44 @@
+﻿using System;
+using System.Net;
+using System.Net.Sockets;
+using System.Reactive.Linq;
+
+namespace BrainNetwork.RxSocket.Common
+{
+    public static class ListenerExtensions
+    {
+        public static IObservable<Socket> ToListenerObservable(this IPEndPoint endpoint, int backlog)
+        {
+            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket.Bind(endpoint);
+            return socket.ToListenerObservable(backlog);
+        }
+
+        public static IObservable<Socket> ToListenerObservable(this Socket socket, int backlog)
+        {
+            return Observable.Create<Socket>(async (observer, token) =>
+            {
+                socket.Listen(backlog);
+
+                try
+                {
+                    while (!token.IsCancellationRequested)
+                        observer.OnNext(await socket.AcceptAsync()
+                        .WithCancellableWait(token));
+                }
+                catch (OperationCanceledException)
+                {
+                    observer.OnCompleted();
+                }
+                catch (Exception error)
+                {
+                    observer.OnError(error);
+                }
+                finally
+                {
+                    socket.Close();
+                }
+            });
+        }
+    }
+}

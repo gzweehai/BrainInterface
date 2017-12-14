@@ -4,3 +4,19 @@ GreatBrainClient/obj/
 \.idea/
 
 \.vs/
+
+BrainCommon/bin/
+
+BrainCommon/obj/
+
+BrainNetwork/bin/
+
+BrainNetwork/obj/
+
+BrainProtocolTester/bin/
+
+BrainProtocolTester/obj/
+
+BrainSimulator/bin/
+
+BrainSimulator/obj/
