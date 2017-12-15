@@ -34,7 +34,9 @@ namespace BrainSimulator
                 .Subscribe(
                     client =>
                         client.ToClientObservable(1024, SocketFlags.None)
-                            .Subscribe(async buf => { await OnReceived(client, buf); }, cts.Token),
+                            .Subscribe(async buf => { await OnReceived(client, buf); },
+                            err=>Console.WriteLine("socket receive error"+err.Message),
+                            ()=> { }, cts.Token),
                     error => Console.WriteLine("Error: " + error.Message),
                     () => Console.WriteLine("OnCompleted"),
                     cts.Token);

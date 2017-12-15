@@ -4,6 +4,7 @@
     {
         /// <summary>
         /// convert 24 bit data from ADS1299, to sample value 
+        /// TODO use unsafe to improve
         /// </summary>
         /// <param name="b0">high byte</param>
         /// <param name="b1">mid byte</param>
@@ -17,16 +18,11 @@
             const int flipVal = (maxVal + 1) * 2;
             var num = From24bit(b0, b1, b2);
             var signFlag = b0 & 0x80;
-            if (signFlag == 0)
+            if (signFlag != 0)
             {
-                //positive
-                return (num * vRef) / (maxVal * gain);
+                num = num - flipVal;
             }
-            else
-            {
-                num = flipVal - num;
-                return -(num * vRef) / (maxVal * gain);
-            }
+            return (num * vRef) / (maxVal * gain);
         }
 
         /// <summary>

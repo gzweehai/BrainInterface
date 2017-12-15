@@ -35,6 +35,7 @@ namespace BrainProtocolTester
             {
                 Console.WriteLine(e.Message);
             }
+            Console.ReadLine();
         }
 
         private static async void TestBrainDeviceManager()
@@ -68,7 +69,6 @@ namespace BrainProtocolTester
             }
             
             BrainDeviceManager.DisConnect();
-            Console.ReadLine();
         }
         
         private static void OldTest(string[] args)

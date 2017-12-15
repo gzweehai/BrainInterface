@@ -1,12 +1,24 @@
-﻿<Window x:Class="GreatBrainClient.MainWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GreatBrainClient"
+        xmlns:d3="clr-namespace:InteractiveDataDisplay.WPF;assembly=InteractiveDataDisplay.WPF" x:Class="GreatBrainClient.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="493.094" Width="644.89">
     <Grid>
-        
+        <StackPanel Height="500" Margin="25,120,158,-158">
+            <d3:Chart BottomTitle="Argument" LeftTitle="Function"  Height="197" RenderTransformOrigin="0.5,0.5" Margin="0,0,-169,0">
+                <d3:LineGraph x:Name="linegraph" Description="Simple linegraph" Stroke="Blue" StrokeThickness="3"/>
+            </d3:Chart>
+            <d3:Chart BottomTitle="Argument" LeftTitle="Function" Height="197" RenderTransformOrigin="0.5,0.5" Margin="0,0,-169,0">
+                <d3:LineGraph x:Name="linegraph2" Description="Simple linegraph" Stroke="Blue" StrokeThickness="3"/>
+            </d3:Chart>
+        </StackPanel>
+        <Menu HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Width="627" Margin="10,0,0,0">
+            <MenuItem Header="开始" Height="32" Width="100" Click="MenuItem_Click_1"/>
+            <MenuItem Header="结束" Height="32" Width="100" Click="MenuItem_Click" />
+        </Menu>
     </Grid>
 </Window>

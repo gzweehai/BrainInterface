@@ -46,20 +46,22 @@ namespace BrainNetwork.BrainDeviceProtocol
 
                 var endInd = data.Offset + count;
                 var extraBlockCount = (count - leastLen + 2) / 3;
-                var blocks = new List<ArraySegment<byte>>(extraBlockCount + 3)
-                {
-                    [0] = chan1,
-                    [1] = chan2,
-                    [2] = chan3
-                };
+                var blocks = new List<ArraySegment<byte>>(extraBlockCount + 3);
+                /*blocks[0] = chan1;
+                blocks[1] = chan2;
+                blocks[2] = chan3;*/
+                blocks.Add(chan1);
+                blocks.Add(chan2);
+                blocks.Add(chan3);
+
                 if (extraBlockCount > 0)
                 {
                     for (var i = 0; i < extraBlockCount; i++)
                     {
                         if (startIdx + 3 <= endInd)
-                            blocks[i + 3] = new ArraySegment<byte>(buf, startIdx, 3);
+                            blocks.Add(new ArraySegment<byte>(buf, startIdx, 3));//blocks[i + 3] = new ArraySegment<byte>(buf, startIdx, 3);
                         else
-                            blocks[i + 3] = new ArraySegment<byte>(buf, startIdx, data.Offset + count - startIdx);
+                            blocks.Add(new ArraySegment<byte>(buf, startIdx, data.Offset + count - startIdx)); //blocks[i + 3] = new ArraySegment<byte>(buf, startIdx, data.Offset + count - startIdx);
 
                         startIdx += 3;
                     }
