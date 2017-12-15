@@ -17,11 +17,13 @@ namespace BrainProtocolTester
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(BitDataConverter.ConvertFrom(0x7f, 0xff, 0xff));
-            Console.WriteLine(BitDataConverter.ConvertFrom(0x00, 0x00, 0x01));
-            Console.WriteLine(BitDataConverter.ConvertFrom(0x00, 0x00, 0x00));
-            Console.WriteLine(BitDataConverter.ConvertFrom(0xff, 0xff, 0xff));
-            Console.WriteLine(BitDataConverter.ConvertFrom(0x80, 0x00, 0x01));
+            Console.WriteLine(BitDataConverter.ConvertFrom(0x7f, 0xff, 0xff, 4.5f, 1));
+            Console.WriteLine(BitDataConverter.ConvertFrom(0x00, 0x00, 0x01, 4.5f, 1));
+            Console.WriteLine(BitDataConverter.ConvertFrom(0x00, 0x00, 0x00, 4.5f, 1));
+            Console.WriteLine(BitDataConverter.ConvertFrom(0xff, 0xff, 0xff, 4.5f, 1));
+            Console.WriteLine(BitDataConverter.ConvertFrom(0x80, 0x00, 0x01, 4.5f, 1));
+            Console.WriteLine(BitDataConverter.ConvertFrom(0x80, 0x00, 0x00, 4.5f, 1));
+
             Console.ReadLine();
             
             //OldTest(args);
