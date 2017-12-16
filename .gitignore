@@ -22,3 +22,5 @@ BrainSimulator/bin/
 BrainSimulator/obj/
 
 GreatBrainClient/bin/
+
+*.userprefs
