@@ -17,6 +17,18 @@ namespace BrainCommon
             for (var i = 0; i < data.Length; i++)
             {
                 sb.Append(data[i].Show());
+                sb.Append(" ");
+            }
+            return sb.ToString();
+        }
+        
+        public static string Show(this int[] data)
+        {
+            var sb = new StringBuilder(); 
+            for (var i = 0; i < data.Length; i++)
+            {
+                sb.Append(data[i]);
+                sb.Append(" ");
             }
             return sb.ToString();
         }
@@ -28,6 +40,7 @@ namespace BrainCommon
             for (var i = 0; i < lst.Count; i++)
             {
                 sb.Append(lst[i].Show());
+                sb.Append(" ");
             }
             return sb.ToString();
         }
@@ -38,6 +51,7 @@ namespace BrainCommon
             for (var i = 0; i < data.Count; i++)
             {
                 sb.Append(data[i].Show());
+                sb.Append(" ");
             }
             return sb.ToString();
         }
