@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using BrainCommon;
 using BrainNetwork.BrainDeviceProtocol;
 using BrainNetwork.RxSocket.Common;
-
+using BrainNetwork.RxSocket.Protocol;
 
 namespace BrainSimulator
 {
@@ -26,6 +26,8 @@ namespace BrainSimulator
         public static void Main(string[] args)
         {
             var endpoint = ProgramArgs.Parse(args, new[] {"127.0.0.1:9211"}).EndPoint;
+            var bufferManager = BufferManager.CreateBufferManager(2 << 16, 1024);
+            var decoder = new DynamicFrameDecoder(0xA0, 0XC0);
 
             var cts = new CancellationTokenSource();
 
@@ -33,10 +35,11 @@ namespace BrainSimulator
                 .ObserveOn(TaskPoolScheduler.Default)
                 .Subscribe(
                     client =>
-                        client.ToClientObservable(1024, SocketFlags.None)
-                            .Subscribe(async buf => { await OnReceived(client, buf); },
-                            err=>Console.WriteLine("socket receive error"+err.Message),
-                            ()=> { }, cts.Token),
+                        //client.ToClientObservable(1024, SocketFlags.None)
+                            client.ToDynamicFrameObservable(bufferManager, decoder)
+                                .Subscribe(async buf => await OnReceived(client, buf, cts.Token),
+                                    SocketReceiveError,
+                                    ClientSocketClose, cts.Token),
                     error => Console.WriteLine("Error: " + error.Message),
                     () => Console.WriteLine("OnCompleted"),
                     cts.Token);
@@ -47,68 +50,99 @@ namespace BrainSimulator
             cts.Cancel();
         }
 
-        private struct BrainState//naive server, no thread synchonization
+        private static void SocketReceiveError(Exception err)
+        {
+            _brainState.Reset();
+            Console.WriteLine("socket receive error:" + err.Message);
+        }
+
+        private static void ClientSocketClose()
+        {
+            _brainState.Reset();
+            Console.WriteLine("client socket closed");
+        }
+
+        private struct BrainState //naive server, no thread synchonization
         {
             public bool IsStart;
             public SampleRateEnum SampleRate;
             public TrapSettingEnum TrapOption;
             public bool EnableFilter;
             public byte SamplePacketOrder;
+
+            public BrainState(bool isStart)
+            {
+                IsStart = isStart;
+                SampleRate = SampleRateEnum.SPS_250;
+                TrapOption = TrapSettingEnum.NoTrap;
+                EnableFilter = false;
+                SamplePacketOrder = 0;
+            }
+
+            public void Reset()
+            {
+                IsStart = false;
+                SamplePacketOrder = 0;
+            }
         }
 
-        private static BrainState _brainState;
+        private static BrainState _brainState = new BrainState(false);
 
-        private static async Task OnReceived(Socket socket, ArraySegment<byte> buffer)
+        private static async Task OnReceived(Socket socket, DisposableValue<ArraySegment<byte>> arrSeg,
+            CancellationToken ctsToken)
         {
+            var buffer = arrSeg.Value;
             var buf = buffer.Array;
             var count = buffer.Count;
-            if (count > 2 && buf != null && buf[0] == 0xA0 && buf[count - 1] == 0xC0)
+            if (count > 0 && buf != null)
             {
-                var funcId = buf[1];
+                var funcId = buf[buffer.Offset];
+                AppLogger.Debug($"func:{funcId},{buffer.Show()}");
                 switch (funcId)
                 {
                     case 1:
-                        await HandlerStartStop(socket, buffer);
+                        HandlerStartStop(socket, buffer, ctsToken);
                         return;
                     case 11:
-                        await SetSampleRate(socket, buffer);
+                        await SetSampleRate(socket, buffer, ctsToken);
                         return;
                     case 12:
-                        await SetTrap(socket, buffer);
+                        await SetTrap(socket, buffer, ctsToken);
                         return;
                     case 13:
-                        await SetFilter(socket, buffer);
+                        await SetFilter(socket, buffer, ctsToken);
                         return;
                     case 21:
-                        await QueryParam(socket, buffer);
+                        await QueryParam(socket, buffer, ctsToken);
                         return;
                 }
             }
             await SimpleSend(socket, buffer);
         }
 
-        private static async Task HandlerStartStop(Socket socket, ArraySegment<byte> buffer)
+        private static void HandlerStartStop(Socket socket, ArraySegment<byte> buffer, CancellationToken ctsToken)
         {
             if (buffer.Array != null)
             {
-                var flag = buffer.Array[2];
+                var startInd = buffer.Offset;
+                var flag = buffer.Array[startInd + 1];
                 if (flag != 0)
                 {
                     if (!_brainState.IsStart)
                     {
                         _brainState.IsStart = true;
                         //await SendSampleData(socket);//collect data then sent, not sent immediately
-                        StartPeridSender(socket);
+                        StartPeridSender(socket, ctsToken);
                     }
                 }
                 else
                 {
-                    _brainState.IsStart = false;
+                    _brainState.Reset();
                 }
             }
         }
 
-        private static async void StartPeridSender(Socket socket)
+        private static async void StartPeridSender(Socket socket, CancellationToken ctsToken)
         {
             while (true)
             {
@@ -136,46 +170,48 @@ namespace BrainSimulator
                 {
                     for (int i = 0; i < count; i++)
                     {
-                        await SendSampleData(socket);
+                        await SendSampleData(socket, ctsToken);
+                        if (!_brainState.IsStart) return;
                     }
-
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    return;//any exception will break the sending queues
+                    return; //any exception will break the sending queues
                 }
             }
         }
 
-        const byte ChannelCount = 32;//must >= 3
-        private static async Task SendSampleData(Socket socket)
+        const byte ChannelCount = 32; //must >= 3
+
+        private static async Task SendSampleData(Socket socket, CancellationToken ctsToken)
         {
-            var buf = bmgr.TakeBuffer(2 + ChannelCount * 3);
+            byte size = 2 + ChannelCount * 3;
+            var buf = bmgr.TakeBuffer(size);
             _r.NextBytes(buf);
             buf[0] = 1;
             buf[1] = ++_brainState.SamplePacketOrder;
             buf[2] = 0;
             buf[2 + 3] = 1;
             buf[2 + 3 + 3] = 2;
-            await SendWithHeadTail(socket, buf);
+            await SendWithHeadTail(socket, buf, size,ctsToken);
             bmgr.ReturnBuffer(buf);
         }
 
-        private static async Task SetSampleRate(Socket socket, ArraySegment<byte> buffer)
+        private static async Task SetSampleRate(Socket socket, ArraySegment<byte> buffer, CancellationToken ctsToken)
         {
             var buf = bmgr.TakeBuffer(2);
             buf[0] = 11;
             if (buffer.Array != null)
             {
-                var flag = (SampleRateEnum)buffer.Array[2];
+                var flag = (SampleRateEnum) buffer.Array[buffer.Offset + 1];
                 switch (flag)
                 {
                     case SampleRateEnum.SPS_250:
                     case SampleRateEnum.SPS_500:
                     case SampleRateEnum.SPS_1k:
                     case SampleRateEnum.SPS_2k:
-                        _brainState.IsStart = false;
+                        _brainState.Reset();
                         _brainState.SampleRate = flag;
                         buf[1] = 0;
                         break;
@@ -184,59 +220,57 @@ namespace BrainSimulator
                         break;
                 }
             }
-            await SendWithHeadTail(socket, buf);
+            await SendWithHeadTail(socket, buf, 2,ctsToken);
             bmgr.ReturnBuffer(buf);
         }
 
-        private static async Task SetTrap(Socket socket, ArraySegment<byte> buffer)
+        private static async Task SetTrap(Socket socket, ArraySegment<byte> buffer, CancellationToken ctsToken)
         {
             var buf = bmgr.TakeBuffer(2);
             buf[1] = 1;
             buf[0] = 12;
-            await SendWithHeadTail(socket, buf);
+            await SendWithHeadTail(socket, buf, 2,ctsToken);
             bmgr.ReturnBuffer(buf);
         }
 
-        private static async Task SetFilter(Socket socket, ArraySegment<byte> buffer)
+        private static async Task SetFilter(Socket socket, ArraySegment<byte> buffer, CancellationToken ctsToken)
         {
             var buf = bmgr.TakeBuffer(2);
             buf[1] = 1;
             buf[0] = 13;
-            await SendWithHeadTail(socket, buf);
+            await SendWithHeadTail(socket, buf, 2,ctsToken);
             bmgr.ReturnBuffer(buf);
         }
 
         private const byte DevCode = 0xFF;
-        private static async Task QueryParam(Socket socket, ArraySegment<byte> buffer)
+
+        private static async Task QueryParam(Socket socket, ArraySegment<byte> buffer, CancellationToken ctsToken)
         {
-            var buf = bmgr.TakeBuffer(6);
+            var buf = bmgr.TakeBuffer(7);
             buf[0] = 21;
             buf[1] = DevCode;
             buf[2] = ChannelCount;
-            buf[3] = (byte)_brainState.SampleRate;
-            buf[4] = (byte)_brainState.TrapOption;
-            buf[5] = _brainState.EnableFilter ? (byte) 1 : (byte) 0;
-            
-            await SendWithHeadTail(socket, buf);
+            buf[3] = 72;
+            buf[4] = (byte) _brainState.SampleRate;
+            buf[5] = (byte) _brainState.TrapOption;
+            buf[6] = _brainState.EnableFilter ? (byte) 1 : (byte) 0;
+
+            await SendWithHeadTail(socket, buf, 7,ctsToken);
             bmgr.ReturnBuffer(buf);
         }
 
-        private static async Task SendWithHeadTail(Socket socket, byte[] buf)
+        private static async Task SendWithHeadTail(Socket socket, byte[] buf, byte bufSize, CancellationToken ctsToken)
         {
-            var size = buf.Length + 2;
-            var sent = 0;
-            while (sent < size)
+            var size = buf.Length + 3;
+            var lenByte = new ArraySegment<byte>(new[] {bufSize});
+            var sent = await socket.SendCompletelyAsync(new[]
             {
-                var bytes = await socket.SendAsync(new[]
-                {
-                    _frameHeader,
-                    new ArraySegment<byte>(buf),
-                    _frameTail,
-                }, SocketFlags.None);
-                if (bytes == 0)
-                    break;
-                sent += bytes;
-            }
+                _frameHeader,
+                lenByte,
+                new ArraySegment<byte>(buf,0,bufSize),
+                _frameTail,
+            }, SocketFlags.None, ctsToken);
+            //AppLogger.Debug($"sent,{sent},len:{buf.Length},{buf.Show()}");
         }
 
         private static async Task SimpleSend(Socket socket, ArraySegment<byte> buffer)
@@ -248,6 +282,7 @@ namespace BrainSimulator
             {
                 sent += await socket.SendAsync(buf, sent, count - sent, SocketFlags.None);
             }
+            AppLogger.Debug($"SimpleSend:{sent},len:{buf.Length},{buf.Show()}");
         }
     }
 }

@@ -48,6 +48,8 @@
     <Compile Include="AppLogger.cs" />
     <Compile Include="BitDataConverter.cs" />
     <Compile Include="CASHelper.cs" />
+    <Compile Include="DisposableValue.cs" />
+    <Compile Include="LengthBitConverter.cs" />
     <Compile Include="MiscUtility.cs" />
     <Compile Include="ProgramArgExt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

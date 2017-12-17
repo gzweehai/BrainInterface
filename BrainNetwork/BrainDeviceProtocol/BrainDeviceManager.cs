@@ -19,7 +19,7 @@ namespace BrainNetwork.BrainDeviceProtocol
     {
         private static BufferManager bufferManager;
         private static ClientFrameEncoder encoder;
-        private static ClientFrameDecoder decoder;
+        private static FixedLenFrameDecoder decoder;
         private static IDisposable observerDisposable;
         private static CancellationTokenSource cts;
 
@@ -27,8 +27,8 @@ namespace BrainNetwork.BrainDeviceProtocol
         {
             bufferManager = BufferManager.CreateBufferManager(2 << 16, 1024);
             encoder = new ClientFrameEncoder(0xA0, 0XC0);
-            decoder = new ClientFrameDecoder(0xA0, 0XC0);
-            _dataStream = new Subject<List<ArraySegment<byte>>>();
+            decoder = new FixedLenFrameDecoder(0xA0, 0XC0);
+            _dataStream = new Subject<(byte, int[], ArraySegment<byte>)>();
             _stateStream = new Subject<BrainDevState>();
             _stateStream.OnNext(_devState);
         }
@@ -42,7 +42,7 @@ namespace BrainNetwork.BrainDeviceProtocol
             cts = new CancellationTokenSource();
 
             var frameClientSubject =
-                socket.ToFrameClientSubject(encoder, decoder, bufferManager, cts.Token);
+                socket.ToFixedLenFrameSubject(encoder, decoder, bufferManager, cts.Token);
 
             observerDisposable =
                 frameClientSubject
@@ -52,20 +52,18 @@ namespace BrainNetwork.BrainDeviceProtocol
                         {
                             var segment = managedBuffer.Value;
                             if (!ReceivedDataProcessor.Instance.Process(segment) && segment.Array != null)
-                                AppLogger.Debug(
-                                    "Echo: " + Encoding.UTF8.GetString(segment.Array, segment.Offset,
-                                        segment.Count));
+                                AppLogger.Debug("Echo: " + segment.Show());
                             managedBuffer.Dispose();
                         },
                         error =>
                         {
                             AppLogger.Error("Error: " + error.Message);
-                            cts.Cancel();
+                            DisConnect();
                         },
                         () =>
                         {
                             AppLogger.Info("OnCompleted: Frame Protocol Receiver");
-                            cts.Cancel();
+                            DisConnect();
                         });
 
             var cmdSender = new DevCommandSender(frameClientSubject, bufferManager);
@@ -75,6 +73,7 @@ namespace BrainNetwork.BrainDeviceProtocol
 
         public static void DisConnect()
         {
+            CommitEnableFiler(false);
             cts?.Cancel();
             cts = null;
             observerDisposable?.Dispose();
@@ -83,6 +82,7 @@ namespace BrainNetwork.BrainDeviceProtocol
             _dataStream = null;
             _stateStream?.OnCompleted();
             _stateStream = null;
+            AppLogger.Debug("BrainDeviceManager.DisConnect");
         }
     }
 }

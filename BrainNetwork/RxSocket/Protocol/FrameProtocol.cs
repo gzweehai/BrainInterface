@@ -7,8 +7,19 @@ using BrainNetwork.RxSocket.Protocol;
 
 namespace BrainNetwork.RxSocket.Protocol
 {
-    //TODO multi frame protocol support
-    public interface ISimpleFrameDecoder
+    public interface IFixedLenFrameDecoder
+    {
+        SocketFlags ReceivedFlags { get; }
+        byte Header { get; }
+        byte Tail { get; }
+        byte LenByteCount { get; }
+    }
+}
+
+#region dynamic frame decoder
+namespace BrainNetwork.RxSocket.Protocol
+{
+    public interface IDynamicFrameDecoder
     {
         SocketFlags ReceivedFlags { get; }
 
@@ -39,7 +50,7 @@ namespace BrainNetwork.RxSocket.Protocol
         DropAndRestart,
     }
 
-    public abstract class AbsSimpleDecoder : ISimpleFrameDecoder
+    public abstract class DynamicFrameDecoderBase : IDynamicFrameDecoder
     {
         public abstract SocketFlags ReceivedFlags { get; }
         public abstract int BufferSize { get; }
@@ -91,8 +102,8 @@ namespace BrainNetwork.RxSocket.Common
         /// <param name="decoder"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public static async Task<(int, int)> ReceiveCompletelyAsync(this Socket socket, object state,
-            byte[] buffer, int startIdx, ISimpleFrameDecoder decoder, CancellationToken token)
+        public static async Task<(int, int)> ReceiveDynamicFrame(this Socket socket, object state,
+            byte[] buffer, int startIdx, IDynamicFrameDecoder decoder, CancellationToken token)
         {
             var received = 0;
             var leftover = 0;
@@ -124,3 +135,4 @@ namespace BrainNetwork.RxSocket.Common
         }
     }
 }
+#endregion

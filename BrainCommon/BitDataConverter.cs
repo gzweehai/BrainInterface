@@ -2,7 +2,7 @@
 
 namespace BrainCommon
 {
-    public class BitDataConverter
+    public static class BitDataConverter
     {
         /// <summary>
         /// convert 24 bit data from ADS1299, to sample value 
@@ -16,7 +16,7 @@ namespace BrainCommon
         /// <param name="vRef"></param>
         /// <param name="gain"></param>
         /// <returns></returns>
-        public static double ConvertFrom(byte b0,byte b1,byte b2,float vRef=4.5f, int gain=72)
+        public static double ConvertFrom(byte b0, byte b1, byte b2, float vRef = 4.5f, int gain = 72)
         {
             var num = (b0 << 16) + (b1 << 8) + b2;
             if ((b0 & 0x80) != 0)
@@ -25,11 +25,11 @@ namespace BrainCommon
             }
             return (num * vRef) / (maxVal * gain);
         }
-        
+
         const int maxVal = 0x7fFFff;
         const int flipVal = (maxVal + 1) * 2;
 
-        public static int ConvertFrom(byte[] arr,int ind)
+        public static int ConvertFrom(byte[] arr, int ind)
         {
             var num = (arr[ind] << 16) + (arr[ind + 1] << 8) + arr[ind + 2];
             if ((arr[ind] & 0x80) != 0)
@@ -45,10 +45,10 @@ namespace BrainCommon
             if (arr == null) return null;
             var ind = data.Offset;
             var count = data.Count;
-            var result = new int[count/3];
+            var result = new int[count / 3];
             for (int i = 0; i < result.Length; i++)
             {
-                result[i] = ConvertFrom(arr,ind);
+                result[i] = ConvertFrom(arr, ind);
                 ind += 3;
             }
             return result;
@@ -60,7 +60,7 @@ namespace BrainCommon
             if (arr == null) return null;
             var ind = data.Offset;
             var count = data.Count;
-            var result = new int[count/3];
+            var result = new int[count / 3];
             for (int i = 0; i < result.Length; i++)
             {
                 result[i] = (arr[ind] << 16) + (arr[ind + 1] << 8) + arr[ind + 2];
@@ -78,7 +78,7 @@ namespace BrainCommon
             if (data.Array == null) return null;
             var startInd = data.Offset;
             var count = data.Count;
-            var result = new int[count/3];
+            var result = new int[count / 3];
             unsafe
             {
                 fixed (byte* arr = data.Array)
@@ -89,9 +89,9 @@ namespace BrainCommon
                         for (int i = startInd; i < count; i = i + 3)
                         {
                             byte* tmp = (byte*) rt;
-                            *tmp = arr[i+2];
+                            *tmp = arr[i + 2];
                             tmp++;
-                            *tmp = arr[i+1];
+                            *tmp = arr[i + 1];
                             tmp++;
                             *tmp = arr[i];
                             tmp++;
@@ -104,16 +104,27 @@ namespace BrainCommon
                         }
                     }
                 }
-                
             }
             return result;
         }
 
+        public static int[] ConvertFromPlatform(ArraySegment<byte> data)
+        {
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                return FastConvertFrom(data);
+            }
+            else
+            {
+                return ConvertFrom(data);
+            }
+        }
+        
         private static byte[] PrepareTestData()
         {
-            //const int count = 32*40;//max count expected
-            const int count = 10;//simple test
-            const int startNum = maxVal - count / 2;
+            const int count = 32;//max count expected
+            //const int count = 10; //simple test
+            const int startNum = maxVal + 1 - count / 2;
             var tArr = new byte[count * 3];
             for (var i = 0; i < count; i++)
             {
@@ -134,32 +145,70 @@ namespace BrainCommon
         public static void TestConvertPerformance()
         {
             var tArr = PrepareTestData();
-            Console.WriteLine(tArr.Show());
-            
+            var arraySegment = new ArraySegment<byte>(tArr);
+
             var startTime = DateTime.Now;
-            var result = ConvertFrom(new ArraySegment<byte>(tArr));
+            var result = ConvertFrom(arraySegment);
             var endTime = DateTime.Now;
             var timeSpanNormal = endTime - startTime;
-            Console.WriteLine($"time used:{timeSpanNormal}");
-            Console.WriteLine(result.Show());
-            
+            Console.WriteLine($"ConvertFrom: {timeSpanNormal}");
+
             startTime = DateTime.Now;
-            var result2 = FastConvertFrom(new ArraySegment<byte>(tArr));
+            var result2 = FastConvertFrom(arraySegment);
             endTime = DateTime.Now;
             var timeSpanFast = endTime - startTime;
-            Console.WriteLine($"time used:{timeSpanFast}");
-            Console.WriteLine(result2.Show());
-            
-            for (var i = 0; i < result.Length; i++)
+            Console.WriteLine($"FastConvertFrom: {timeSpanFast}");
+
+            /*for (var i = 0; i < result.Length; i++)
             {
                 if (result[i] != result2[i])
                 {
                     Console.WriteLine($"bug at index:{i}, {result[i]} != {result2[i]}");
+                    Console.WriteLine(tArr.Show());
+                    Console.WriteLine(result.Show());
+                    Console.WriteLine(result2.Show());
                 }
+            }*/
+            var speedup =timeSpanFast.Ticks==0?long.MaxValue: timeSpanNormal.Ticks / timeSpanFast.Ticks;
+            Console.WriteLine(
+                $"FastConvertFrom is realy faster than ConvertFrom? {timeSpanFast < timeSpanNormal},faster order :{speedup},{timeSpanNormal},{timeSpanFast}");
+            startTime = DateTime.Now;
+            result2 = ConvertFromPlatform(arraySegment);
+            endTime = DateTime.Now;
+            Console.WriteLine($"ConvertFromPlatform: {endTime - startTime}");
+            
+            startTime = DateTime.Now;
+            result = ConvertFrom(arraySegment);
+            endTime = DateTime.Now;
+            Console.WriteLine($"ConvertFrom: {endTime - startTime}");
+
+            startTime = DateTime.Now;
+            result2 = FastConvertFrom(arraySegment);
+            endTime = DateTime.Now;
+            Console.WriteLine($"FastConvertFrom: {endTime - startTime}");
+
+            long normalAcc= 0;
+            long unsafeAcc = 0;
+            const int l = 40*1000;
+            for (int i = 0; i < l; i++)
+            {
+                startTime = DateTime.Now;
+                result = ConvertFrom(arraySegment);
+                endTime = DateTime.Now;
+                normalAcc += endTime.Ticks - startTime.Ticks;
             }
-            Console.WriteLine($"FastConvertFrom is realy faster than ConvertFrom? {timeSpanFast<timeSpanNormal},faster order :{timeSpanNormal.Ticks/timeSpanFast.Ticks},{timeSpanNormal},{timeSpanFast}");
+            for (int i = 0; i < l; i++)
+            {
+                startTime = DateTime.Now;
+                result2 = FastConvertFrom(arraySegment);
+                endTime = DateTime.Now;
+                unsafeAcc += endTime.Ticks - startTime.Ticks;
+            }
+            speedup = unsafeAcc != 0 ? normalAcc / unsafeAcc : long.MaxValue;
+            Console.WriteLine(
+                $"FastConvertFrom is realy faster than ConvertFrom? {unsafeAcc < normalAcc},faster order :{speedup},{TimeSpan.FromTicks(unsafeAcc)},{TimeSpan.FromTicks(normalAcc)}");
         }
-        
+
         public static void TestConvert()
         {
             var tArr = PrepareTestData();
@@ -175,20 +224,20 @@ namespace BrainCommon
             var result = FastConvertFrom(new ArraySegment<byte>(tArr));
             Console.WriteLine(result.Show());
         }
-        
+
         public static void TestByteOrder()
         {
             int number = 0x7feeff;
-            
-            unsafe 
+
+            unsafe
             {
                 // Convert to byte:
-                byte* p = (byte*)&number;
-            
+                byte* p = (byte*) &number;
+
                 System.Console.Write("The 4 bytes of the integer:");
-            
-                // Display the 4 bytes of the int variable:
-                for (int i = 0 ; i < sizeof(int) ; ++i)
+
+                // Display the 4 bytes of the int variable://mac: FF EE 7F 00
+                for (int i = 0; i < sizeof(int); ++i)
                 {
                     System.Console.Write(" {0:X2}", *p);
                     // Increment the pointer:
@@ -196,9 +245,9 @@ namespace BrainCommon
                 }
                 System.Console.WriteLine();
                 System.Console.WriteLine("The value of the integer: {0}", number);
-            
+
                 // Keep the console window open in debug mode.
-                System.Console.WriteLine("Press any key to exit.");
+                System.Console.WriteLine("Press any key to continue.");
                 System.Console.ReadKey();
             }
         }

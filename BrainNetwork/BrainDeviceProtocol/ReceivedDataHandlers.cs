@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reactive.Subjects;
+using System.Threading;
 using BrainCommon;
 
 namespace BrainNetwork.BrainDeviceProtocol
@@ -8,12 +8,133 @@ namespace BrainNetwork.BrainDeviceProtocol
     public static partial class BrainDeviceManager
     {
         //sample data stream
-        private static Subject<List<ArraySegment<byte>>> _dataStream;
+        private static Subject<(byte,int[],ArraySegment<byte>)> _dataStream;
 
+        public static IObservable<(byte, int[], ArraySegment<byte>)> SampleDataStream => _dataStream;
+        
         //device state stream
         private static Subject<BrainDevState> _stateStream;
 
+        public static IObservable<BrainDevState> BrainDeviceState => _stateStream;
+
         private static BrainDevState _devState;
+
+        #region Commit State Operations
+        private static int _stateLock=CASHelper.LockFree;
+
+        private static void CommitSampleRate(SampleRateEnum sampleRate)
+        {
+            var changed = false;
+            //spin lock
+            while (Interlocked.CompareExchange(ref _stateLock, CASHelper.LockUsed, CASHelper.LockFree) != CASHelper.LockFree){}
+            if (_devState.SampleRate != sampleRate)
+            {
+                changed = true;
+                _devState.SampleRate = sampleRate;
+            }
+            //free lock
+            Interlocked.CompareExchange(ref _stateLock, CASHelper.LockFree, CASHelper.LockUsed);
+            if (changed)
+                CommiteState();
+        }
+
+        private static void CommitTrapOpt(TrapSettingEnum trapOpt)
+        {
+            var changed = false;
+            //spin lock
+            while (Interlocked.CompareExchange(ref _stateLock, CASHelper.LockUsed, CASHelper.LockFree) != CASHelper.LockFree){}
+            if (_devState.TrapOption != trapOpt)
+            {
+                changed = true;
+                _devState.TrapOption = trapOpt;
+            }
+            //free lock
+            Interlocked.CompareExchange(ref _stateLock, CASHelper.LockFree, CASHelper.LockUsed);
+            if (changed)
+                CommiteState();
+        }
+
+        private static void CommitEnableFiler(bool enalbeFilter)
+        {
+            var changed = false;
+            //spin lock
+            while (Interlocked.CompareExchange(ref _stateLock, CASHelper.LockUsed, CASHelper.LockFree) != CASHelper.LockFree){}
+            if (_devState.EnalbeFilter != enalbeFilter)
+            {
+                changed = true;
+                _devState.EnalbeFilter = enalbeFilter;
+            }
+            //free lock
+            Interlocked.CompareExchange(ref _stateLock, CASHelper.LockFree, CASHelper.LockUsed);
+            if (changed)
+                CommiteState();
+        }
+        
+        private static void CommitParam(byte devCode,byte chanCount,byte gain,SampleRateEnum sampleRate,TrapSettingEnum trapOpt,bool enalbeFilter)
+        {
+            var changed = false;
+            //spin lock
+            while (Interlocked.CompareExchange(ref _stateLock, CASHelper.LockUsed, CASHelper.LockFree) != CASHelper.LockFree){}
+            if (_devState.DevCode != devCode)
+            {
+                changed = true;
+                _devState.DevCode = devCode;
+            }
+            if (_devState.ChannelCount != chanCount)
+            {
+                changed = true;
+                _devState.ChannelCount = chanCount;
+            }
+            if (_devState.Gain != gain)
+            {
+                changed = true;
+                _devState.Gain = gain;
+            }
+            
+            if (_devState.SampleRate != sampleRate)
+            {
+                changed = true;
+                _devState.SampleRate = sampleRate;
+            }
+            if (_devState.TrapOption != trapOpt)
+            {
+                changed = true;
+                _devState.TrapOption = trapOpt;
+            }
+            if (_devState.EnalbeFilter != enalbeFilter)
+            {
+                changed = true;
+                _devState.EnalbeFilter = enalbeFilter;
+            }
+            //free lock
+            Interlocked.CompareExchange(ref _stateLock, CASHelper.LockFree, CASHelper.LockUsed);
+            if (changed)
+                CommiteState();
+        }
+        
+        private static void CommitStartStop(bool isStart)
+        {
+            var changed = false;
+            //spin lock
+            while (Interlocked.CompareExchange(ref _stateLock, CASHelper.LockUsed, CASHelper.LockFree) != CASHelper.LockFree){}
+            if (_devState.IsStart != isStart)
+            {
+                changed = true;
+                _devState.IsStart = isStart;
+            }
+            //free lock
+            Interlocked.CompareExchange(ref _stateLock, CASHelper.LockFree, CASHelper.LockUsed);
+            if (changed)
+                CommiteState();
+        }
+
+        private static void CommiteState()
+        {
+            AppLogger.Debug($"CommiteState: {_devState}");
+            _stateStream?.OnNext(_devState);
+        }
+        
+        #endregion
 
         public class SampleDataHandler : IReceivedDataProcessor
         {
@@ -26,14 +147,16 @@ namespace BrainNetwork.BrainDeviceProtocol
                 const int leastLen = 1 + 1 + 3 + 3 + 3;
                 if (buf == null || count < leastLen)
                 {
-                    AppLogger.Error("corruted sample data");
+                    AppLogger.Error($"corruted sample data,received len: {count}");
                     return;
                 }
 
+                var extraBlockCount = (count - leastLen + 2) / 3;
                 var startIdx = data.Offset;
                 startIdx++;
                 var order = buf[startIdx];
                 startIdx++;
+                /*
                 var chan1 = new ArraySegment<byte>(buf, startIdx, 3);
                 startIdx += 3;
                 var chan2 = new ArraySegment<byte>(buf, startIdx, 3);
@@ -41,15 +164,10 @@ namespace BrainNetwork.BrainDeviceProtocol
                 var chan3 = new ArraySegment<byte>(buf, startIdx, 3);
                 startIdx += 3;
 
-                AppLogger.Debug(
-                    $"sample data received,order:{order},ch1:{chan1.Show()},ch2:{chan2.Show()},ch3:{chan3.Show()}");
+                AppLogger.Debug($"sample data received,order:{order},ch1:{chan1.Show()},ch2:{chan2.Show()},ch3:{chan3.Show()}");
 
                 var endInd = data.Offset + count;
-                var extraBlockCount = (count - leastLen + 2) / 3;
                 var blocks = new List<ArraySegment<byte>>(extraBlockCount + 3);
-                /*blocks[0] = chan1;
-                blocks[1] = chan2;
-                blocks[2] = chan3;*/
                 blocks.Add(chan1);
                 blocks.Add(chan2);
                 blocks.Add(chan3);
@@ -59,15 +177,17 @@ namespace BrainNetwork.BrainDeviceProtocol
                     for (var i = 0; i < extraBlockCount; i++)
                     {
                         if (startIdx + 3 <= endInd)
-                            blocks.Add(new ArraySegment<byte>(buf, startIdx, 3));//blocks[i + 3] = new ArraySegment<byte>(buf, startIdx, 3);
+                            blocks.Add(new ArraySegment<byte>(buf, startIdx, 3));
                         else
-                            blocks.Add(new ArraySegment<byte>(buf, startIdx, data.Offset + count - startIdx)); //blocks[i + 3] = new ArraySegment<byte>(buf, startIdx, data.Offset + count - startIdx);
+                            blocks.Add(new ArraySegment<byte>(buf, startIdx, data.Offset + count - startIdx));
 
                         startIdx += 3;
                     }
                     AppLogger.Debug($"extra {extraBlockCount} channel data:{blocks.Show()}");
                 }
-                _dataStream?.OnNext(blocks);
+                */
+                var dataSeg = new ArraySegment<byte>(buf, startIdx, (extraBlockCount + 3) * 3);
+                _dataStream?.OnNext((order,BitDataConverter.FastConvertFrom(dataSeg),dataSeg));
             }
         }
 
@@ -82,14 +202,14 @@ namespace BrainNetwork.BrainDeviceProtocol
                 const int leastLen = 1 + 1;
                 if (buf == null || count < leastLen)
                 {
-                    AppLogger.Error("corruted SetSampleRate result");
+                    AppLogger.Error($"corruted SetSampleRate result,received len: {count}");
                     return;
                 }
 
                 var startIdx = data.Offset;
                 var flag = buf[startIdx + 1];
                 var success = flag == 0;
-                AppLogger.Debug(success);
+                AppLogger.Debug($"SetSampleRate success? {success}");
             }
         }
 
@@ -104,14 +224,14 @@ namespace BrainNetwork.BrainDeviceProtocol
                 const int leastLen = 1 + 1;
                 if (buf == null || count < leastLen)
                 {
-                    AppLogger.Error("corruted SetTrap result");
+                    AppLogger.Error($"corruted SetTrap result,received len: {count}");
                     return;
                 }
 
                 var startIdx = data.Offset;
                 var flag = buf[startIdx + 1];
                 var success = flag == 0;
-                AppLogger.Debug(success);
+                AppLogger.Debug($"SetTrap success? {success}");
             }
         }
 
@@ -126,14 +246,14 @@ namespace BrainNetwork.BrainDeviceProtocol
                 const int leastLen = 1 + 1;
                 if (buf == null || count < leastLen)
                 {
-                    AppLogger.Error("corruted SetFilter result");
+                    AppLogger.Error($"corruted SetFilter result,received len: {count}");
                     return;
                 }
 
                 var startIdx = data.Offset;
                 var flag = buf[startIdx + 1];
                 var success = flag == 0;
-                AppLogger.Debug(success);
+                AppLogger.Debug($"SetFilter success? {success}");
             }
         }
 
@@ -145,24 +265,16 @@ namespace BrainNetwork.BrainDeviceProtocol
             {
                 var count = data.Count;
                 var buf = data.Array;
-                const int leastLen = 1 + 5;
+                const int leastLen = 1 + 6;
                 if (buf == null || count < leastLen)
                 {
-                    AppLogger.Error("corruted Query result");
+                    AppLogger.Error($"corruted Query result,received len: {count}");
                     return;
                 }
 
                 var startIdx = data.Offset;
-                _devState.DevCode = buf[startIdx + 1];
-                _devState.ChannelCount = buf[startIdx + 2];
                 //TODO range check
-                _devState.SampleRate = (SampleRateEnum) buf[startIdx + 3];
-                _devState.TrapOption = (TrapSettingEnum) buf[startIdx + 4];
-                _devState.EnalbeFilter = buf[startIdx + 5] == 1;
-                AppLogger.Debug(data.Show());
-                
-                AppLogger.Debug(_devState.ToString());
-                _stateStream.OnNext(_devState);
+                CommitParam(buf[startIdx + 1],buf[startIdx + 2],buf[startIdx + 3],(SampleRateEnum) buf[startIdx + 4],(TrapSettingEnum) buf[startIdx + 5],buf[startIdx + 6] == 1);
             }
         }
     }

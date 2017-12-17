@@ -15,8 +15,10 @@ namespace BrainProtocolTester
 {
     internal static class BrainDevProtocolTestProgram
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
+            //BitDataConverter.TestByteOrder();
+            BitDataConverter.TestConvertPerformance();
             Console.WriteLine(BitDataConverter.ConvertFrom(0x7f, 0xff, 0xff, 4.5f, 1));
             Console.WriteLine(BitDataConverter.ConvertFrom(0x00, 0x00, 0x01, 4.5f, 1));
             Console.WriteLine(BitDataConverter.ConvertFrom(0x00, 0x00, 0x00, 4.5f, 1));
@@ -29,7 +31,7 @@ namespace BrainProtocolTester
             //OldTest(args);
             try
             {
-                TestBrainDeviceManager();
+                await TestBrainDeviceManager();
             }
             catch (Exception e)
             {
@@ -38,12 +40,38 @@ namespace BrainProtocolTester
             Console.ReadLine();
         }
 
-        private static async void TestBrainDeviceManager()
+        private static async Task TestBrainDeviceManager()
         {
             BrainDeviceManager.Init();
             var sender = await BrainDeviceManager.Connnect("127.0.0.1", 9211);
             var cmdResult = await sender.QueryParam();
             AppLogger.Debug("QueryParam result:"+cmdResult);
+            if (cmdResult != CommandError.Success)
+            {
+                AppLogger.Error("Failed to QueryParam, stop");
+                BrainDeviceManager.DisConnect();
+                return;
+            }
+            
+            //保证设备参数正常才继续跑逻辑
+            BrainDeviceManager.BrainDeviceState.Subscribe(ss =>
+            {
+                AppLogger.Debug($"Brain Device State Changed Detected: {ss}");
+            }, () =>
+            {
+                AppLogger.Debug("device stop detected");
+            });
+            BrainDeviceManager.SampleDataStream.Subscribe(tuple =>
+            {
+                var (order, datas, arr) = tuple;
+                Console.Write($" {order} ");
+                //AppLogger.Debug($"order:{order}");
+                //AppLogger.Debug($"converted values:{datas.Show()}");
+                //AppLogger.Debug($"original datas:{arr.Show()}");
+            }, () =>
+            {
+                AppLogger.Debug("device sampling stream closed detected");
+            });
             
             cmdResult = await sender.SetFilter(true);
             AppLogger.Debug("SetFilter result:"+cmdResult);
@@ -51,12 +79,13 @@ namespace BrainProtocolTester
             cmdResult = await sender.SetTrap(TrapSettingEnum.Trap_50);
             AppLogger.Debug("SetTrap result:"+cmdResult);
             
-            cmdResult = await sender.SetSampleRate(SampleRateEnum.SPS_250);
+            cmdResult = await sender.SetSampleRate(SampleRateEnum.SPS_2k);
             AppLogger.Debug("SetSampleRate result:"+cmdResult);
             
             cmdResult = await sender.QueryParam();
             AppLogger.Debug("QueryParam result:"+cmdResult);
-            
+
+            Console.ReadLine();
             cmdResult = await sender.Start();
             if (cmdResult != CommandError.Success)
             {
@@ -64,8 +93,12 @@ namespace BrainProtocolTester
             }
             else
             {
-                await Task.Delay(1000);
+                AppLogger.Debug($"start receive sample data");
+                await Task.Delay(1000*10);
+                AppLogger.Debug($"stoping");
                 await sender.Stop();
+                AppLogger.Debug($"stop receive sample data");
+                await Task.Delay(1000);
             }
             
             BrainDeviceManager.DisConnect();
@@ -78,14 +111,14 @@ namespace BrainProtocolTester
             var cts = new CancellationTokenSource();
             var bufferManager = BufferManager.CreateBufferManager(2 << 16, 1024);
             var encoder = new ClientFrameEncoder(0xA0, 0XC0);
-            var decoder = new ClientFrameDecoder(0xA0, 0XC0);
+            var decoder = new FixedLenFrameDecoder(0xA0, 0XC0);
 
             endpoint.ToConnectObservable()
                 .ObserveOn(TaskPoolScheduler.Default)
                 .Subscribe(socket =>
                     {
                         var frameClientSubject =
-                            socket.ToFrameClientSubject(encoder, decoder, bufferManager, cts.Token);
+                            socket.ToFixedLenFrameSubject(encoder, decoder, bufferManager, cts.Token);
 
                         var observerDisposable =
                             frameClientSubject

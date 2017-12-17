@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.ServiceModel.Channels;
 using System.Threading;
+using BrainCommon;
 using BrainNetwork.RxSocket.Common;
 
 namespace BrainNetwork.RxSocket.Protocol
@@ -13,15 +14,90 @@ namespace BrainNetwork.RxSocket.Protocol
     public static class FrameProtocolExtensions
     {
         public static ISubject<DisposableValue<ArraySegment<byte>>, DisposableValue<ArraySegment<byte>>>
-            ToFrameClientSubject(this Socket socket, ISimpleFrameEncoder encoder, ISimpleFrameDecoder decoder,
+            ToFixedLenFrameSubject(this Socket socket, ISimpleFrameEncoder encoder, IFixedLenFrameDecoder decoder,
                 BufferManager bufferManager, CancellationToken token)
         {
-            return Subject.Create<DisposableValue<ArraySegment<byte>>, DisposableValue<ArraySegment<byte>>>(socket.ToFrameClientObserver(encoder, token),
-                socket.ToFrameClientObservable(bufferManager, decoder));
+            return Subject.Create<DisposableValue<ArraySegment<byte>>, DisposableValue<ArraySegment<byte>>>(
+                socket.ToFrameClientObserver(encoder, token),
+                socket.ToFixedLenFrameObservable(bufferManager, decoder));
         }
 
-        public static IObservable<DisposableValue<ArraySegment<byte>>> ToFrameClientObservable(this Socket socket,
-            BufferManager bufferManager, ISimpleFrameDecoder decoder)
+        public static IObserver<DisposableValue<ArraySegment<byte>>> ToFrameClientObserver(this Socket socket,
+            ISimpleFrameEncoder encoder, CancellationToken token)
+        {
+            return Observer.Create<DisposableValue<ArraySegment<byte>>>(async disposableBuffer =>
+            {
+                await socket.SendCompletelyAsync(
+                    encoder.EncoderSendFrame(disposableBuffer.Value),
+                    encoder.SendFlags,
+                    token);
+            });
+        }
+
+        public static IObservable<DisposableValue<ArraySegment<byte>>> ToFixedLenFrameObservable(this Socket socket,
+            BufferManager bufferManager, IFixedLenFrameDecoder decoder)
+        {
+            return Observable.Create<DisposableValue<ArraySegment<byte>>>(async (observer, token) =>
+            {
+                var receivedFlag = decoder.ReceivedFlags;
+                var decoderLenByteCount = decoder.LenByteCount;
+                var hc = 1 + decoderLenByteCount;
+                var decoderHeader = decoder.Header;
+                var decoderTail = decoder.Tail;
+                var headerBuffer = new byte[hc];
+
+                try
+                {
+                    while (!token.IsCancellationRequested)
+                    {
+                        if (await socket.ReceiveCompletelyAsync(headerBuffer, hc, receivedFlag, token) != hc)
+                            break;
+                        if (headerBuffer[0] != decoderHeader)
+                        {
+                            AppLogger.Warning($"corruted packet: invalid frame header");
+                            break;
+                        }
+                        var length = LengthBitConverter.FromByte(headerBuffer, 1, decoderLenByteCount);
+
+                        var buffer = bufferManager.TakeBuffer(length);
+                        if (await socket.ReceiveCompletelyAsync(buffer, length, receivedFlag, token) != length)
+                            break;
+
+                        var arraySegment = new ArraySegment<byte>(buffer, 0, length);
+                        observer.OnNext(
+                            new DisposableValue<ArraySegment<byte>>(arraySegment,
+                                Disposable.Create(() => bufferManager.ReturnBuffer(buffer))));
+
+                        if (await socket.ReceiveAsync(headerBuffer, 0, 1, receivedFlag) == 0)
+                            break;
+                        if (headerBuffer[0] != decoderTail)
+                        {
+                            AppLogger.Warning($"corruted packet: invalid frame tail");
+                            break;
+                        }
+                    }
+
+                    observer.OnCompleted();
+                }
+                catch (Exception error)
+                {
+                    observer.OnError(error);
+                }
+            });
+        }
+
+        #region dynamic frame
+        public static ISubject<DisposableValue<ArraySegment<byte>>, DisposableValue<ArraySegment<byte>>>
+            ToDynamicFrameSubject(this Socket socket, ISimpleFrameEncoder encoder, IDynamicFrameDecoder decoder,
+                BufferManager bufferManager, CancellationToken token)
+        {
+            return Subject.Create<DisposableValue<ArraySegment<byte>>, DisposableValue<ArraySegment<byte>>>(
+                socket.ToFrameClientObserver(encoder, token),
+                socket.ToDynamicFrameObservable(bufferManager, decoder));
+        }
+
+        public static IObservable<DisposableValue<ArraySegment<byte>>> ToDynamicFrameObservable(this Socket socket,
+            BufferManager bufferManager, IDynamicFrameDecoder decoder)
         {
             return Observable.Create<DisposableValue<ArraySegment<byte>>>(async (observer, token) =>
             {
@@ -29,7 +105,8 @@ namespace BrainNetwork.RxSocket.Protocol
                 {
                     var state = decoder.InitState();
                     byte[] leftoverBuf = null;
-                    int leftoverCount = 0; //rider suggestion is buggy: this variable must declare outside the loop in the case when receive length is zero
+                    //rider suggestion is buggy: this variable must declare outside the loop in the case when receive length is zero
+                    int leftoverCount = 0; 
                     while (!token.IsCancellationRequested)
                     {
                         byte[] bufferArray;
@@ -45,7 +122,7 @@ namespace BrainNetwork.RxSocket.Protocol
                             bufferArray = bufferManager.TakeBuffer(decoder.BufferSize);
                             startIdx = 0;
                         }
-                        var pair = await socket.ReceiveCompletelyAsync(state, bufferArray, startIdx, decoder, token);
+                        var pair = await socket.ReceiveDynamicFrame(state, bufferArray, startIdx, decoder, token);
                         var receiveLen = pair.Item1;
                         leftoverCount = pair.Item2;
                         if (receiveLen == 0) //no data received, and leftoverCount should be zero
@@ -83,7 +160,7 @@ namespace BrainNetwork.RxSocket.Protocol
                             Buffer.BlockCopy(bufferArray, receiveLen - leftoverCount, leftoverBuf, 0, leftoverCount);
                         }
 
-                        var arraySegment = decoder.BuildFrame(state,bufferArray, receiveLen,leftoverCount);
+                        var arraySegment = decoder.BuildFrame(state, bufferArray, receiveLen, leftoverCount);
                         observer.OnNext(
                             new DisposableValue<ArraySegment<byte>>(arraySegment,
                                 Disposable.Create(() => bufferManager.ReturnBuffer(bufferArray))));
@@ -99,17 +176,6 @@ namespace BrainNetwork.RxSocket.Protocol
                 }
             });
         }
-
-        public static IObserver<DisposableValue<ArraySegment<byte>>> ToFrameClientObserver(this Socket socket,
-            ISimpleFrameEncoder encoder, CancellationToken token)
-        {
-            return Observer.Create<DisposableValue<ArraySegment<byte>>>(async disposableBuffer =>
-            {
-                await socket.SendCompletelyAsync(
-                    encoder.EncoderSendFrame(disposableBuffer.Value),
-                    encoder.SendFlags, //SocketFlags.None,
-                    token);
-            });
-        }
+        #endregion
     }
 }

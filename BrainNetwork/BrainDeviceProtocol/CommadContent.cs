@@ -15,12 +15,6 @@ namespace BrainNetwork.BrainDeviceProtocol
 
     public static partial class BrainDeviceManager
     {
-        private static void CommiteState()
-        {
-            AppLogger.Debug(_devState.ToString());
-            _stateStream.OnNext(_devState);
-        }
-        
         #region Start Command
 
         public class FillStartCommadContent : ICommandContent
@@ -39,8 +33,7 @@ namespace BrainNetwork.BrainDeviceProtocol
 
             public void HandlerSuccess(object cmdCnt)
             {
-                _devState.IsStart = true;
-                CommiteState();
+                CommitStartStop(true);
             }
         }
 
@@ -64,8 +57,7 @@ namespace BrainNetwork.BrainDeviceProtocol
             public async void HandlerSuccess(object cmdCnt)
             {//set stop tag
                 await Task.Delay(50);
-                _devState.IsStart = false;
-                CommiteState();
+                CommitStartStop(false);
             }
         }
 
@@ -106,8 +98,7 @@ namespace BrainNetwork.BrainDeviceProtocol
             public void HandlerSuccess(object cmdCnt)
             {
                 var rateB = (SampleRateEnum)cmdCnt;
-                _devState.SampleRate = rateB;
-                CommiteState();
+                CommitSampleRate(rateB);
             }
         }
 
@@ -145,8 +136,7 @@ namespace BrainNetwork.BrainDeviceProtocol
             public void HandlerSuccess(object cmdCnt)
             {
                 var trapOpt = (TrapSettingEnum)cmdCnt;
-                _devState.TrapOption = trapOpt;
-                CommiteState();
+                CommitTrapOpt(trapOpt);
             }
         }
 
@@ -172,8 +162,7 @@ namespace BrainNetwork.BrainDeviceProtocol
             public void HandlerSuccess(object cmdCnt)
             {
                 var useFilter = (bool) cmdCnt;
-                _devState.EnalbeFilter = useFilter;
-                CommiteState();
+                CommitEnableFiler(useFilter);
             }
         }
 
@@ -216,7 +205,7 @@ namespace BrainNetwork.BrainDeviceProtocol
             public int CntSize => 1;
             public byte FuncId => 21;
             public bool DontCheckResponse => false;
-            public bool ReponseHasErrorFlag => true;
+            public bool ReponseHasErrorFlag => false;
 
             public object FillCnt(byte[] buffer, object[] args)
             {

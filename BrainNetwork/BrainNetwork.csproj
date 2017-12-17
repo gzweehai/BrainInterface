@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;DisableDevTimeout</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -67,7 +67,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RxSocket\Common\ClientExtensions.cs" />
     <Compile Include="RxSocket\Common\ConnectExtensions.cs" />
-    <Compile Include="RxSocket\Common\DisposableValue.cs" />
     <Compile Include="RxSocket\Common\ListenerExtensions.cs" />
     <Compile Include="RxSocket\Common\SocketExtensions.cs" />
     <Compile Include="RxSocket\Common\TaskExtensions.cs" />

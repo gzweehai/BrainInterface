@@ -59,13 +59,13 @@ namespace BrainNetwork.BrainDeviceProtocol
 
             if (handler.DontCheckResponse)
             {
-                _clientFrameSender.OnNext(DisposableValue.Create(new ArraySegment<byte>(buffer), buf));
+                _clientFrameSender.OnNext(buf.AsDisposableValue());
                 handler.HandlerSuccess(cmdState);
                 return CommandError.Success;
             }
 
             _currentTaskCtl = new TaskCompletionSource<CommandError>();
-            _clientFrameSender.OnNext(DisposableValue.Create(new ArraySegment<byte>(buffer), buf));
+            _clientFrameSender.OnNext(buf.AsDisposableValue());
 
 #if !DisableDevTimeout
             ScheduleTimeout();

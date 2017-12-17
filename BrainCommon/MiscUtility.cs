@@ -45,7 +45,7 @@ namespace BrainCommon
             return sb.ToString();
         }
 
-        public static string Show(this List<ArraySegment<byte>> data)
+        public static string Show(this IList<ArraySegment<byte>> data)
         {
             var sb = new StringBuilder();
             for (var i = 0; i < data.Count; i++)

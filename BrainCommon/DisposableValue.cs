@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace BrainNetwork.RxSocket.Common
+namespace BrainCommon
 {
     public static class DisposableValue
     {

@@ -6,7 +6,54 @@ using BrainNetwork.RxSocket.Protocol;
 
 namespace BrainNetwork.BrainDeviceProtocol
 {
-    public class ClientFrameDecoder : AbsSimpleDecoder
+    public class FixedLenFrameDecoder : IFixedLenFrameDecoder
+    {
+        public FixedLenFrameDecoder(byte header, byte tail)
+        {
+            Header = header;
+            Tail = tail;
+        }
+
+        public SocketFlags ReceivedFlags => SocketFlags.None;
+        public byte Header { get; }
+        public byte Tail { get; }
+        public byte LenByteCount => 1;
+    }
+
+    public class ClientFrameEncoder : ISimpleFrameEncoder
+    {
+        private readonly byte FrameHeader;
+        private readonly byte FrameTail;
+        private readonly ArraySegment<byte> FrameHeaderSeg;
+        private readonly ArraySegment<byte> FrameTailSeg;
+
+        public ClientFrameEncoder(byte frameHeader, byte frameTail)
+        {
+            FrameHeader = frameHeader;
+            FrameTail = frameTail;
+            var buf = new byte[] {FrameHeader};
+            FrameHeaderSeg = new ArraySegment<byte>(buf, 0, 1);
+            buf = new byte[] {FrameTail};
+            FrameTailSeg = new ArraySegment<byte>(buf, 0, 1);
+        }
+
+        public IList<ArraySegment<byte>> EncoderSendFrame(ArraySegment<byte> data)
+        {
+            if (data.Array == null) throw new ArgumentException("ArraySegment contains no data");
+            return new[]
+            {
+                FrameHeaderSeg,
+                new ArraySegment<byte>(data.Array, 0, data.Count),
+                FrameTailSeg
+            };
+        }
+
+        public SocketFlags SendFlags => SocketFlags.None;
+    }
+
+    #region dynamic frame decoder
+
+    public class DynamicFrameDecoder : DynamicFrameDecoderBase
     {
         public override SocketFlags ReceivedFlags => SocketFlags.None;
         public override int BufferSize => 1024;
@@ -14,7 +61,7 @@ namespace BrainNetwork.BrainDeviceProtocol
         private readonly byte FrameHeader;
         private readonly byte FrameTail;
 
-        public ClientFrameDecoder(byte frameHeader, byte frameTail)
+        public DynamicFrameDecoder(byte frameHeader, byte frameTail)
         {
             FrameHeader = frameHeader;
             FrameTail = frameTail;
@@ -88,34 +135,5 @@ namespace BrainNetwork.BrainDeviceProtocol
         }
     }
 
-    public class ClientFrameEncoder : ISimpleFrameEncoder
-    {
-        private readonly byte FrameHeader;
-        private readonly byte FrameTail;
-        private readonly ArraySegment<byte> FrameHeaderSeg;
-        private readonly ArraySegment<byte> FrameTailSeg;
-
-        public ClientFrameEncoder(byte frameHeader, byte frameTail)
-        {
-            FrameHeader = frameHeader;
-            FrameTail = frameTail;
-            var buf = new byte[] {FrameHeader};
-            FrameHeaderSeg = new ArraySegment<byte>(buf, 0, 1);
-            buf = new byte[] {FrameTail};
-            FrameTailSeg = new ArraySegment<byte>(buf, 0, 1);
-        }
-
-        public IList<ArraySegment<byte>> EncoderSendFrame(ArraySegment<byte> data)
-        {
-            if (data.Array == null) throw new ArgumentException("ArraySegment contains no data");
-            return new[]
-            {
-                FrameHeaderSeg,
-                new ArraySegment<byte>(data.Array, 0, data.Count),
-                FrameTailSeg
-            };
-        }
-
-        public SocketFlags SendFlags => SocketFlags.None;
-    }
+    #endregion
 }

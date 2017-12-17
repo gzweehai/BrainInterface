@@ -24,3 +24,5 @@ BrainSimulator/obj/
 GreatBrainClient/bin/
 
 *.userprefs
+
+\.DS_Store
