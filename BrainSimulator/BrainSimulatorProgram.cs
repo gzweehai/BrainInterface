@@ -140,18 +140,21 @@ namespace BrainSimulator
 
         private static async void StartPeridSender(Socket socket, CancellationToken ctsToken)
         {
+            var sampleTimeTick = 0;
             while (true)
             {
                 await Task.Delay(20);
                 if (!_brainState.IsStart) return;
 
-                var count = BrainDevState.SampleCountPer20ms(_brainState.SampleRate);
+                var rate = _brainState.SampleRate;
+                var count = BrainDevState.SampleCountPer20ms(rate);
 
                 try
                 {
                     for (int i = 0; i < count; i++)
                     {
-                        await SendSampleData(socket, ctsToken);
+                        await SendSampleData(sampleTimeTick,rate,socket, ctsToken);
+                        sampleTimeTick++;
                         if (!_brainState.IsStart) return;
                     }
                 }
@@ -165,16 +168,19 @@ namespace BrainSimulator
 
         const byte ChannelCount = 32; //must >= 3
 
-        private static async Task SendSampleData(Socket socket, CancellationToken ctsToken)
+        private static async Task SendSampleData(int sampleTimeTick, SampleRateEnum rate, Socket socket, CancellationToken ctsToken)
         {
             byte size = 2 + ChannelCount * 3;
             var buf = bmgr.TakeBuffer(size);
             _r.NextBytes(buf);
+            var passTimes=BrainDevState.PassTimeMs(rate, sampleTimeTick);
+            var sampleValue= passTimes * 2 * Math.PI /1000;
+            var (b0, b1, b2) = BitDataConverter.ConvertTo(sampleValue);
             buf[0] = 1;
-            buf[1] = ++_brainState.SamplePacketOrder;
-            buf[2] = 0;
-            buf[2 + 3] = 1;
-            buf[2 + 3 + 3] = 2;
+            buf[1] = _brainState.SamplePacketOrder++;
+            buf[2] = b0;
+            buf[2 + 1] = b1;
+            buf[2 + 2] = b2;
             await SendWithHeadTail(socket, buf, size,ctsToken);
             bmgr.ReturnBuffer(buf);
         }

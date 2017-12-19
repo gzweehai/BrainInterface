@@ -22,11 +22,17 @@ namespace BrainProtocolTester
             BitDataConverter.TestByteOrder();
             BitDataConverter.TestConvertPerformance();
             Console.WriteLine(BitDataConverter.ConvertFrom(0x7f, 0xff, 0xff, 4.5f, 1));
+            Console.WriteLine(BitDataConverter.ConvertTo(BitDataConverter.ConvertFrom(0x7f, 0xff, 0xff)));
             Console.WriteLine(BitDataConverter.ConvertFrom(0x00, 0x00, 0x01, 4.5f, 1));
+            Console.WriteLine(BitDataConverter.ConvertTo(BitDataConverter.ConvertFrom(0x00, 0x00, 0x01)));
             Console.WriteLine(BitDataConverter.ConvertFrom(0x00, 0x00, 0x00, 4.5f, 1));
+            Console.WriteLine(BitDataConverter.ConvertTo(BitDataConverter.ConvertFrom(0x00, 0x00, 0x00)));
             Console.WriteLine(BitDataConverter.ConvertFrom(0xff, 0xff, 0xff, 4.5f, 1));
+            Console.WriteLine(BitDataConverter.ConvertTo(BitDataConverter.ConvertFrom(0xff, 0xff, 0xff)));
             Console.WriteLine(BitDataConverter.ConvertFrom(0x80, 0x00, 0x01, 4.5f, 1));
+            Console.WriteLine(BitDataConverter.ConvertTo(BitDataConverter.ConvertFrom(0x80, 0x00, 0x01)));
             Console.WriteLine(BitDataConverter.ConvertFrom(0x80, 0x00, 0x00, 4.5f, 1));
+            Console.WriteLine(BitDataConverter.ConvertTo(BitDataConverter.ConvertFrom(0x80, 0x00, 0x00)));
             Console.ReadLine();
             */
             
@@ -87,7 +93,7 @@ namespace BrainProtocolTester
             cmdResult = await sender.SetTrap(TrapSettingEnum.Trap_50);
             AppLogger.Debug("SetTrap result:"+cmdResult);
             
-            cmdResult = await sender.SetSampleRate(SampleRateEnum.SPS_250);
+            cmdResult = await sender.SetSampleRate(SampleRateEnum.SPS_2k);
             AppLogger.Debug("SetSampleRate result:"+cmdResult);
             
             cmdResult = await sender.QueryParam();

@@ -17,6 +17,11 @@
         public const int SampleCount_1k = 20 * 1000 / 1000;
         public const int SampleCount_2k = 20 * 2000 / 1000;
 
+        public const float SmapleDeltaTime_250 = 1000f / 250;
+        public const float SmapleDeltaTime_500 = 1000f / 500;
+        public const float SmapleDeltaTime_1k = 1000f / 1000;
+        public const float SmapleDeltaTime_2k = 1000f / 2000;
+
         public static int SampleCountPer20ms(SampleRateEnum sampleRate)
         {
             var count = 1;
@@ -33,6 +38,27 @@
                     break;
                 case SampleRateEnum.SPS_2k:
                     count = BrainDevState.SampleCount_2k; //20ms -> sample counts
+                    break;
+            }
+            return count;
+        }
+
+        public static float PassTimeMs(SampleRateEnum sampleRate,int passTimeTick)
+        {
+            var count = 1f;
+            switch (sampleRate)
+            {
+                case SampleRateEnum.SPS_250: //every 1000ms sample 250 times
+                    count = passTimeTick*BrainDevState.SmapleDeltaTime_250;
+                    break;
+                case SampleRateEnum.SPS_500:
+                    count = passTimeTick*BrainDevState.SmapleDeltaTime_500;
+                    break;
+                case SampleRateEnum.SPS_1k:
+                    count = passTimeTick*BrainDevState.SmapleDeltaTime_1k;
+                    break;
+                case SampleRateEnum.SPS_2k:
+                    count = passTimeTick*BrainDevState.SmapleDeltaTime_2k;
                     break;
             }
             return count;

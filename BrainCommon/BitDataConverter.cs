@@ -90,9 +90,46 @@ namespace BrainCommon
             var num = (b0 << 16) + (b1 << 8) + b2;
             if ((b0 & 0x80) != 0)
             {
-                num = num - flipVal;
+                num -= flipVal;
             }
             return (num * vRef) / (maxVal * gain);
+        }
+
+        public static (byte, byte, byte) ConvertTo(double value, float vRef = 4.5f, int gain = 72)
+        {
+            double trimVal = value;
+            var posMax = vRef/gain;
+            var negMax = - posMax - posMax / maxVal;
+            if (trimVal > posMax)
+                trimVal = posMax;
+            
+            if (trimVal < negMax)
+                trimVal = negMax;
+            double ceiling;
+            if (trimVal < 0)
+                ceiling = Math.Floor(trimVal * maxVal / posMax);
+            else
+                ceiling = Math.Ceiling(trimVal * maxVal / posMax);
+            int num = (int) ceiling;
+            bool neg = false;
+            if (num < 0)
+            {
+                num += flipVal;
+                neg = true;
+            }
+            byte b0, b1, b2;
+            unsafe
+            {
+                byte* p = (byte*) &num;
+                b2 = *p;
+                p++;
+                b1 = *p;
+                p++;
+                b0 = *p;
+            }
+            if (neg)
+                b0 = (byte) (b0 | 0x80);
+            return (b0, b1, b2);
         }
 
         const int maxVal = 0x7fFFff;
