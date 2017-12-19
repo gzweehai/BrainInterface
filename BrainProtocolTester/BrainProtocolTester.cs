@@ -10,6 +10,7 @@ using BrainCommon;
 using BrainNetwork.BrainDeviceProtocol;
 using BrainNetwork.RxSocket.Common;
 using BrainNetwork.RxSocket.Protocol;
+using DataAccess;
 
 namespace BrainProtocolTester
 {
@@ -17,7 +18,8 @@ namespace BrainProtocolTester
     {
         static async Task Main(string[] args)
         {
-            //BitDataConverter.TestByteOrder();
+            /*
+            BitDataConverter.TestByteOrder();
             BitDataConverter.TestConvertPerformance();
             Console.WriteLine(BitDataConverter.ConvertFrom(0x7f, 0xff, 0xff, 4.5f, 1));
             Console.WriteLine(BitDataConverter.ConvertFrom(0x00, 0x00, 0x01, 4.5f, 1));
@@ -25,10 +27,11 @@ namespace BrainProtocolTester
             Console.WriteLine(BitDataConverter.ConvertFrom(0xff, 0xff, 0xff, 4.5f, 1));
             Console.WriteLine(BitDataConverter.ConvertFrom(0x80, 0x00, 0x01, 4.5f, 1));
             Console.WriteLine(BitDataConverter.ConvertFrom(0x80, 0x00, 0x00, 4.5f, 1));
-
             Console.ReadLine();
+            */
             
             //OldTest(args);
+            
             try
             {
                 await TestBrainDeviceManager();
@@ -44,6 +47,30 @@ namespace BrainProtocolTester
         {
             BrainDeviceManager.Init();
             var sender = await BrainDeviceManager.Connnect("127.0.0.1", 9211);
+            BrainDevState currentState = default(BrainDevState);
+            //保证设备参数正常才继续跑逻辑
+            BrainDeviceManager.BrainDeviceState.Subscribe(ss =>
+            {
+                currentState = ss;
+                AppLogger.Debug($"Brain Device State Changed Detected: {ss}");
+            }, () =>
+            {
+                AppLogger.Debug("device stop detected");
+            });
+            int totalReceived = 0;
+            BrainDeviceManager.SampleDataStream.Subscribe(tuple =>
+            {
+                //var (order, datas, arr) = tuple;
+                //Console.Write($" {order} ");
+                totalReceived++;
+                //AppLogger.Debug($"order:{order}");
+                //AppLogger.Debug($"converted values:{datas.Show()}");
+                //AppLogger.Debug($"original datas:{arr.Show()}");
+            }, () =>
+            {
+                AppLogger.Debug("device sampling stream closed detected");
+            });
+            
             var cmdResult = await sender.QueryParam();
             AppLogger.Debug("QueryParam result:"+cmdResult);
             if (cmdResult != CommandError.Success)
@@ -53,25 +80,6 @@ namespace BrainProtocolTester
                 return;
             }
             
-            //保证设备参数正常才继续跑逻辑
-            BrainDeviceManager.BrainDeviceState.Subscribe(ss =>
-            {
-                AppLogger.Debug($"Brain Device State Changed Detected: {ss}");
-            }, () =>
-            {
-                AppLogger.Debug("device stop detected");
-            });
-            BrainDeviceManager.SampleDataStream.Subscribe(tuple =>
-            {
-                var (order, datas, arr) = tuple;
-                Console.Write($" {order} ");
-                //AppLogger.Debug($"order:{order}");
-                //AppLogger.Debug($"converted values:{datas.Show()}");
-                //AppLogger.Debug($"original datas:{arr.Show()}");
-            }, () =>
-            {
-                AppLogger.Debug("device sampling stream closed detected");
-            });
             
             cmdResult = await sender.SetFilter(true);
             AppLogger.Debug("SetFilter result:"+cmdResult);
@@ -79,13 +87,15 @@ namespace BrainProtocolTester
             cmdResult = await sender.SetTrap(TrapSettingEnum.Trap_50);
             AppLogger.Debug("SetTrap result:"+cmdResult);
             
-            cmdResult = await sender.SetSampleRate(SampleRateEnum.SPS_2k);
+            cmdResult = await sender.SetSampleRate(SampleRateEnum.SPS_250);
             AppLogger.Debug("SetSampleRate result:"+cmdResult);
             
             cmdResult = await sender.QueryParam();
             AppLogger.Debug("QueryParam result:"+cmdResult);
 
             Console.ReadLine();
+            var fs = new FileResource(currentState, 19801983, 1, BrainDeviceManager.BufMgr);
+            fs.StartRecord(BrainDeviceManager.SampleDataStream);
             cmdResult = await sender.Start();
             if (cmdResult != CommandError.Success)
             {
@@ -102,6 +112,27 @@ namespace BrainProtocolTester
             }
             
             BrainDeviceManager.DisConnect();
+            fs.Dispose();
+            
+            var readf = new FileSampleData(fs.ResourceId,BrainDeviceManager.BufMgr);
+            Console.WriteLine($"expecte to read {totalReceived} blocks");
+            Console.WriteLine($"start reading saved sampling data");
+            int readCount = 0;
+            readf.DataStream.Subscribe(tuple =>
+            {
+                var (order, datas, arr) = tuple;
+                Console.Write($" {order} ");
+                readCount++;
+                //AppLogger.Debug($"order:{order}");
+                //AppLogger.Debug($"converted values:{datas.Show()}");
+                //AppLogger.Debug($"original datas:{arr.Show()}");
+            }, () =>
+            {
+                AppLogger.Debug($"read sampling data file end,count :{readCount},expected count:{totalReceived}");
+            });
+            readf.Start();
+            await Task.Delay(1000*10);
+            Console.Write($"wait complete");            
         }
         
         private static void OldTest(string[] args)
@@ -109,7 +140,7 @@ namespace BrainProtocolTester
             var endpoint = ProgramArgs.Parse(args, new[] {"127.0.0.1:9211"}).EndPoint;
 
             var cts = new CancellationTokenSource();
-            var bufferManager = BufferManager.CreateBufferManager(2 << 16, 1024);
+            var bufferManager = SyncBufManager.Create(2 << 16, 128,32);
             var encoder = new ClientFrameEncoder(0xA0, 0XC0);
             var decoder = new FixedLenFrameDecoder(0xA0, 0XC0);
 

@@ -49,12 +49,14 @@
     <Compile Include="BitDataConverter.cs" />
     <Compile Include="CASHelper.cs" />
     <Compile Include="DisposableValue.cs" />
+    <Compile Include="IntBufManager.cs" />
     <Compile Include="LengthBitConverter.cs" />
     <Compile Include="MiscUtility.cs" />
     <Compile Include="ProgramArgExt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecycleBuffer.cs" />
     <Compile Include="ReflectionHelper.cs" />
+    <Compile Include="SyncBufManager.cs" />
     <Compile Include="TextReaderExt.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

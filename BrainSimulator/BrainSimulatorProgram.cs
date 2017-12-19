@@ -14,10 +14,6 @@ namespace BrainSimulator
 {
     internal static class ServerStub
     {
-        private const int SampleCount_250 = 20 * 250 / 1000;
-        private const int SampleCount_500 = 20 * 500 / 1000;
-        private const int SampleCount_1k = 20 * 1000 / 1000;
-        private const int SampleCount_2k = 20 * 2000 / 1000;
         private static Random _r = new Random();
         private static BufferManager bmgr = BufferManager.CreateBufferManager(64, 1024);
         private static ArraySegment<byte> _frameHeader = new ArraySegment<byte>(new byte[] {0xA0});
@@ -149,22 +145,7 @@ namespace BrainSimulator
                 await Task.Delay(20);
                 if (!_brainState.IsStart) return;
 
-                var count = 1;
-                switch (_brainState.SampleRate)
-                {
-                    case SampleRateEnum.SPS_250: //every 1000ms sample 250 times
-                        count = SampleCount_250; //20ms -> sample counts
-                        break;
-                    case SampleRateEnum.SPS_500:
-                        count = SampleCount_500; //20ms -> sample counts
-                        break;
-                    case SampleRateEnum.SPS_1k:
-                        count = SampleCount_1k; //20ms -> sample counts
-                        break;
-                    case SampleRateEnum.SPS_2k:
-                        count = SampleCount_2k; //20ms -> sample counts
-                        break;
-                }
+                var count = BrainDevState.SampleCountPer20ms(_brainState.SampleRate);
 
                 try
                 {

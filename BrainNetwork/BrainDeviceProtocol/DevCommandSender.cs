@@ -21,10 +21,10 @@ namespace BrainNetwork.BrainDeviceProtocol
     public sealed partial class DevCommandSender
     {
         private readonly IObserver<DisposableValue<ArraySegment<byte>>> _clientFrameSender;
-        private readonly BufferManager _bufMgr;
+        private readonly SyncBufManager _bufMgr;
         private readonly Dictionary<DevCommandEnum, ICommandContent> _cmdhandler;
 
-        public DevCommandSender(IObserver<DisposableValue<ArraySegment<byte>>> clientFrameSender, BufferManager bufMgr)
+        public DevCommandSender(IObserver<DisposableValue<ArraySegment<byte>>> clientFrameSender, SyncBufManager bufMgr)
         {
             _cmdhandler = new Dictionary<DevCommandEnum, ICommandContent>();
             foreach (var cmdcnt in ReflectionHelper.GetAllInterfaceImpl<ICommandContent>())

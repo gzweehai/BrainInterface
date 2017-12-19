@@ -15,7 +15,7 @@ namespace BrainNetwork.RxSocket.Protocol
     {
         public static ISubject<DisposableValue<ArraySegment<byte>>, DisposableValue<ArraySegment<byte>>>
             ToFixedLenFrameSubject(this Socket socket, ISimpleFrameEncoder encoder, IFixedLenFrameDecoder decoder,
-                BufferManager bufferManager, CancellationToken token)
+                SyncBufManager bufferManager, CancellationToken token)
         {
             return Subject.Create<DisposableValue<ArraySegment<byte>>, DisposableValue<ArraySegment<byte>>>(
                 socket.ToFrameClientObserver(encoder, token),
@@ -35,7 +35,7 @@ namespace BrainNetwork.RxSocket.Protocol
         }
 
         public static IObservable<DisposableValue<ArraySegment<byte>>> ToFixedLenFrameObservable(this Socket socket,
-            BufferManager bufferManager, IFixedLenFrameDecoder decoder)
+            SyncBufManager bufferManager, IFixedLenFrameDecoder decoder)
         {
             return Observable.Create<DisposableValue<ArraySegment<byte>>>(async (observer, token) =>
             {

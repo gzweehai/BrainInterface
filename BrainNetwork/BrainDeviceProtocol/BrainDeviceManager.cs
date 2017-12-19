@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
+using System.Security.Cryptography;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading;
@@ -17,20 +18,24 @@ namespace BrainNetwork.BrainDeviceProtocol
 {
     public static partial class BrainDeviceManager
     {
-        private static BufferManager bufferManager;
+        private static SyncBufManager bufferManager;
         private static ClientFrameEncoder encoder;
         private static FixedLenFrameDecoder decoder;
         private static IDisposable observerDisposable;
         private static CancellationTokenSource cts;
-
+        private static MD5 _hasher;
+        
+        public static SyncBufManager BufMgr => bufferManager;
+        
         public static void Init()
         {
-            bufferManager = BufferManager.CreateBufferManager(2 << 16, 1024);
+            bufferManager = SyncBufManager.Create(2 << 16, 128,32);
             encoder = new ClientFrameEncoder(0xA0, 0XC0);
             decoder = new FixedLenFrameDecoder(0xA0, 0XC0);
-            _dataStream = new Subject<(byte, int[], ArraySegment<byte>)>();
+            _dataStream = new Subject<(byte, ArraySegment<int>, ArraySegment<byte>)>();
             _stateStream = new Subject<BrainDevState>();
             _stateStream.OnNext(_devState);
+            _hasher = MD5.Create();
         }
 
         public static async Task<DevCommandSender> Connnect(string ip, int port)
@@ -82,7 +87,22 @@ namespace BrainNetwork.BrainDeviceProtocol
             _dataStream = null;
             _stateStream?.OnCompleted();
             _stateStream = null;
+            _hasher.Clear();
             AppLogger.Debug("BrainDeviceManager.DisConnect");
+        }
+
+        public static void HashBlock(byte[] buf, int count)
+        {
+            _hasher.TransformBlock(buf, 0, count, null, 0);
+        }
+
+        private static readonly byte[] Emptyblock = new byte[0];
+        public static byte[] CloseHash()
+        {
+            _hasher.TransformFinalBlock(Emptyblock, 0, 0);
+            var result = _hasher.Hash;
+            _hasher.Clear();
+            return result;
         }
     }
 }

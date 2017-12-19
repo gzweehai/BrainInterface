@@ -4,6 +4,75 @@ namespace BrainCommon
 {
     public static class BitDataConverter
     {
+        #region Disposable Implmentation
+        public static DisposableValue<ArraySegment<int>> ConvertFrom(ArraySegment<byte> data, SyncBufManager mgr)
+        {
+            var arr = data.Array;
+            if (arr == null) return DisposableValue<ArraySegment<int>>.Empty;
+            var ind = data.Offset;
+            var count = data.Count;
+            var t = new RecycleIntBuf(count / 3,mgr);
+            var buf =t.Buffer;
+            for (int i = 0; i < buf.Length; i++)
+            {
+                buf[i] = (arr[ind] << 16) + (arr[ind + 1] << 8) + arr[ind + 2];
+                if ((arr[ind] & 0x80) != 0)
+                {
+                    buf[i] -= flipVal;
+                }
+                ind += 3;
+            }
+            return t.AsDisposableValue();
+        }
+        public static DisposableValue<ArraySegment<int>> FastConvertFrom(ArraySegment<byte> data, SyncBufManager mgr)
+        {
+            if (data.Array == null) return DisposableValue<ArraySegment<int>>.Empty;
+            var startInd = data.Offset;
+            var count = data.Count;
+            var t = new RecycleIntBuf(count / 3,mgr);
+            var result =t.Buffer;
+            unsafe
+            {
+                fixed (byte* arr = data.Array)
+                {
+                    fixed (int* r = result)
+                    {
+                        int* rt = r;
+                        for (int i = startInd; i < count; i = i + 3)
+                        {
+                            byte* tmp = (byte*) rt;
+                            *tmp = arr[i + 2];
+                            tmp++;
+                            *tmp = arr[i + 1];
+                            tmp++;
+                            *tmp = arr[i];
+                            tmp++;
+                            *tmp = 0;
+                            if ((arr[i] & 0x80) != 0)
+                            {
+                                *rt -= flipVal;
+                            }
+                            rt++;
+                        }
+                    }
+                }
+            }
+            return t.AsDisposableValue(); 
+        }
+        
+        public static DisposableValue<ArraySegment<int>> ConvertFromPlatform(ArraySegment<byte> data, SyncBufManager mgr)
+        {
+            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            {
+                return FastConvertFrom(data,mgr);
+            }
+            else
+            {
+                return ConvertFrom(data,mgr);
+            }
+        }
+        #endregion
+        
         /// <summary>
         /// convert 24 bit data from ADS1299, to sample value 
         /// TODO use unsafe to improve

@@ -8,9 +8,9 @@ namespace BrainNetwork.BrainDeviceProtocol
     public static partial class BrainDeviceManager
     {
         //sample data stream
-        private static Subject<(byte,int[],ArraySegment<byte>)> _dataStream;
+        private static Subject<(byte,ArraySegment<int>,ArraySegment<byte>)> _dataStream;
 
-        public static IObservable<(byte, int[], ArraySegment<byte>)> SampleDataStream => _dataStream;
+        public static IObservable<(byte, ArraySegment<int>, ArraySegment<byte>)> SampleDataStream => _dataStream;
         
         //device state stream
         private static Subject<BrainDevState> _stateStream;
@@ -187,7 +187,9 @@ namespace BrainNetwork.BrainDeviceProtocol
                 }
                 */
                 var dataSeg = new ArraySegment<byte>(buf, startIdx, (extraBlockCount + 3) * 3);
-                _dataStream?.OnNext((order,BitDataConverter.FastConvertFrom(dataSeg),dataSeg));
+                var disIntBuf = BitDataConverter.FastConvertFrom(dataSeg,bufferManager);
+                _dataStream?.OnNext((order,disIntBuf.Value,dataSeg));
+                disIntBuf.Dispose();
             }
         }
 

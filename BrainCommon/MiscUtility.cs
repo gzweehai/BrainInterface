@@ -11,10 +11,11 @@ namespace BrainCommon
             return $"{data:X2}";
         }
         
-        public static string Show(this byte[] data)
+        public static string Show(this byte[] data,int count=-1)
         {
-            var sb = new StringBuilder(); 
-            for (var i = 0; i < data.Length; i++)
+            var sb = new StringBuilder();
+            if (count < 0) count = data.Length;
+            for (var i = 0; i < count; i++)
             {
                 sb.Append(data[i].Show());
                 sb.Append(" ");
