@@ -26,3 +26,7 @@ GreatBrainClient/bin/
 *.userprefs
 
 \.DS_Store
+
+DataAccess/bin/
+
+DataAccess/obj/
