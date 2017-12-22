@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainProtocolTester", "Brai
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{7713A1BD-A789-4F71-B713-D05DFE6A21C1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECGExample", "ECGExample\ECGExample.csproj", "{FD0DD120-232E-46C7-BC19-79B09D4F66E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -121,6 +123,10 @@ Global
 		{7713A1BD-A789-4F71-B713-D05DFE6A21C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7713A1BD-A789-4F71-B713-D05DFE6A21C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7713A1BD-A789-4F71-B713-D05DFE6A21C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD0DD120-232E-46C7-BC19-79B09D4F66E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD0DD120-232E-46C7-BC19-79B09D4F66E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD0DD120-232E-46C7-BC19-79B09D4F66E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD0DD120-232E-46C7-BC19-79B09D4F66E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

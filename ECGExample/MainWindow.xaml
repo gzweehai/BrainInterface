@@ -1,0 +1,11 @@
+﻿<Window x:Class="ECGExample.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Example="clr-namespace:Abt.Controls.SciChart.Example.Examples.IWantTo.SeeFeaturedApplication.ECGMonitor"
+        xmlns:local="clr-namespace:ECGExample"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="300" Width="300">
+    <Example:ECGMonitorView x:Name="ecgView"/>
+</Window>
