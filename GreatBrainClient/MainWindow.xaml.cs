@@ -24,20 +24,16 @@ namespace GreatBrainClient
         {
             InitializeComponent();
 
-            var x = Enumerable.Range(0, 1001).Select(i => i / 10.0).ToArray();
+        /*    var x = Enumerable.Range(0, 1001).Select(i => i / 10.0).ToArray();
             var y = x.Select(v => Math.Abs(v) < 1e-10 ? 1 : Math.Sin(v) / v).ToArray();
-            linegraph.Plot(x, y); // x and y are IEnumerable<double>
-            linegraph2.Plot(x, y);
+            lineGraph.Plot(x, y); // x and y are IEnumerable<double>
+            lineGraph2.Plot(x, y);*/
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void LiveTool_Click(object sender, RoutedEventArgs e)
         {
-
-        }
-
-        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
-        {
-
+            LiveWin live = new LiveWin();
+            live.Show();
         }
     }
 }
