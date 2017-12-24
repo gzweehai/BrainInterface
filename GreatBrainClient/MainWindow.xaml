@@ -6,19 +6,131 @@
         xmlns:local="clr-namespace:GreatBrainClient"
         xmlns:d3="clr-namespace:InteractiveDataDisplay.WPF;assembly=InteractiveDataDisplay.WPF" x:Class="GreatBrainClient.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="493.094" Width="644.89">
-    <Grid>
-        <StackPanel Height="500" Margin="25,120,158,-158">
-            <d3:Chart BottomTitle="Argument" LeftTitle="Function"  Height="197" RenderTransformOrigin="0.5,0.5" Margin="0,0,-169,0">
-                <d3:LineGraph x:Name="linegraph" Description="Simple linegraph" Stroke="Blue" StrokeThickness="3"/>
-            </d3:Chart>
-            <d3:Chart BottomTitle="Argument" LeftTitle="Function" Height="197" RenderTransformOrigin="0.5,0.5" Margin="0,0,-169,0">
-                <d3:LineGraph x:Name="linegraph2" Description="Simple linegraph" Stroke="Blue" StrokeThickness="3"/>
-            </d3:Chart>
-        </StackPanel>
-        <Menu HorizontalAlignment="Left" Height="32" VerticalAlignment="Top" Width="627" Margin="10,0,0,0">
-            <MenuItem Header="开始" Height="32" Width="100" Click="MenuItem_Click_1"/>
-            <MenuItem Header="结束" Height="32" Width="100" Click="MenuItem_Click" />
+        Title="诺益脑电检测系统" Height="800" Width="1000">
+    <Window.Resources>
+   
+    </Window.Resources>
+    
+    <Grid x:Name="LayoutRoot" Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Menu Grid.Row="0" Grid.ColumnSpan="4"  FontSize="16" Margin="0,5" Padding="5">
+            <MenuItem Header="文件" Name="File"/>
+            <MenuItem Header="编辑" Name="Edit"/>
+            <MenuItem Header="查看" Name="View"/>
+            <MenuItem Header="设置"  Name="Setting"/>
+            <MenuItem Header="采集" Name="Live"/>
+            <MenuItem Header="协议" Name="Protocol"/>
+            <MenuItem Header="视频"  Name="Vedio"/>
+            <MenuItem Header="工具"  Name="Tool"/>
+            <MenuItem Header="帮助"  Name="Help"/>
         </Menu>
+        <ToolBar Grid.Row="1" Grid.ColumnSpan="4"  FontSize="16" Margin="0,5" Padding="5">
+            <Button Content="新建" Name="Create"></Button>
+            <Button Content="采集" Name="LiveTool" Click="LiveTool_Click"></Button>
+            <Button Content="查阅" Name="PlayBack"></Button>
+            <Button Content="截图" Name="ScreenShot"></Button>
+        </ToolBar>
+
+        <Border BorderThickness="0.5" BorderBrush="Black" Grid.Row="2" Grid.ColumnSpan="3"  Grid.Column="0" Margin="5" Padding="5">
+        <TabControl Name="MemberInfo" VerticalAlignment="Top" >
+            <TabItem Header="患者信息">
+                    <DataGrid x:Name="PatientGrid" ItemsSource="{Binding}" AutoGenerateColumns="False" >
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="姓 名"  Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="年 龄"  Binding="{Binding Age}"/>
+                            <DataGridComboBoxColumn  Header="性别" 
+                                        SelectedItemBinding="{Binding Sex}" />
+                            <!--       ItemsSource="{Binding Source={StaticResource sexEnum}}"/> -->
+                            <DataGridTextColumn Header="身高(cm)" 
+                                        Binding="{Binding Height}"/>
+                            <DataGridTextColumn Header="体重(kg)" 
+                                         Binding="{Binding Weight}"/>
+                            <DataGridTextColumn Header="电话" 
+                                         Binding="{Binding Phone}"/>
+                            <DataGridTextColumn Header="用手习惯" 
+                                         Binding="{Binding Handedness}"/>
+                            <DataGridTextColumn Header="主治医生" 
+                                         Binding="{Binding Doctor}"/>
+                            <DataGridTextColumn Header="转诊医生" 
+                                         Binding="{Binding DoctorTransfer}"/>
+                            <DataGridTextColumn Header="病史" 
+                                         Binding="{Binding History}"/>
+                            <DataGridTextColumn Header="地址" 
+                                         Binding="{Binding Address}"/>
+                            <DataGridTextColumn Header="备注" 
+                                         Binding="{Binding Comment}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </TabItem>
+            <TabItem Header="医生信息">
+                    <DataGrid x:Name="DoctorGrid" ItemsSource="{Binding}" AutoGenerateColumns="False" >
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="姓 名"  Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="年 龄"  Binding="{Binding Age}"/>
+                            <DataGridComboBoxColumn  Header="性别" 
+                                        SelectedItemBinding="{Binding Sex}" />
+                            <!--       ItemsSource="{Binding Source={StaticResource sexEnum}}"/> -->
+                            <DataGridTextColumn Header="身高(cm)" 
+                                        Binding="{Binding Height}"/>
+                            <DataGridTextColumn Header="体重(kg)" 
+                                         Binding="{Binding Weight}"/>
+                            <DataGridTextColumn Header="电话" 
+                                         Binding="{Binding Phone}"/>
+                            <DataGridTextColumn Header="医院名称" 
+                                         Binding="{Binding Hospital}"/>
+                            <DataGridTextColumn Header="科室职称" 
+                                         Binding="{Binding Title}"/>
+                            <DataGridTextColumn Header="研究方向" 
+                                         Binding="{Binding Major}"/>
+                            <DataGridTextColumn Header="Email" 
+                                         Binding="{Binding Email}"/>
+                            <DataGridTextColumn Header="地址" 
+                                         Binding="{Binding Address}"/>
+                        </DataGrid.Columns>
+                        </DataGrid>
+                </TabItem>
+        </TabControl>
+        </Border>
+        <Border  Grid.Row="2" Grid.ColumnSpan="1" Grid.Column="3" BorderThickness="0.5" BorderBrush="Black" Margin="5" Padding="5">
+            <StackPanel   Orientation="Vertical" Margin="5">
+                <DockPanel Margin="5" LastChildFill="True">
+                    <Button Margin="5" DockPanel.Dock="Right" >查找</Button>
+                    <TextBox Name="Search" BorderThickness="1" Margin="0,5,0,5" DockPanel.Dock="Left" ></TextBox>
+                </DockPanel>
+                <Label Background="WhiteSmoke"> 脑电记录</Label>
+                <DataGrid x:Name="RecordGrid"  ItemsSource="{Binding}" AutoGenerateColumns="False"  Margin="0,0,0,10" DockPanel.Dock="Bottom">
+                    <DataGrid.Columns>
+                            <DataGridTextColumn  Binding="{Binding Record}" />
+                     </DataGrid.Columns>
+                </DataGrid>
+
+                <Label Background="WhiteSmoke">事件</Label>
+                <DataGrid x:Name="EventGrid" ItemsSource="{Binding}" AutoGenerateColumns="False"   DockPanel.Dock="Bottom">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="名称"  Binding="{Binding EventName}" />
+                  
+                        <DataGridTextColumn Header="时间"  Binding="{Binding Time}" />
+                  
+                        <DataGridTextColumn Header="持续"  Binding="{Binding Interval}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </StackPanel>
+        </Border>
+        <StatusBar Grid.Row="3" Grid.ColumnSpan="4" FontSize="16">
+            test
+        </StatusBar>
+  
     </Grid>
 </Window>

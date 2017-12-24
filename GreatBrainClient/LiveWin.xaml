@@ -1,0 +1,69 @@
+﻿<Window x:Class="GreatBrainClient.LiveWin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GreatBrainClient"
+        xmlns:d3="clr-namespace:InteractiveDataDisplay.WPF;assembly=InteractiveDataDisplay.WPF"
+        mc:Ignorable="d"
+        Title="诺益脑电检测系统采集端" Height="800" Width="1000">
+
+    <Grid x:Name="LayoutRoot" Background="WhiteSmoke">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition Width="*"/>
+         </Grid.ColumnDefinitions>
+
+        <Menu Grid.Row="0" Grid.ColumnSpan="10"  FontSize="16" Margin="0,5" Padding="5">
+            <MenuItem Header="文件" Name="File"/>
+            <MenuItem Header="编辑" Name="Edit"/>
+            <MenuItem Header="查看" Name="View"/>
+            <MenuItem Header="设置"  Name="Setting"/>
+            <MenuItem Header="采集" Name="Live"/>
+            <MenuItem Header="协议" Name="Protocol"/>
+            <MenuItem Header="视频"  Name="Vedio"/>
+            <MenuItem Header="工具"  Name="Tool"/>
+            <MenuItem Header="帮助"  Name="Help"/>
+        </Menu>
+        <ToolBar Grid.Row="1" Grid.ColumnSpan="10"  FontSize="16" Margin="0,5" Padding="5">
+            <Button Content="记录" Name="Record"></Button>
+            <Button Content="预览" Name="Preview"></Button>
+            <Button Content="停止" Name="Stop"></Button>
+            <Button Content="患者" Name="Patient"></Button>
+            <Button Content="阻抗" Name="Impedance"></Button>
+            <Button Content="视频" Name="VedioTool"></Button>
+            <Button Content="带阻" Name="Band"></Button>
+            <Button Content="校准" Name="Ajust"></Button>
+            <Button Content="设置" Name="SettingTool"></Button>
+            <Button Content="协议" Name="ProtocolTool"></Button>
+            <Button Content="概况" Name="Basic"></Button>
+            <Button Content="控制板" Name="ControlPanel"></Button>
+            <Button Content="回放" Name="PlayBack"></Button>
+            <Button Content="标准杆" Name="ReferBar"></Button>
+            <Button Content="放大" Name="ZoomOut"></Button>
+            <Button Content="缩小" Name="ZoomIn"></Button>
+            <Button Content="结束" Name="End"></Button>
+        </ToolBar>
+        <WrapPanel Orientation="Vertical" Name="Chanels" Grid.Row="2" Grid.ColumnSpan="7">
+            
+        </WrapPanel>
+        <StatusBar Grid.Row="3" Grid.ColumnSpan="10" FontSize="18">
+            test
+        </StatusBar>
+    </Grid>
+</Window>
