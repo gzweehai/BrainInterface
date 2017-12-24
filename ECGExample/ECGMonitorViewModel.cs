@@ -181,7 +181,19 @@ namespace Abt.Controls.SciChart.Example.Examples.IWantTo.SeeFeaturedApplication.
         private double[] LoadWaveformData(string filename)
         {
             var values = new List<double>();
-            var asm = Assembly.GetExecutingAssembly();
+            using (var stream = File.OpenRead(filename))
+            {
+                using (var streamReader = new StreamReader(stream))
+                {
+                    string line = streamReader.ReadLine();
+                    while (line != null)
+                    {
+                        values.Add(double.Parse(line, NumberFormatInfo.InvariantInfo));
+                        line = streamReader.ReadLine();
+                    }
+                }
+            }
+            /*var asm = Assembly.GetExecutingAssembly();
             var resourceString = asm.GetManifestResourceNames().Single(x => x.Contains(filename));
 
             using (var stream = asm.GetManifestResourceStream(resourceString))
@@ -193,7 +205,7 @@ namespace Abt.Controls.SciChart.Example.Examples.IWantTo.SeeFeaturedApplication.
                     values.Add(double.Parse(line, NumberFormatInfo.InvariantInfo));
                     line = streamReader.ReadLine();
                 }
-            }
+            }*/
 
             return values.ToArray();
         }
