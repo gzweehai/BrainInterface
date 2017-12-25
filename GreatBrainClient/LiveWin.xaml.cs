@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using GreatBrainClient.MonitorViews;
 using InteractiveDataDisplay.WPF;
 
 namespace GreatBrainClient
@@ -24,9 +25,18 @@ namespace GreatBrainClient
         {
             InitializeComponent();
             //初始化通道信息
-           InitialChanels();
+           //InitialChanels();
+            ShowEcgView();
         }
 
+        public void ShowEcgView()
+        {
+            var viewModel = new ECGMonitorViewModel();
+            EcgView.DataContext = viewModel;
+            viewModel.OnExampleEnter();
+        }
+        
+/*
         private void InitialChanels()
         {
             for (int i = 0; i <10; i++){
@@ -57,6 +67,7 @@ namespace GreatBrainClient
                 Chanels.Children.Add(plotter);
             }
         }
+        */
 
     }
 

@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GreatBrainClient"
         xmlns:d3="clr-namespace:InteractiveDataDisplay.WPF;assembly=InteractiveDataDisplay.WPF"
+        xmlns:monitorViews="clr-namespace:GreatBrainClient.MonitorViews"
         mc:Ignorable="d"
         Title="诺益脑电检测系统采集端" Height="800" Width="1000">
 
@@ -60,7 +61,7 @@
             <Button Content="结束" Name="End"></Button>
         </ToolBar>
         <WrapPanel Orientation="Vertical" Name="Chanels" Grid.Row="2" Grid.ColumnSpan="7">
-            
+            <monitorViews:ECGMonitorView x:Name="EcgView"/>
         </WrapPanel>
         <StatusBar Grid.Row="3" Grid.ColumnSpan="10" FontSize="18">
             test

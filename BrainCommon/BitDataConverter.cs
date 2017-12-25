@@ -4,6 +4,11 @@ namespace BrainCommon
 {
     public static class BitDataConverter
     {
+        public static double Calculatevoltage(int num,float vRef = 4.5f, int gain = 72)
+        {
+            return (num * vRef) / (maxVal * gain);
+        }
+        
         #region Disposable Implmentation
         public static DisposableValue<ArraySegment<int>> ConvertFrom(ArraySegment<byte> data, SyncBufManager mgr)
         {

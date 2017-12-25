@@ -34,6 +34,7 @@ namespace GreatBrainClient
         {
             LiveWin live = new LiveWin();
             live.Show();
+            live.ShowEcgView();
         }
     }
 }

@@ -6,6 +6,14 @@ namespace BrainCommon
 {
     public static class Utility
     {
+        public static int[] CopyToArray(this ArraySegment<int> seg)
+        {
+            if (seg.Array == null) return null;
+            var result = new int[seg.Count];
+            Array.Copy(seg.Array,seg.Offset,result,0,seg.Count);
+            return result;
+        }
+        
         public static string Show(this byte data)
         {
             return $"{data:X2}";
