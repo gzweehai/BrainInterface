@@ -174,7 +174,8 @@ namespace BrainSimulator
             var buf = bmgr.TakeBuffer(size);
             _r.NextBytes(buf);
             var passTimes=BrainDevState.PassTimeMs(rate, sampleTimeTick);
-            var sampleValue= passTimes * 2 * Math.PI /1000;
+            const float max = 4.5f / 72;
+            var sampleValue= Math.Sin(passTimes * 2 /1000f * Math.PI)*max;
             var (b0, b1, b2) = BitDataConverter.ConvertTo(sampleValue);
             buf[0] = 1;
             buf[1] = _brainState.SamplePacketOrder++;
