@@ -79,9 +79,9 @@
 
     public enum SampleRateEnum
     {
-        SPS_250=1,
-        SPS_500,
-        SPS_1k,
-        SPS_2k,
+        SPS_2k =3,
+        SPS_1k=4,
+        SPS_500=5,
+        SPS_250=6,
     }
 }
