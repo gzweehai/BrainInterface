@@ -251,16 +251,12 @@ namespace GreatBrainClient.MonitorViews
             _viewStream.SubscribeOn(Dispatcher.CurrentDispatcher).Subscribe(
                 intArr =>
                 {
-                    for (var i = 0; i < intArr.Length; i++)
-                    {
-                        _pakNum++;
-                        var val = intArr[i];
-                        var passTimes=BrainDevState.PassTimeMs(_currentState.SampleRate, _pakNum);
-                        var voltage = BitDataConverter.Calculatevoltage(val,4.5f, _currentState.Gain);
-                        _series0.Append(passTimes,voltage);
-                    }
-                    var time=BrainDevState.PassTimeMs(_currentState.SampleRate, _pakNum);
-                    XVisibleRange = ComputeXAxisRange(time);
+                    _pakNum++;
+                    var passTimes=BrainDevState.PassTimeMs(_currentState.SampleRate, _pakNum)/1000;
+                    var val = intArr[0];
+                    var voltage = BitDataConverter.Calculatevoltage(val,4.5f, _currentState.Gain);
+                    _series0.Append(passTimes,voltage);
+                    XVisibleRange = ComputeXAxisRange(passTimes);
                 });
         }
         
