@@ -30,7 +30,7 @@ namespace GreatBrainClient.MonitorViews
         private bool _lastBeat;
         private DateTime _lastBeatTime;
 
-        private const double WindowSize = 5.0;
+        private const double WindowSize = 10.0;
         private const int TimerInterval = 20;
 
         public ECGMonitorViewModel()
@@ -269,6 +269,8 @@ namespace GreatBrainClient.MonitorViews
             BrainDeviceManager.BrainDeviceState.Subscribe(ss =>
             {
                 _currentState = ss;
+                var pmax = 4.5f*2 / _currentState.Gain;
+                YVisibleRange = new DoubleRange(-pmax, pmax);
                 AppLogger.Debug($"Brain Device State Changed Detected: {ss}");
             }, () =>
             {
