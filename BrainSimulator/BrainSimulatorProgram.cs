@@ -167,21 +167,25 @@ namespace BrainSimulator
         }
 
         const byte ChannelCount = 32; //must >= 3
+        static double simalatedDelta = 2 * Math.PI / ChannelCount;
 
         private static async Task SendSampleData(int sampleTimeTick, SampleRateEnum rate, Socket socket, CancellationToken ctsToken)
         {
             byte size = 2 + ChannelCount * 3;
             var buf = bmgr.TakeBuffer(size);
-            _r.NextBytes(buf);
+            //_r.NextBytes(buf);
             var passTimes=BrainDevState.PassTimeMs(rate, sampleTimeTick);
             const float max = 4.5f / 72;
-            var sampleValue= Math.Sin(passTimes * 2 /1000f * Math.PI)*max;
-            var (b0, b1, b2) = BitDataConverter.ConvertTo(sampleValue);
             buf[0] = 1;
             buf[1] = _brainState.SamplePacketOrder++;
-            buf[2] = b0;
-            buf[2 + 1] = b1;
-            buf[2 + 2] = b2;
+            for (int i = 0; i < ChannelCount; i++)
+            {
+                var sampleValue= Math.Sin(passTimes * 2 /1000f * Math.PI + i*simalatedDelta)*max;
+                var (b0, b1, b2) = BitDataConverter.ConvertTo(sampleValue);
+                buf[2+i*3]= b0;
+                buf[2 + 1+i*3] = b1;
+                buf[2 + 2+i*3] = b2;
+            }
             await SendWithHeadTail(socket, buf, size,ctsToken);
             bmgr.ReturnBuffer(buf);
         }
