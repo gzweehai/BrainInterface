@@ -24,18 +24,22 @@ namespace BrainNetwork.BrainDeviceProtocol
         private static IDisposable observerDisposable;
         private static CancellationTokenSource cts;
         private static MD5 _hasher;
-        
+
         public static SyncBufManager BufMgr => bufferManager;
-        
-        public static void Init()
+
+        static BrainDeviceManager()
         {
-            bufferManager = SyncBufManager.Create(2 << 16, 128,32);
+            bufferManager = SyncBufManager.Create(2 << 16, 128, 32);
             encoder = new ClientFrameEncoder(0xA0, 0XC0);
             decoder = new FixedLenFrameDecoder(0xA0, 0XC0);
+            _hasher = MD5.Create();
+        }
+
+        public static void Init()
+        {
             _dataStream = new Subject<(byte, ArraySegment<int>, ArraySegment<byte>)>();
             _stateStream = new Subject<BrainDevState>();
             _stateStream.OnNext(_devState);
-            _hasher = MD5.Create();
         }
 
         public static async Task<DevCommandSender> Connnect(string ip, int port)
@@ -88,6 +92,7 @@ namespace BrainNetwork.BrainDeviceProtocol
             _stateStream?.OnCompleted();
             _stateStream = null;
             _hasher.Clear();
+            bufferManager.Clear();
             AppLogger.Debug("BrainDeviceManager.DisConnect");
         }
 
