@@ -1,0 +1,64 @@
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart_50ChannelEEG.exe.config
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart_50ChannelEEG.exe
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart_50ChannelEEG.pdb
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart.Charting.dll
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart.Charting3D.dll
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart.Core.dll
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart.Data.dll
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart.Drawing.DirectX.dll
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart.Drawing.dll
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart.Examples.ExternalDependencies.dll
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\System.Windows.Interactivity.dll
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\SharpDX.D3DCompiler.dll
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\SharpDX.dll
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\SharpDX.Direct3D11.dll
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\SharpDX.Mathematics.dll
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\SharpDX.DXGI.dll
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\SharpDX.Direct3D9.dll
+D:\eeg sln\SciChart_50ChannelEEG\bin\Debug\SharpDX.Direct3D11.Effects.dll
+D:\eeg sln\SciChart_50ChannelEEG\obj\Debug\SciChart_50ChannelEEG.csprojResolveAssemblyReference.cache
+D:\eeg sln\SciChart_50ChannelEEG\obj\Debug\EEGExampleView.baml
+D:\eeg sln\SciChart_50ChannelEEG\obj\Debug\App.baml
+D:\eeg sln\SciChart_50ChannelEEG\obj\Debug\MainWindow.g.cs
+D:\eeg sln\SciChart_50ChannelEEG\obj\Debug\EEGExampleView.g.cs
+D:\eeg sln\SciChart_50ChannelEEG\obj\Debug\App.g.cs
+D:\eeg sln\SciChart_50ChannelEEG\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\eeg sln\SciChart_50ChannelEEG\obj\Debug\SciChart_50ChannelEEG_MarkupCompile.cache
+D:\eeg sln\SciChart_50ChannelEEG\obj\Debug\SciChart_50ChannelEEG_MarkupCompile.lref
+D:\eeg sln\SciChart_50ChannelEEG\obj\Debug\MainWindow.baml
+D:\eeg sln\SciChart_50ChannelEEG\obj\Debug\SciChart_50ChannelEEG.g.resources
+D:\eeg sln\SciChart_50ChannelEEG\obj\Debug\SciChart_50ChannelEEG.csproj.CoreCompileInputs.cache
+D:\eeg sln\SciChart_50ChannelEEG\obj\Debug\SciChart_50ChannelEEG.exe
+D:\eeg sln\SciChart_50ChannelEEG\obj\Debug\SciChart_50ChannelEEG.pdb
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart_50ChannelEEG.exe.config
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart_50ChannelEEG.exe
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart_50ChannelEEG.pdb
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart.Charting.dll
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart.Charting3D.dll
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart.Core.dll
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart.Data.dll
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart.Drawing.DirectX.dll
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart.Drawing.dll
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\SciChart.Examples.ExternalDependencies.dll
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\System.Windows.Interactivity.dll
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\SharpDX.D3DCompiler.dll
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\SharpDX.dll
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\SharpDX.Direct3D11.dll
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\SharpDX.Mathematics.dll
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\SharpDX.DXGI.dll
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\SharpDX.Direct3D9.dll
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\bin\Debug\SharpDX.Direct3D11.Effects.dll
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\obj\Debug\SciChart_50ChannelEEG.csprojResolveAssemblyReference.cache
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\obj\Debug\EEGExampleView.baml
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\obj\Debug\App.baml
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\obj\Debug\MainWindow.g.cs
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\obj\Debug\EEGExampleView.g.cs
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\obj\Debug\App.g.cs
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\obj\Debug\SciChart_50ChannelEEG_MarkupCompile.cache
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\obj\Debug\SciChart_50ChannelEEG_MarkupCompile.lref
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\obj\Debug\MainWindow.baml
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\obj\Debug\SciChart_50ChannelEEG.g.resources
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\obj\Debug\SciChart_50ChannelEEG.csproj.CoreCompileInputs.cache
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\obj\Debug\SciChart_50ChannelEEG.exe
+C:\Users\MacWin\Documents\eeg sln\eeg sln\SciChart_50ChannelEEG\obj\Debug\SciChart_50ChannelEEG.pdb

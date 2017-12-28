@@ -1,0 +1,6 @@
+<Window x:Class="SciChartExport.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="SciChart | 50-Channel EEG" xmlns:example="clr-namespace:SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo">
+  <Window.Resources>
+    <example:EEGExampleViewModel x:Key="ViewModel" />
+  </Window.Resources>
+  <example:EEGExampleView DataContext="{StaticResource ViewModel}" />
+</Window>
