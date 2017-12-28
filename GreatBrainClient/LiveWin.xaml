@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Example="clr-namespace:Abt.Controls.SciChart.Example.Examples.IWantTo.CreateRealtimeChart.EEGChannelsDemo"
         xmlns:local="clr-namespace:GreatBrainClient"
         xmlns:d3="clr-namespace:InteractiveDataDisplay.WPF;assembly=InteractiveDataDisplay.WPF"
         xmlns:monitorViews="clr-namespace:GreatBrainClient.MonitorViews"
@@ -61,7 +62,8 @@
             <Button Content="结束" Name="End"></Button>
         </ToolBar>
         <WrapPanel Orientation="Vertical" Name="Chanels" Grid.Row="2" Grid.ColumnSpan="7">
-            <monitorViews:ECGMonitorView x:Name="EcgView"/>
+<!--            <monitorViews:ECGMonitorView x:Name="EcgView"/>-->
+            <Example:EEGExampleView x:Name="EEGView"/>
         </WrapPanel>
         <StatusBar Grid.Row="3" Grid.ColumnSpan="10" FontSize="18">
             test

@@ -6,6 +6,11 @@
             <!-- StartupUri="MainWindow.xaml"> -->
            
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/ExpressionDark.xaml" />
+                <ResourceDictionary Source="Resources/Xaml/Styles/Button.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

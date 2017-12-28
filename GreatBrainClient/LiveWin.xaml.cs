@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Abt.Controls.SciChart.Example.Examples.IWantTo.CreateRealtimeChart.EEGChannelsDemo;
 using GreatBrainClient.MonitorViews;
 using InteractiveDataDisplay.WPF;
 
@@ -31,9 +32,14 @@ namespace GreatBrainClient
 
         public void ShowEcgView()
         {
+            /*
             var viewModel = new ECGMonitorViewModel();
             EcgView.DataContext = viewModel;
             viewModel.OnExampleEnter();
+            */
+            var eegExampleViewModel = new EEGExampleViewModel();
+            EEGView.DataContext = eegExampleViewModel;
+            eegExampleViewModel.OnExampleEnter();
         }
         
 /*
