@@ -35,7 +35,7 @@ namespace Abt.Controls.SciChart.Example.Examples.IWantTo.SeeFeaturedApplication.
             // At the sample rate of ~500Hz and 5 seconds
             // visible range we'll need 2500 points in the FIFO. 
             // We set 5000 so no data gets discarded while still in view
-            _series0 = new XyDataSeries<double, double>() { FifoCapacity = 5000 };
+            _series0 = new XyDataSeries<double, double>() { FifoCapacity = 15000 };
 
             // Simulate waveform
             _sourceData = LoadWaveformData("Waveform.txt");
