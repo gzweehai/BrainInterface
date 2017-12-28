@@ -39,8 +39,9 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                                                     };
 
         private readonly FasterRandom _random = new FasterRandom();
-        private const int ChannelCount = 50; // Number of channels to render
-        private const int Size = 1000;       // Size of each channel in points (FIFO Buffer)
+        private const int ChannelCount = 32; // Number of channels to render
+        private int Size = 1000;       // Size of each channel in points (FIFO Buffer)
+        private int _size = 1000;
         private volatile int _currentSize = 0;
         private uint _timerInterval = 20;// Interval of the timer to generate data in ms        
         private int _bufferSize = 15; // Number of points to append to each channel each timer tick
@@ -103,6 +104,17 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             }
         }
 
+        public double TimerZoom
+        {
+            get { return _size; }
+            set
+            {
+                _size = (int)value;
+                OnPropertyChanged("TimerZoom");
+                Stop();
+            }
+        }
+
         public bool IsReset
         {
             get { return _isReset; }
@@ -135,7 +147,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         private void Start()
         {
-            if (_channelViewModels == null || _channelViewModels.Count == 0)
+            if (_channelViewModels == null || _channelViewModels.Count == 0 ||Size!=_size)
             {
                 Reset();
             }
@@ -165,7 +177,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         private void Reset()
         {
             Stop();
-
+            Size = _size;
             // Initialize N EEGChannelViewModels. Each of these will be represented as a single channel
             // of the EEG on the view. One channel = one SciChartSurface instance
             ChannelViewModels = new ObservableCollection<EEGChannelViewModel>();

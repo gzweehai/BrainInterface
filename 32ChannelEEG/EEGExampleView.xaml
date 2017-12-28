@@ -1,4 +1,4 @@
-<UserControl x:Class="SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo.EEGExampleView"
+﻿<UserControl x:Class="SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo.EEGExampleView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -70,13 +70,8 @@
                                      DrawMajorGridLines="False"
                                      DrawMinorGridLines="False"
                                      DrawMajorBands="False"
-                                     Visibility="Visible"
-                                        
-                                           >
-                        
-                                <s:NumericAxis.GrowBy>
-                                    <s:DoubleRange Max="0" Min="0" />
-                                </s:NumericAxis.GrowBy>
+                                     Visibility="Visible">
+                              
                             </s:NumericAxis>
                      </s:SciChartSurface.XAxis>
                       
@@ -147,30 +142,76 @@
 
                 <!--  Define the Toolbar  -->
                 <ToggleButton Command="{Binding StartCommand}"
-                              Content="Play"
+                              x:Name="StartButton"
+                              Content="采集"
                               Style="{StaticResource PlayButtonStyle}"
-                              ToolTip="Play"
+                              ToolTip="采集"
                               s:ToggleButtonExtensions.GroupName="RealTimeEEG" />
 
                 <ToggleButton Command="{Binding StopCommand}"
                               x:Name="StopButton"
-                              Content="Pause"
+                              Content="预览"
                               Style="{StaticResource PauseButtonStyle}"
-                              ToolTip="Pause"
+                              ToolTip="预览"
                               s:ToggleButtonExtensions.GroupName="RealTimeEEG" />
 
                 <ToggleButton Command="{Binding ResetCommand}"
                               x:Name="ResetButton"
-                              Content="Stop"
+                              Content="停止"
                               Style="{StaticResource StopButtonStyle}"
-                              ToolTip="Stop"
+                              ToolTip="停止"
                               s:ToggleButtonExtensions.GroupName="RealTimeEEG" />
+                
+                <ToggleButton Command="{Binding ImpedanceCommand}"
+                              Content="阻抗"
+                              ToolTip="阻抗"
+                              s:ToggleButtonExtensions.GroupName="RealTimeEEG"/>
 
-                <ext:FlyoutMenuButton x:Name="IntervalFlyoutMenuButton"
+                <ToggleButton Command="{Binding VideoCommand}"
+                              Content="视频"
+                              ToolTip="视频"  />
+
+                <ToggleButton Command="{Binding BandCommand}"
+                              Content="带阻"
+                              ToolTip="带阻"  />
+
+                <ToggleButton Command="{Binding PatientCommand}"
+                              Content="患者"
+                              ToolTip="患者"  />
+
+                <ToggleButton Command="{Binding AjustCommand}"
+                              Content="校准"
+                              ToolTip="校准"  />
+                
+                <ToggleButton Command="{Binding SettingCommand}"
+                              Content="设置"
+                              ToolTip="设置"  />
+
+                <ToggleButton Command="{Binding ProtocolCommand}"
+                              Content="协议"
+                              ToolTip="协议"  />
+
+                <ToggleButton Command="{Binding BasicCommand}"
+                              Content="概况"
+                              ToolTip="概况"  />
+                
+                <ToggleButton Command="{Binding ControlCommand}"
+                              Content="控制板"
+                              ToolTip="控制板"  />
+
+                <ToggleButton Command="{Binding PlayBackCommand}"
+                              Content="回放"
+                              ToolTip="回放" />
+
+                <ToggleButton Command="{Binding ReferCommand}"
+                              Content="标准杆"
+                              ToolTip="标准杆"  />
+
+                <ext:FlyoutMenuButton x:Name="ZoomFlyoutMenuButton"
                                       HorizontalAlignment="Left"
-                                      Content="Interval"
+                                      Content="缩放"
                                       Style="{StaticResource FlyoutMenuButtonStyle}"
-                                      ToolTipService.ToolTip="Interval (ms)">
+                                      ToolTipService.ToolTip="显示 (ms)" FlowDirection="LeftToRight" HorizontalContentAlignment="Stretch" Width="Auto" >
 
                     <ext:FlyoutMenuButton.PopupContent>
                         <StackPanel MinWidth="150" Orientation="Vertical">
@@ -178,7 +219,42 @@
                             <TextBlock Margin="3"
                                        HorizontalAlignment="Left"
                                        Foreground="White"
-                                       Text="Interval (ms): " />
+                                       Text="显示 (ms)： " />
+
+                            <Slider MinWidth="100"
+                                    DataContext="{Binding}"
+                                    IsEnabled="{Binding IsRunning,
+                                                        Converter={StaticResource BooleanToVisibilityConverter},
+                                                        ConverterParameter=INVERSE}"
+                                    Maximum="5000"
+                                    Minimum="100"
+                                    Value="{Binding TimerZoom,
+                                                    Mode=TwoWay}">
+                                <ToolTipService.ToolTip>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Foreground="#222222" Text="{Binding TimerZoom}" />
+                                        <TextBlock Foreground="#222222" Text=" ms" />
+                                    </StackPanel>
+                                </ToolTipService.ToolTip>
+                            </Slider>
+
+                        </StackPanel>
+                    </ext:FlyoutMenuButton.PopupContent>
+                </ext:FlyoutMenuButton>
+                
+                <ext:FlyoutMenuButton x:Name="IntervalFlyoutMenuButton"
+                                      HorizontalAlignment="Left"
+                                      Content="间隔"
+                                      Style="{StaticResource FlyoutMenuButtonStyle}"
+                                      ToolTipService.ToolTip="间隔 (ms)" FlowDirection="LeftToRight" HorizontalContentAlignment="Stretch" Width="Auto" >
+
+                    <ext:FlyoutMenuButton.PopupContent>
+                        <StackPanel MinWidth="150" Orientation="Vertical">
+
+                            <TextBlock Margin="3"
+                                       HorizontalAlignment="Left"
+                                       Foreground="White"
+                                       Text="间隔 (ms)： " />
 
                             <Slider MinWidth="100"
                                     DataContext="{Binding}"
@@ -203,17 +279,17 @@
 
                 <ext:FlyoutMenuButton x:Name="PointsFlyoutMenuButton"
                                       VerticalAlignment="Bottom"
-                                      Content="Points"
+                                      Content="样品数"
                                       Style="{StaticResource FlyoutMenuButtonStyle}"
-                                      ToolTipService.ToolTip="Points per Tick">
+                                      ToolTipService.ToolTip="样品数" VerticalContentAlignment="Bottom" Width="Auto" >
 
                     <ext:FlyoutMenuButton.PopupContent>
                         <StackPanel MinWidth="150" Orientation="Vertical">
 
                             <TextBlock Margin="3"
-                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Left"
                                        Foreground="White"
-                                       Text="Points per Tick: " />
+                                       Text="样品数: " />
 
                             <Slider MinWidth="100"
                                     DataContext="{Binding}"
