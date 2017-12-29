@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reactive.Disposables;
+using System.Security.Cryptography;
 using System.Threading;
 using BrainCommon;
 using BrainNetwork.BrainDeviceProtocol;
@@ -17,6 +18,7 @@ namespace DataAccess
         private FileStream _fHandler;
         private SyncBufManager _bufferManager;
         private long _startTick;
+        private MD5 _hasher;
 
         public string ResourceId => _rid;
 
@@ -34,6 +36,7 @@ namespace DataAccess
             var tmp = Interlocked.Exchange(ref _unsubscribe, Disposable.Empty);
             if (tmp != null) throw new Exception("This File Resource is used");
             _unsubscribe = dataStream.Subscribe(OnDataPush, OnErr, OnComplete);
+            _hasher = MD5.Create();
         }
 
         private void OnDataPush((byte, ArraySegment<int>, ArraySegment<byte>) tuple)
@@ -64,7 +67,7 @@ namespace DataAccess
                     _fHandler.WriteAsync(buf, 0, count).ContinueWith(state =>
                     {
                         //Console.WriteLine(buf.Show(count));
-                        BrainDeviceManager.HashBlock(buf, count);
+                        _hasher.TransformBlock(buf, 0, count, null, 0);
                         _bufferManager.ReturnBuffer(buf);
                     });
                 });
@@ -87,6 +90,7 @@ namespace DataAccess
             AppLogger.Warning("FileResource error:" + e.Message);
         }
 
+        private static readonly byte[] Emptyblock = new byte[0];
         public void Dispose()
         {
             var tmp = Interlocked.Exchange(ref _unsubscribe, Disposable.Empty);
@@ -94,7 +98,10 @@ namespace DataAccess
             
             tmp?.Dispose();
             var t = Interlocked.Exchange(ref _fHandler, null);
-            var hash = BrainDeviceManager.CloseHash();
+            _hasher.TransformFinalBlock(Emptyblock, 0, 0);
+            var hash = _hasher.Hash;
+            _hasher.Clear();
+            _hasher = null;
             if (hash.Length > SampleDataFileFormat.Md5Len)
             {
                 AppLogger.Warning($"MD5 hash length ({hash.Length}) is greater than predefined length {SampleDataFileFormat.Md5Len}");
