@@ -155,6 +155,20 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BrainCommon\BrainCommon.csproj">
+      <Project>{508D5173-A3A7-4BA8-8E24-FE8103141A5E}</Project>
+      <Name>BrainCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BrainNetwork\BrainNetwork.csproj">
+      <Project>{0A95E846-FDC6-4A00-A495-E2528E59E359}</Project>
+      <Name>BrainNetwork</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
+      <Project>{7713A1BD-A789-4F71-B713-D05DFE6A21C1}</Project>
+      <Name>DataAccess</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
