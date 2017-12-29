@@ -40,3 +40,7 @@ packages/
 EEGExample/bin/
 
 EEGExample/obj/
+
+32ChannelEEG/bin/
+
+32ChannelEEG/obj/
