@@ -1,0 +1,32 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>CreateAMultiSeriesChart</ChartGroup>
+  <Title>Candlestick and Lines</Title>
+  <View>Examples/IWantTo/CreateMultiseriesChart/CandlestickWithLinesView.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoCandlestickAndLines.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/candlestick_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>Demonstrates how to simple multi-series financial charts, with a Candlestick chart rendering OHLC data and three line series rendering Moving Average indicators</ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Candlestick and Lines&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Generates a Candlestick Chart with three Line-Series showing the moving average of the closing price.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontWeight="Bold" FontStyle="Italic"&gt;Interactivity Options&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - ZoomPan, left-mouse drag to pan the chart&lt;/Run&gt;
+    &lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - Mousewheel, roll the mousewheel to zoom&lt;/Run&gt;
+    &lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - ZoomExtents, double click to zoom to extents&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontWeight="Bold" FontStyle="Italic"&gt;Tip!&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt;To get the effect of hiding the line for the first N points of a moving average, you can insert double.NaN into the XyDataSeries. &lt;/Run&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt;double.NaN can be used to render gaps or continuous lines.&lt;/Run&gt;
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/CreateMultiseriesChart/CandlestickWithLinesView.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/CreateMultiseriesChart/CandlestickWithLinesView.xaml.cs.txt</string>
+  </CodeFiles>
+</ExampleDefinition>

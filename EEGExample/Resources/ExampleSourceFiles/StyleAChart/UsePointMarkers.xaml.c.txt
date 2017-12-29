@@ -1,0 +1,42 @@
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
+using Abt.Controls.SciChart.Model.DataSeries;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.StyleAChart
+{
+    public partial class UsePointMarkers : UserControl
+    {
+        public UsePointMarkers()
+        {
+            InitializeComponent();
+        }
+        private void UsePointMarkers_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var dataSeries1 = new XyDataSeries<double, double>() { SeriesName = "data1" };
+            var dataSeries2 = new XyDataSeries<double, double>() { SeriesName = "data2" };
+            var dataSeries3 = new XyDataSeries<double, double>() { SeriesName = "data3" };
+            var dataSeries4 = new XyDataSeries<double, double>() { SeriesName = "data4" };
+            var dataSeries5 = new XyDataSeries<double, double>() { SeriesName = "data5" };
+
+            const int dataSize = 30;
+            var rnd = new Random();
+            for (int i = 0; i < dataSize; i++) dataSeries1.Append(i, rnd.NextDouble());
+            for (int i = 0; i < dataSize; i++) dataSeries2.Append(i, 1 + rnd.NextDouble());
+            for (int i = 0; i < dataSize; i++) dataSeries3.Append(i, 1.8 + rnd.NextDouble());
+            for (int i = 0; i < dataSize; i++) dataSeries4.Append(i, 2.5 + rnd.NextDouble());
+            for (int i = 0; i < dataSize; i++) dataSeries5.Append(i, 3.5 + rnd.NextDouble());
+
+            using (this.sciChart.SuspendUpdates())
+            {
+                this.lineSeries1.DataSeries = dataSeries1;
+                this.lineSeries2.DataSeries = dataSeries2;
+                this.lineSeries3.DataSeries = dataSeries3;
+                this.lineSeries4.DataSeries = dataSeries4;
+                this.lineSeries5.DataSeries = dataSeries5;
+            }
+
+            this.sciChart.ZoomExtents();
+        }
+    }
+}

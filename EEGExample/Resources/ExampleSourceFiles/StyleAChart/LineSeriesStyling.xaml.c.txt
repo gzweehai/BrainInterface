@@ -1,0 +1,15 @@
+﻿using System.Windows.Controls;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.StyleAChart
+{
+    /// <summary>
+    /// Interaction logic for LineSeriesStyling.xaml
+    /// </summary>
+    public partial class LineSeriesStyling : UserControl
+    {
+        public LineSeriesStyling()
+        {
+            InitializeComponent();
+        }
+    }
+}

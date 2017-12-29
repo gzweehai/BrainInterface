@@ -1,0 +1,95 @@
+﻿using System.Windows;
+using System.Windows.Controls;
+using Abt.Controls.SciChart.Example.Data;
+using Abt.Controls.SciChart.Model.DataSeries;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.ZoomAndPanAChart
+{
+    public partial class DragAxisToScale : UserControl
+    {
+        private bool _initialized;
+
+        public DragAxisToScale()
+        {
+            InitializeComponent();
+            _initialized = true;
+        }
+
+        private void DragAxisToScale_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Performing multiple updates in a SuspendUpdates block is efficient as only one redraw is performed
+            using (sciChart.SuspendUpdates())
+            {
+                // Create a dataset of type X=double, Y=double
+                var dataSeries0 = new XyDataSeries<double, double>();
+                var dataSeries1 = new XyDataSeries<double, double>();
+
+                var data2 = DataManager.Instance.GetFourierSeries(1.0, 0.1);
+                var data1 = DataManager.Instance.GetDampedSinewave(1500, 3.0, 0.0, 0.005, data2.Count);
+
+                // Append data to series.
+                dataSeries0.Append(data1.XData, data1.YData);
+                dataSeries1.Append(data2.XData, data2.YData);
+
+                // Assign data series to RenderableSeries
+                // Note: you can also data-bind them in MVVM
+                mountainSeries.DataSeries = dataSeries1;
+                lineSeries.DataSeries = dataSeries0;
+
+                // Set initial zoom
+                sciChart.XAxis.VisibleRange = new DoubleRange(3, 6);
+                sciChart.ZoomExtentsY();
+            }
+        }
+
+        // Optional: demonstrates changing which direction the ZoomPanModifier operates in
+        private void YDirection_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!_initialized) return;
+
+            yAxisLeftDragmodifier.IsEnabled = true;
+            yAxisRightDragmodifier.IsEnabled = true;
+            xAxisDragModifier.IsEnabled = false;
+        }
+
+        private void XDirection_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!_initialized) return;
+
+            yAxisLeftDragmodifier.IsEnabled = false;
+             yAxisRightDragmodifier.IsEnabled = false;
+            xAxisDragModifier.IsEnabled = true;
+        }
+
+        private void XYDirection_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!_initialized) return;
+
+            yAxisLeftDragmodifier.IsEnabled = true;
+            yAxisRightDragmodifier.IsEnabled = true;
+            xAxisDragModifier.IsEnabled = true;
+        }
+
+        private void PanChecked(object sender, RoutedEventArgs e)
+        {
+            if (!_initialized) return;
+
+            btnZoom.IsChecked = !btnPan.IsChecked;
+            var mode = AxisDragModes.Pan;
+            yAxisLeftDragmodifier.DragMode = mode;
+            yAxisRightDragmodifier.DragMode = mode;
+            xAxisDragModifier.DragMode = mode;
+        }
+
+        private void ScaleChecked(object sender, RoutedEventArgs e)
+        {
+            if (!_initialized) return;
+
+            btnPan.IsChecked = !btnZoom.IsChecked;
+            var mode = AxisDragModes.Scale;
+            yAxisLeftDragmodifier.DragMode = mode;
+            yAxisRightDragmodifier.DragMode = mode;
+            xAxisDragModifier.DragMode = mode;
+        }
+    }
+}

@@ -1,0 +1,34 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>ZoomAndPanAChart</ChartGroup>
+  <Title>Overview Control</Title>
+  <View>Examples/IWantTo/ZoomAndPanAChart/ScrollChartUsingOverviewControl.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoOverviewControl.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/line_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+    <ToolTipDescription>Demonstrates the use of the SciChart Overview control to zoom and scroll a chart. 
+    
+    The Overview displays a small chart of the entire data-set at the footer of a main chart. This highlights the region currently in view. 
+
+    Manipulate the thumbs on the Overview control to zoom the chart, drag the center region to scroll the chart. 
+  </ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Overview Control&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Demonstrates a supplimentary control, the SciChartOverview. This control can be bound to a parent SciChartSurface and renders the first series on that surface in entirely. A reticule is overlaid on the SciChartOverview to show the portion of the parent data in the viewport.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Interact with the SciChartOverview by dragging the middle area to scroll, or the edges of the middle area to scale. Similarly as you pan the chart by dragging, the SciChartOverview updates to show the current section of the data in the viewport.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;This doesn't increase the memory burden by much as the SciChartOverview shares the same source data as the parent SciChartSurface.&lt;/Run&gt;
+  </Description>
+  <HelpText>
+    Manipulate the thumbs on the Overview control to zoom the chart, drag the center region to scroll the chart.
+  </HelpText>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/ZoomAndPanAChart/ScrollChartUsingOverviewControl.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/ZoomAndPanAChart/ScrollChartUsingOverviewControl.xaml.cs.txt</string>
+  </CodeFiles>
+  <Features>
+    <Features>WithZoom</Features>
+  </Features>
+</ExampleDefinition>

@@ -1,0 +1,28 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>ZoomAndPanAChart</ChartGroup>
+  <Title>Drag Axis to Scale</Title>
+  <View>Examples/IWantTo/ZoomAndPanAChart/DragAxisToScale.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoDragAxisToScale.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/area_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>Demonstrates mouse-dragging of X and Y Axis to scale using the YAxisDragModifier and XAxisDragModifier. These are a built-in ChartModifierBase derived classes which add the behavior of scaling on mouse-drag of each axis.
+  </ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Drag Axis to Scale&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Showcases how to add Axis-Drag scaling to a SciChartSurface using the YAxisDragModifier and XAxisDragModifier.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;YAxisDragModifiers must be assigned to an axis. These can be used in Absolute mode (when YAxis.AutoRange=false) as well as Relative mode (when YAxis.AutoRange=true).&lt;/Run&gt;
+  </Description>
+  <HelpText>
+    Left-Button Drag over the Axis to scale SciChart
+  </HelpText>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/ZoomAndPanAChart/DragAxisToScale.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/ZoomAndPanAChart/DragAxisToScale.xaml.cs.txt</string>
+  </CodeFiles>
+  <Features>
+    <Features>WithZoom</Features>
+  </Features>
+</ExampleDefinition>

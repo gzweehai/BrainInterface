@@ -1,0 +1,23 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>ManipulateSeries</ChartGroup>
+  <Title>Add Remove DataSeries</Title>
+  <View>Examples/IWantTo/ManipulateSeries/AddRemoveDataSeriesExampleView.xaml</View>
+  <ViewModel/>
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoAddRemoveDataSeries.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/line_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>Demonstrates how to add and remove data-series and their associated RenderableSeries using SciChart.</ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Add Remove DataSeries&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Demonstrates how to programmatically add and remove series in code.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Click 'Add Series' several times. Now click to select a series. With a series selected, click 'Delete Series'. &lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;The same thing can be achieved in MVVM, using our new MVVM SciChartSurface.SeriesSource API&lt;/Run&gt;
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/ManipulateSeries/AddRemoveDataSeriesExampleView.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/ManipulateSeries/AddRemoveDataSeriesExampleView.xaml.cs.txt</string>
+  </CodeFiles>
+</ExampleDefinition>

@@ -1,0 +1,12 @@
+﻿using System.Windows.Controls;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.UseSciChartWithMvvm
+{
+    public partial class BindToDataSeriesSetView : UserControl
+    {
+        public BindToDataSeriesSetView()
+        {
+            InitializeComponent();
+        }
+    }
+}

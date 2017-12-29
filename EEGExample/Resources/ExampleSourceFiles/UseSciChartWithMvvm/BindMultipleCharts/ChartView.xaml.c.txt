@@ -1,0 +1,12 @@
+﻿using System.Windows.Controls;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.UseSciChartWithMvvm.BindMultipleCharts
+{
+    public partial class ChartView : UserControl
+    {
+        public ChartView()
+        {
+            InitializeComponent();
+        }
+    }
+}

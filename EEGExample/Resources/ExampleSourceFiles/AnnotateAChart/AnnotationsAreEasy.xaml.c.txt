@@ -1,0 +1,28 @@
+﻿using System;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Abt.Controls.SciChart.Example.Data;
+using Abt.Controls.SciChart.Visuals.Annotations;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.AnnotateAChart
+{
+    public partial class AnnotationsAreEasy : UserControl
+    {
+        public AnnotationsAreEasy()
+        {
+            InitializeComponent();
+        }
+
+        private void TextAnnotation2_MouseClick(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            ((TextAnnotation) sender).Text = "Clicked!";
+        }
+
+        private void TextAnnotation1_MouseEnter(object sender, MouseEventArgs e)
+        {
+            ((TextAnnotation)sender).Text = "Hovered!";
+        }
+    }
+}

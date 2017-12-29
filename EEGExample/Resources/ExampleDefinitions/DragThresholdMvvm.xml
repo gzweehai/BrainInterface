@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>AnnotateAChart</ChartGroup>
+  <Title>Drag Horizontal Threshold</Title>
+  <View>Examples/IWantTo/AnnotateAChart/DragHorizontalThreshold/DragThresholdMvvm.xaml</View>
+  <ViewModel>Examples.IWantTo.AnnotateAChart.DragHorizontalThreshold.DragThresholdMvvmViewModel</ViewModel>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoThreshold.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/line_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>Demonstrates how to add a Horizontal line Annotation and drag via the mouse, recoloring the series when series-values pass a certain threshold</ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Drag Horizontal Threshold&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Demonstrates how a HorizontalLineAnnotation (available in the Premium Edition of SciChart) and a Column Series can interact in an MVVM example. &lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Drag the line to see the colors of the Column Series change whenever the data-value is greater than the threshold.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Re-coloring of bars is provided by the RedIfOverThresholdPaletteProvider, a custom class which implements IPaletteProvider (available in the Standard or Premium editions) and is attached to the ColumnSeries. Using this method you can re-color data-points in Column, Line, OHLC and Candlestick Series depending on their data-value. &lt;/Run&gt;
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/AnnotateAChart/DragHorizontalThreshold/DragThresholdMvvm.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/AnnotateAChart/DragHorizontalThreshold/DragThresholdMvvmViewModel.cs.txt</string>
+  </CodeFiles>
+  <Features>
+    <Features>WithAnnotations</Features>
+    <Features>Mvvm</Features>
+  </Features>
+</ExampleDefinition>
+

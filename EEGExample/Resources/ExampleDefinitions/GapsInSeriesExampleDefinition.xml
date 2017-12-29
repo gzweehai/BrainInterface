@@ -1,0 +1,28 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>CreateAMultiSeriesChart</ChartGroup>
+  <Title>Gaps in Series</Title>
+  <View>Examples/IWantTo/CreateMultiseriesChart/GapsInSeries.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoGapsInSeries.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/column_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>Demonstrates discontinuous lines series and column series, where gaps can be inserted into the chart by using double.NaN</ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Gaps in Series&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Demonstrates how double.NaN can be used to render gaps or continuous lines in a line or column chart. See the source code for this example to understand how we did this.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontWeight="Bold" FontStyle="Italic"&gt;Interactivity Options&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - Drag X-Axis to scale.&lt;/Run&gt;
+    &lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - Drag Y-Axis to scale.&lt;/Run&gt;
+    &lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - Double click to zoom to extents.&lt;/Run&gt;
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/CreateMultiseriesChart/GapsInSeries.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/CreateMultiseriesChart/GapsInSeries.xaml.cs.txt</string>
+  </CodeFiles>
+</ExampleDefinition>
+

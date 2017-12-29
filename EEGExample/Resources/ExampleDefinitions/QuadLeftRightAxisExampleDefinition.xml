@@ -1,0 +1,30 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>ModifyAxisBehavior</ChartGroup>
+  <Title>Quad Left/Right Y-Axes</Title>
+  <View>Examples/IWantTo/ModifyAxisBehaviour/QuadLeftRightAxes.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoQuadAxis.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/line_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>Demonstrates a line chart with four series and double left / right Y-Axis. SciChart supports multiple left and right Y-Axes and this example shows in a simple way how to register a line series on each axis</ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Quad Left-Right Y-Axes&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Demonstrates a line chart with four series and double left / right Y-Axis. SciChart supports multiple left and right Y-Axes and this example shows in a simple way how to register a line series on each axis.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontWeight="Bold" FontStyle="Italic"&gt;Interactivity Options&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - Drag any axis to scale.&lt;/Run&gt;
+    &lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - Drag the chart to zoom.&lt;/Run&gt;
+    &lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - Double click to reset zoom.&lt;/Run&gt;    
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/ModifyAxisBehaviour/QuadLeftRightAxes.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/ModifyAxisBehaviour/QuadLeftRightAxes.xaml.cs.txt</string>
+  </CodeFiles>
+  <Features>
+    <Features>WithQuadAxis</Features>
+  </Features>
+</ExampleDefinition>

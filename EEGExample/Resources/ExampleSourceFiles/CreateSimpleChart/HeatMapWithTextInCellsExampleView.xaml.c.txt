@@ -1,0 +1,85 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using Abt.Controls.SciChart.Model.DataSeries;
+using Abt.Controls.SciChart.Visuals.Axes;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.CreateSimpleChart
+{
+    /// <summary>
+    /// Interaction logic for HeatMapWithTextInCellsExampleView.xaml
+    /// </summary>
+    public partial class HeatMapWithTextInCellsExampleView : UserControl
+    {
+        class YAxisLabelProvider: LabelProviderBase
+        {
+            public override string FormatLabel(IComparable dataValue)
+            {
+                var day = Convert.ToInt32(dataValue);
+                switch (day)
+                {
+                    case 0: return "Mon";
+                    case 1: return "Tue";
+                    case 2: return "Wed";
+                    case 3: return "Thu";
+                    case 4: return "Fri";
+                    case 5: return "Sat";
+                    case 6: return "Sun";
+                }
+                return "";
+            }
+
+            public override string FormatCursorLabel(IComparable dataValue)
+            {
+                return FormatLabel(dataValue);
+            }
+        }
+
+        class XAxisLabelProvider : LabelProviderBase
+        {
+            public override string FormatLabel(IComparable dataValue)
+            {
+                var h = Convert.ToInt32(dataValue);
+                var dt = new DateTime(2000, 1, 1, 1, 0, 0).AddHours(h);
+                return dt.ToString("hh:mm tt", new CultureInfo("en-US"));
+            }
+
+            public override string FormatCursorLabel(IComparable dataValue)
+            {
+                return FormatLabel(dataValue);
+            }
+        }
+
+        private IDataSeries CreateSeries()
+        {
+            var rnd = new Random();
+            int w = 24, h = 7;
+            var data = new double[h, w];
+            for (int x = 0; x < w; x++)
+                for (int y = 0; y < h; y++)
+                {
+                    data[y, x] = Math.Pow(rnd.NextDouble(), 0.15) * x / (w-1) * y / (h-1) * 100;
+                }
+            return new Heatmap2DArrayDataSeries<int, int, double>(data, ix => ix, iy => iy);
+        }
+
+        public HeatMapWithTextInCellsExampleView()
+        {
+            InitializeComponent();
+            yAxis.LabelProvider = new YAxisLabelProvider();
+            xAxis.LabelProvider = new XAxisLabelProvider();
+            heatmapSeries.DataSeries = CreateSeries();
+        }
+    }
+}

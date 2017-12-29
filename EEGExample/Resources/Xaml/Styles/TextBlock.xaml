@@ -1,0 +1,33 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Abt.Controls.SciChart.Example;component/Themes/ExpressionDark.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style x:Key="toolbarButtonTextStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
+
+    <Style x:Key="groupHeaderTextStyle" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+        <Setter Property="FontFamily" Value="/Abt.Controls.SciChart.Example;component/Resources/Fonts/NEUROPOL.ttf#Neuropol" />
+        <Setter Property="FontSize" Value="25" />
+    </Style>
+
+    <Style x:Key="treeViewGroupHeaderTextStyle"
+           BasedOn="{StaticResource groupHeaderTextStyle}"
+           TargetType="TextBlock">
+        <Setter Property="FontSize" Value="15" />
+    </Style>
+
+    <Style x:Key="codeViewFileHeaderTextStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="FontFamily" Value="Segoe UI Semibold" />
+        <Setter Property="Padding" Value="5" />
+        <Setter Property="Foreground" Value="Black" />
+        <Setter Property="Background" Value="{StaticResource codeViewFileHeaderBrush}" />
+    </Style>
+
+</ResourceDictionary>

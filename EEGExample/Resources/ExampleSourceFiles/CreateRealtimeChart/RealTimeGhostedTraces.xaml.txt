@@ -1,0 +1,74 @@
+﻿<UserControl x:Class="Abt.Controls.SciChart.Example.Examples.IWantTo.CreateRealtimeChart.RealTimeGhostedTraces"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:s="http://schemas.abtsoftware.co.uk/scichart"
+        xmlns:common="clr-namespace:Abt.Controls.SciChart.Example.Common">
+    
+    <UserControl.Resources>
+        <!-- Used by the hint annotation, hides if if the user selects high quality renderer -->
+        <common:TrueIfValueConverter x:Key="TrueIfValueConverter" Value="Abt.Controls.SciChart.Rendering.HighQualityRasterizer.HighQualityRenderSurface"/>
+    </UserControl.Resources>
+    
+    <Grid>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Timer Speed (ms): " Foreground="White" Margin="5"/>
+            <Slider Minimum="20" Maximum="500" x:Name="Slider" Margin="5" Value="50" ValueChanged="Slider_OnValueChanged" Width="160"/>
+            <TextBlock Margin="5" Foreground="White">
+               <Run Text="{Binding ElementName=Slider, Path=Value, StringFormat=\{0:0.0\}}"/>
+               <Run Text="ms"/>
+            </TextBlock>
+        </StackPanel>
+
+        <!-- We are using the high quality rasterizer. Due to its superior handling of transparency it looks a lot better! -->
+        <!-- To set the HighQuality Rasterizer, apply the attached property -->
+        <!--    s:RenderSurfaceBase.RenderSurfaceType="Abt.Controls.SciChart.Rendering.HighQualityRasterizer.HighQualityRenderSurface" -->
+        <!-- to the SciChartSurface -->
+        <s:SciChartSurface x:Name="sciChartSurface" s:ThemeManager.Theme="Oscilloscope" Grid.Row="1" 
+                           RenderPriority="Low">
+            
+            <!-- 10 RenderableSeries with decreasing opacity, which will be bound to our shifting window of DataSeries -->
+            <s:SciChartSurface.RenderableSeries>
+                <s:FastLineRenderableSeries/>
+                <s:FastLineRenderableSeries Opacity="0.9"/>
+                <s:FastLineRenderableSeries Opacity="0.8"/>
+                <s:FastLineRenderableSeries Opacity="0.7"/>
+                <s:FastLineRenderableSeries Opacity="0.62"/>
+                <s:FastLineRenderableSeries Opacity="0.55"/>
+                <s:FastLineRenderableSeries Opacity="0.45"/>
+                <s:FastLineRenderableSeries Opacity="0.35"/>
+                <s:FastLineRenderableSeries Opacity="0.25"/>
+                <s:FastLineRenderableSeries Opacity="0.15"/>
+            </s:SciChartSurface.RenderableSeries>
+            
+            <s:SciChartSurface.XAxis>
+                <s:NumericAxis AutoRange="Always"/>
+            </s:SciChartSurface.XAxis>
+            
+            <s:SciChartSurface.YAxis>
+                <s:NumericAxis AutoRange="Never" VisibleRange="-2.0, 2.0" TextFormatting="0.00" DrawMajorBands="True"/>
+            </s:SciChartSurface.YAxis>
+            
+            <s:SciChartSurface.ChartModifier>
+                <s:CursorModifier/>
+            </s:SciChartSurface.ChartModifier>
+            
+            <s:SciChartSurface.Annotations>
+                
+                <!-- For the example only. Hint text prompts you to try the High Quality rasterizer -->
+                <s:TextAnnotation VerticalAnchorPoint="Bottom" HorizontalAnchorPoint="Center" 
+                                  AnnotationCanvas="BelowChart" CoordinateMode="Relative" X1="0.5" Y1="0.95" 
+                                  FontSize="18"
+                                  IsHidden="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType='s:SciChartSurface'}, Path=(s:RenderSurfaceBase.RenderSurfaceType), Converter={StaticResource TrueIfValueConverter}}"
+                                  Text="Hint: Try the High Quality Rasterizer to improve transparency quality">                    
+                </s:TextAnnotation>
+            </s:SciChartSurface.Annotations>
+            
+        </s:SciChartSurface>
+    </Grid>
+</UserControl>

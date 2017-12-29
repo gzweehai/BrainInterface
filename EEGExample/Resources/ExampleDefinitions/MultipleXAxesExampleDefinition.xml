@@ -1,0 +1,31 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>ModifyAxisBehavior</ChartGroup>
+  <Title>Multiple X-Axes</Title>
+  <View>Examples/IWantTo/ModifyAxisBehaviour/MultipleXAxes.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoMultiXAxis.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/line_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>Demonstrates a line chart with four series and multiple top / bottom X-Axis and left / right Y-Axis. SciChart supports multiple top or bottom X-Axes and multiple left and right Y-Axes. This example shows in a simple way how to register a line series on each axis</ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Multiple Top-Bottom X-Axes&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Demonstrates a line chart with four series and multiple top / bottom X-Axis and left / right Y-Axis. SciChart supports multiple top or bottom X-Axes and multiple left and right Y-Axes. This example shows in a simple way how to register a line series on each axis.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontWeight="Bold" FontStyle="Italic"&gt;Interactivity Options&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - Drag any axis to scale.&lt;/Run&gt;
+    &lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - Drag the chart to zoom.&lt;/Run&gt;
+    &lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - Double click to reset zoom.&lt;/Run&gt;    
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/ModifyAxisBehaviour/MultipleXAxes.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/ModifyAxisBehaviour/MultipleXAxes.xaml.cs.txt</string>
+  </CodeFiles>
+  <Features>
+    <Features>WithQuadAxis</Features>
+
+  </Features>
+</ExampleDefinition>

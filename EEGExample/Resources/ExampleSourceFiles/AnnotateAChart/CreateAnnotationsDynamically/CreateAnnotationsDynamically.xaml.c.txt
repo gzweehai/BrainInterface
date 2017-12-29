@@ -1,0 +1,95 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using Abt.Controls.SciChart.Example.Data;
+using Abt.Controls.SciChart.Model.DataSeries;
+using Abt.Controls.SciChart.Visuals.Annotations;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.AnnotateAChart.CreateAnnotationsDynamically
+{
+    public partial class CreateAnnotationsDynamically : UserControl
+    {
+        private readonly IDictionary<string, Type> _annotationTypes = new Dictionary<string, Type>()
+        {
+            { "LineAnnotation", typeof(LineAnnotation)},
+            { "LineArrowAnnotation", typeof(LineArrowAnnotation)},
+            { "TextAnnotation", typeof(TextAnnotation)},
+            { "BoxAnnotation", typeof(BoxAnnotation)},
+            { "HorizontalLineAnnotation", typeof(HorizontalLineAnnotation)},
+            { "VerticalLineAnnotation", typeof(VerticalLineAnnotation)},
+            { "AxisMarkerAnnotation", typeof(AxisMarkerAnnotation)},
+            { "MyCustomAnnotation", typeof(MyCustomAnnotation)}
+        };
+
+        public CreateAnnotationsDynamically()
+        {
+            InitializeComponent();
+        }
+
+        void CreateAnnotationsDynamicallyLoaded(object sender, RoutedEventArgs e)
+        {
+            var dataSeries = new OhlcDataSeries<DateTime, double>();
+
+            var marketDataService = new MarketDataService(DateTime.Now, 5, 5);
+            var data = marketDataService.GetHistoricalData(200);
+            dataSeries.Append(data.Select(x => x.DateTime), data.Select(x => x.Open), data.Select(x => x.High), data.Select(x => x.Low), data.Select(x => x.Close));
+
+            sciChart.RenderableSeries[0].DataSeries = dataSeries;
+            pointerButton.IsChecked = true;
+        }
+
+        private void OnDeleteSelectedAnnotationsClick(object sender, RoutedEventArgs e)
+        {
+            var selectedAnnotations = sciChart.Annotations.Where(annotation=>annotation.IsSelected).ToList();
+
+            foreach(var selectedAnnotation in selectedAnnotations)
+            {
+                sciChart.Annotations.Remove(selectedAnnotation);
+            }
+        }
+
+        private void OnAnnotationTypeChanged(object sender, RoutedEventArgs e)
+        {
+            var annotationType = (sender as Control).Tag.ToString();
+
+            var type = _annotationTypes[annotationType];
+
+            var resourceName = String.Format("{0}Style", type.Name);
+            if (Resources.Contains(resourceName))
+            {
+                annotationCreation.AnnotationStyle = (Style)Resources[resourceName];
+            }
+
+            annotationCreation.AnnotationType = type;
+        }
+
+        private void OnAnnotationCreated(object sender, EventArgs e)
+        {
+            var newAnnotation = (annotationCreation.Annotation as AnnotationBase);
+            if (newAnnotation != null)
+            {
+                newAnnotation.IsEditable = true;
+                newAnnotation.CanEditText = true;
+            }
+            pointerButton.IsChecked = true;
+        }
+
+        private void OnEditingEnabled(object sender, RoutedEventArgs e)
+        {
+            if (annotationCreation!=null)
+            annotationCreation.IsEnabled = false;
+
+            foreach (var annotation in sciChart.Annotations)
+            {
+                annotation.IsEditable = true;
+            }
+        }
+
+        private void OnEditDisabled(object sender, RoutedEventArgs e)
+        {
+            annotationCreation.IsEnabled = true;
+    }
+    }
+}

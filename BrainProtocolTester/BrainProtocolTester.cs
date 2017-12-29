@@ -66,9 +66,15 @@ namespace BrainProtocolTester
             int totalReceived = 0;
             BrainDeviceManager.SampleDataStream.Subscribe(tuple =>
             {
-                //var (order, datas, arr) = tuple;
+                var (order, datas, arr) = tuple;
                 //Console.Write($" {order} ");
+                var passTimes=BrainDevState.PassTimeMs(currentState.SampleRate, totalReceived)/1000;
+                var intArr = datas.CopyToArray();
+                var val = intArr[0];
+                var voltage = BitDataConverter.Calculatevoltage(val,4.5f, currentState.Gain);
                 totalReceived++;
+                AppLogger.Debug($"passTimes:{passTimes},val:{val},voltage:{voltage}");
+
                 //AppLogger.Debug($"order:{order}");
                 //AppLogger.Debug($"converted values:{datas.Show()}");
                 //AppLogger.Debug($"original datas:{arr.Show()}");

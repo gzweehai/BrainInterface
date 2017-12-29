@@ -1,0 +1,23 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>ManipulateSeries</ChartGroup>
+  <Title>Change Render Series Type</Title>
+  <View>Examples/IWantTo/ManipulateSeries/ChangeRenderableSeriesTypeExampleView.xaml</View>
+  <ViewModel/>
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoChangeRenderableSeriesType.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/line_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>Demonstrates how to change the type of a RenderableSeries (e.g. change Line to Column, to Mountain) using the SciChart API</ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Change Render Series Type&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Demonstrates how to change how a series type is rendered in code.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Click on a series to select it. With the series selected, change the Series Type via the dropdown.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Note this example uses the HitTest API with interpolation to allow selecting of a series via mouse-click anywhere on the line, column or area. &lt;/Run&gt;
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/ManipulateSeries/ChangeRenderableSeriesTypeExampleView.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/ManipulateSeries/ChangeRenderableSeriesTypeExampleView.xaml.cs.txt</string>
+  </CodeFiles>
+</ExampleDefinition>

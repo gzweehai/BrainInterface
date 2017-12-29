@@ -1,0 +1,29 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>CreateAMultiSeriesChart</ChartGroup>
+  <Title>Stacked Bar Chart</Title>
+  <View>Examples/IWantTo/CreateMultiseriesChart/StackedBarChartExampleView.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoStackedBarChart.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/stackedcolumn_icon.png</IconPath>
+  <ChartTypes>Column</ChartTypes>
+  <ToolTipDescription>Shows how to create stacked  bar chart</ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Stacked Bar Chart&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Generates a Stacked Bar chart in code-behind. The StackedColumnRenderableSeries can be used to render columns stacked one above another, side by side, or a Left or Right aligned Bar Chart.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Columns are rendered using the SeriesColor (outline) and FillBrush (fill).&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontWeight="Bold" FontStyle="Italic"&gt;Tip!&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt;Do you need to change the width of the column? Try setting DataPointWidth from 0.0 to 1.0. This alters how much space the column takes up.&lt;/Run&gt;
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/CreateMultiseriesChart/StackedBarChartExampleView.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/CreateMultiseriesChart/StackedBarChartExampleView.xaml.cs.txt</string>
+  </CodeFiles>
+  <Features>
+
+  </Features>
+</ExampleDefinition>
+

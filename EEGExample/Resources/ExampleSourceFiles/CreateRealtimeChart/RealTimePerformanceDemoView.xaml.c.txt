@@ -1,0 +1,320 @@
+﻿using System;
+using System.Diagnostics;
+using System.Timers;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using Abt.Controls.SciChart.Example.Common;
+using Abt.Controls.SciChart.Example.Data;
+using Abt.Controls.SciChart.Model.DataSeries;
+using Abt.Controls.SciChart.Numerics;
+using Abt.Controls.SciChart.Visuals;
+using Abt.Controls.SciChart.Visuals.Axes;
+using Abt.Controls.SciChart.Visuals.RenderableSeries;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.CreateRealtimeChart
+{
+    public partial class RealTimePerformanceDemoView : UserControl, IExampleAware
+    {
+        private Random _random;
+        private bool _running;
+        private MovingAverage _maLow;
+		private MovingAverage _maHigh;
+		private Stopwatch _stopWatch;
+		private MovingAverage _fpsAverage;
+		private double _lastFrameTime;
+
+        private const int MaxCount = 10000000; // Max number of points to draw before demo stops
+        private const int BufferSize = 1000; // Number of points to append to each channel each tick
+        private const int TimerInterval = 10; // Interval of the timer to generate data in ms
+
+        // X, Y buffers used to buffer data into the Scichart in blocks of BufferSize
+        // This gives an increase in rendering throughput over one off appends of X, Y points
+		private int[] xBuffer = new int[BufferSize];
+		private float[] yBuffer = new float[BufferSize];
+		private float[] maLowBuffer = new float[BufferSize];
+		private float[] maHighBuffer = new float[BufferSize];
+
+        private Timer _timer;
+        private TimedMethod _startDelegate;
+		private XyDataSeries<int, float> _mainSeries;
+		private XyDataSeries<int, float> _maLowSeries;
+		private XyDataSeries<int, float> _maHighSeries;
+
+        public RealTimePerformanceDemoView()
+        {
+            InitializeComponent();
+
+            resamplingCombo.Items.Add(ResamplingMode.None);
+            resamplingCombo.Items.Add(ResamplingMode.MinMax);
+            resamplingCombo.Items.Add(ResamplingMode.Mid);
+            resamplingCombo.Items.Add(ResamplingMode.Min);
+            resamplingCombo.Items.Add(ResamplingMode.Max);
+            resamplingCombo.Items.Add(ResamplingMode.Auto);
+			resamplingCombo.SelectedItem = ResamplingMode.Auto;
+
+            strokeCombo.Items.Add(1);
+            strokeCombo.Items.Add(2);
+            strokeCombo.Items.Add(3);
+            strokeCombo.Items.Add(4);
+            strokeCombo.Items.Add(5);
+            strokeCombo.SelectedItem = 1;
+
+            // Used purely for FPS reporting
+            sciChart.Rendered += OnSciChartRendered;
+        }
+
+        private void DataAppendLoop()
+        {
+            // By nesting multiple updates inside a SuspendUpdates using block, you get one redraw at the end
+            using (sciChart.SuspendUpdates())
+            {
+                // Preload previous value with k-1 sample, or 0.0 if the count is zero
+				int xValue = _mainSeries.Count > 0 ? _mainSeries.XValues[_mainSeries.Count - 1] : 0;
+				double yValue = _mainSeries.Count > 0 ? _mainSeries.YValues[_mainSeries.Count - 1] : 10.0f;
+
+                // Add N points at a time. We want to get to the higher point counts 
+                // quickly to demonstrate performance. 
+                // Also, it is more efficient to buffer and block update the chart
+                // even if you use SuspendUpdates due to the overhead of calculating min, max
+                // for a series
+                for (int i = 0; i < BufferSize; i++)
+                {
+                    // Generate a new X,Y value in the random walk and buffer
+                    xValue = xValue + 1;
+					yValue = (double)(yValue + (_random.NextDouble() - 0.5));
+
+                    xBuffer[i] = xValue;
+                    yBuffer[i] = (float)yValue;
+
+                    // Update moving averages
+					maLowBuffer[i] = (float)_maLow.Push(yValue).Current;
+					maHighBuffer[i] = (float)_maHigh.Push(yValue).Current;
+                }
+
+                // Append block of values to all three series
+                _mainSeries.Append(xBuffer, yBuffer);
+                _maLowSeries.Append(xBuffer, maLowBuffer);
+                _maHighSeries.Append(xBuffer, maHighBuffer);
+            }
+        }
+
+        private void OnSciChartRendered(object sender, EventArgs e)
+        {
+			// Compute the render time
+			double frameTime = _stopWatch.ElapsedMilliseconds;
+			double delta = frameTime - _lastFrameTime;
+			double fps = 1000.0 / delta;
+
+			// Push the fps to the movingaverage, we want to average the FPS to get a more reliable reading
+			if (!double.IsInfinity(fps))
+			{
+				_fpsAverage.Push(fps);
+			}
+
+			// Render the fps to the screen
+			fpsCounter.Text = double.IsNaN(_fpsAverage.Current) ? "-" : string.Format("{0:0}", _fpsAverage.Current);
+
+			// Render the total point count (all series) to the screen
+			int numPoints = 3 * _mainSeries.Count;
+			pointCount.Text = string.Format("{0:n0}", numPoints);
+
+			if (numPoints > MaxCount)
+			{
+				this.PauseButton_Click(this, null);
+			}
+
+			_lastFrameTime = frameTime;
+		}
+
+        private void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            Start();
+
+            startButton.IsEnabled = false;
+            pauseButton.IsEnabled = true;
+            resetButton.IsEnabled = true;
+        }
+
+        private void PauseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Pause();
+
+            startButton.IsEnabled = true;
+            pauseButton.IsEnabled = false;
+            resetButton.IsEnabled = true;
+        }
+
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            Reset();
+
+            startButton.IsEnabled = true;
+            pauseButton.IsEnabled = false;
+            resetButton.IsEnabled = false;
+        }
+
+        private void Start()
+        {
+            if (!_running)
+            {
+                EnableInteractivity(false);
+				_running = true;
+				_stopWatch.Start();
+                _timer = new Timer(TimerInterval);
+                _timer.Elapsed += OnTick;
+                _timer.AutoReset = true;
+                _timer.Start();
+            }
+
+            sciChart.InvalidateElement();
+        }
+
+        private void Pause()
+        {
+            if (_running)
+            {
+                EnableInteractivity(true);
+                _running = false;
+                _timer.Stop();
+                _timer.Elapsed -= OnTick;
+                _timer = null;
+            }
+
+            sciChart.InvalidateElement();
+        }
+
+        private void Reset()
+        {
+            if (_running)
+            {
+                Pause();
+            }
+
+            using (sciChart.SuspendUpdates())
+            {
+                var yRange = sciChart.YAxis.VisibleRange;
+                var xRange = sciChart.XAxis.VisibleRange;
+
+                renderableSeries0 = (FastLineRenderableSeries) sciChart.RenderableSeries[0];
+                renderableSeries1 = (FastLineRenderableSeries) sciChart.RenderableSeries[1];
+                renderableSeries2 = (FastLineRenderableSeries) sciChart.RenderableSeries[2];
+
+                // Create three DataSeries
+				_mainSeries = new XyDataSeries<int, float>();
+				_maLowSeries = new XyDataSeries<int, float>();
+				_maHighSeries = new XyDataSeries<int, float>();
+
+                renderableSeries0.DataSeries = _mainSeries;
+                renderableSeries1.DataSeries = _maLowSeries;
+                renderableSeries2.DataSeries = _maHighSeries;
+
+                EnableInteractivity(false);
+                _maLow = new MovingAverage(200);
+				_maHigh = new MovingAverage(1000);
+				_fpsAverage = new MovingAverage(50);
+                _random = new Random((int) (DateTime.Now.Ticks));
+				_lastFrameTime = 0;
+				_stopWatch = new Stopwatch();
+
+                if (_timer != null)
+                {
+                    _timer.Elapsed -= OnTick;
+                    _timer = null;
+                }
+
+                sciChart.YAxis.VisibleRange = yRange;
+                sciChart.XAxis.VisibleRange = xRange;
+            }
+        }
+
+        private void OnTick(object sender, EventArgs e)
+        {
+            // Ensure only one timer Tick processed at a time
+            lock (_timer)
+            {
+                DataAppendLoop();
+            }
+        }
+
+        private void EnableInteractivity(bool enable)
+        {
+            if (!enable)
+            {
+                sciChart.XAxis.AutoRange = AutoRange.Always;
+                sciChart.YAxis.AutoRange = AutoRange.Always;
+            }
+            else
+            {
+                sciChart.XAxis.AutoRange = AutoRange.Once;
+                sciChart.YAxis.AutoRange = AutoRange.Once;
+            }
+
+            sciChart.ChartModifier.IsEnabled = enable;
+        }
+
+        
+        public void OnExampleExit()
+        {
+            // Manages the state of the example on exit
+            if (_startDelegate != null)
+            {
+                _startDelegate.Dispose();
+                _startDelegate = null;
+            }
+
+            Pause();
+        }
+
+        public void OnExampleEnter()
+        {
+            // Manages the state of example on enter
+            Reset();
+            _startDelegate = TimedMethod.Invoke(this.Start).After(500).Go();
+        }
+
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (renderableSeries0 == null || renderableSeries1 == null || renderableSeries2 == null)
+                return;
+
+            // batch updates for efficiency
+            using (sciChart.SuspendUpdates())
+            {
+                var mode = (ResamplingMode)resamplingCombo.SelectedItem;
+
+                // Set the resampling mode on all series
+                renderableSeries0.ResamplingMode = mode;
+                renderableSeries1.ResamplingMode = mode;
+                renderableSeries2.ResamplingMode = mode;
+
+                if (strokeCombo.SelectedItem == null)
+                    return;
+
+                var strokeThickness = (int)strokeCombo.SelectedItem;
+
+                // Set the StrokeThickness on all series
+                renderableSeries0.StrokeThickness = strokeThickness;
+                renderableSeries1.StrokeThickness = strokeThickness;
+                renderableSeries2.StrokeThickness = strokeThickness;
+            }
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (renderableSeries0 == null || renderableSeries1 == null || renderableSeries2 == null)
+                return;
+
+            // batch updates for efficiency
+            using (sciChart.SuspendUpdates())
+            {
+                // Set Antialiasing Flag on all series
+                bool useAA = ((CheckBox)sender).IsChecked == true;
+                renderableSeries0.AntiAliasing = useAA;
+                renderableSeries1.AntiAliasing = useAA;
+                renderableSeries2.AntiAliasing = useAA;
+            }
+        }
+    }
+}

@@ -1,0 +1,29 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>CreateAMultiSeriesChart</ChartGroup>
+  <Title>Stacked Columns (side by side)</Title>
+  <View>Examples/IWantTo/CreateMultiSeriesChart/StackedColumnChartSideBySideExampleView.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoStackedColumnSideBySideChart.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/stackedcolumn_icon.png</IconPath>
+  <ChartTypes>Column</ChartTypes>
+  <ToolTipDescription>Shows how to create stacked column chart</ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Stacked Columns (Side by Side)&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Generates a Stacked Column chart with multiple stacked groups to render the stacked groups side by side. The StackedColumnRenderableSeries can be used to render columns stacked one above another, side by side, or a Left or Right aligned Bar Chart.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Columns are rendered using the SeriesColor (outline) and FillBrush (fill).&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontWeight="Bold" FontStyle="Italic"&gt;Tip!&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt;Do you need to change the width of the column? Try setting DataPointWidth from 0.0 to 1.0. This alters how much space the column takes up.&lt;/Run&gt;
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/CreateMultiseriesChart/StackedColumnChartSideBySideExampleView.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/CreateMultiseriesChart/StackedColumnChartSideBySideExampleView.xaml.cs.txt</string>
+  </CodeFiles>
+  <Features>
+
+  </Features>
+</ExampleDefinition>
+

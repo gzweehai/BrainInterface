@@ -1,0 +1,31 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>CreateRealTimeCharts</ChartGroup>
+  <Title>RealTime Static Axis</Title>
+  <View>Examples/IWantTo/CreateRealtimeChart/RealTimeStaticAxis/RealTimeStaticAxis.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoRealTimeStaticAxis.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/area_icon.png</IconPath>
+  <ChartTypes>Mountain Line</ChartTypes>
+  <ToolTipDescription>
+    This example shows how to use static axis in charts. This example uses a background-thread Timer with variable interval of 20 ms to demonstrate the effect.
+  </ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;RealTime Static Axis&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;This example shows how to use static axis in charts. X axis made static so tick labels on axis are at the same positions. They just update label values according to displayed data. On chart there is also annotation collection with VerticalLineAnnotations.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontWeight="Bold" FontStyle="Italic"&gt;Tip!&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt;This example looks a lot better using the HighQualityRenderSurface due to its superior handling of transparency. For maximum performance use the HighSpeedRenderSurface.&lt;/Run&gt;
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/CreateRealtimeChart/RealTimeStaticAxis/RealTimeStaticAxis.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/CreateRealtimeChart/RealTimeStaticAxis/RealTimeStaticAxis.xaml.cs.txt</string>
+    <string>Resources/ExampleSourceFiles/CreateRealtimeChart/RealTimeStaticAxis/AnnotationGetXCoordinateConverter.cs.txt</string>
+  </CodeFiles>
+  <Features>
+    <Features>Realtime</Features>
+    <Features>New</Features>
+    <Features>WithAnnotations</Features>
+  </Features>
+</ExampleDefinition>

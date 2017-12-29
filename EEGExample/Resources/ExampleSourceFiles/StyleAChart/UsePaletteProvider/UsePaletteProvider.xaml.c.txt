@@ -1,0 +1,15 @@
+﻿using System.Windows.Controls;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.UsePaletteProvider
+{
+    /// <summary>
+    /// Interaction logic for UsingOfPaletteProvider.xaml
+    /// </summary>
+    public partial class UsePaletteProvider : UserControl
+    {
+        public UsePaletteProvider()
+        {
+            InitializeComponent();
+        }
+    }
+}

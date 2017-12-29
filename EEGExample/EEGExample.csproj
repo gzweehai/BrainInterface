@@ -1,0 +1,1067 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1544B864-EB5B-464C-B392-BAA01FC581A1}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>EEGExample</RootNamespace>
+    <AssemblyName>EEGExample</AssemblyName>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Abt.Controls.SciChart.Wpf, Version=3.1.0.4549, Culture=neutral, PublicKeyToken=b55dd9efe817e823, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Dll\Abt.Controls.SciChart.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Reactive.Core">
+      <HintPath>..\packages\System.Reactive.Core.3.1.1\lib\net46\System.Reactive.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Interfaces">
+      <HintPath>..\packages\System.Reactive.Interfaces.3.1.1\lib\net45\System.Reactive.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Linq">
+      <HintPath>..\packages\System.Reactive.Linq.3.1.1\lib\net46\System.Reactive.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.PlatformServices">
+      <HintPath>..\packages\System.Reactive.PlatformServices.3.1.1\lib\net46\System.Reactive.PlatformServices.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Reactive.Windows.Threading">
+      <HintPath>..\packages\System.Reactive.Windows.Threading.3.1.1\lib\net45\System.Reactive.Windows.Threading.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Controls.Input.Toolkit">
+      <HintPath>..\Dll\System.Windows.Controls.Input.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Interactivity, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\Dll\System.Windows.Interactivity.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="AttachableInteractionClasses.cs" />
+    <Compile Include="BooleanToVisibilityConverter.cs" />
+    <Compile Include="BoolToValueConverter.cs" />
+    <Compile Include="CollapsableGridSplitter.cs" />
+    <Compile Include="EEGExampleView.xaml.cs">
+      <DependentUpon>EEGExampleView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="HyperlinkButton.cs" />
+    <Compile Include="HyperlinkButtonBehavior.cs" />
+    <Compile Include="InverseBooleanConverter.cs" />
+    <Compile Include="ListBoxMouseWheelScrollingBehavior.cs" />
+    <Compile Include="MovingAverage.cs" />
+    <Compile Include="PriceBar.cs" />
+    <Compile Include="SciChartExampleToolbar.cs" />
+    <Compile Include="TimedMethod.cs" />
+    <Compile Include="TransitioningFrame.cs" />
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="BaseViewModel.cs" />
+    <Compile Include="EEGChannelViewModel.cs" />
+    <Page Include="EEGExampleView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="EEGExampleViewModel.cs" />
+    <Compile Include="IExampleAware.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <Page Include="Themes\ExpressionDark.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ModifyAxisBehaviour\VerticallyStackedAxes.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ModifyAxisBehaviour\VerticallyStackedAxes.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleDefinitions\AnnotationsInXamlExampleDefinition.xml" />
+    <EmbeddedResource Include="Resources\ExampleDefinitions\InteractionWithAnnotationsExampleDefinition.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\VerticallyStackedAxesExampleDefinition.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\GapsInSeries.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\GapsInSeries.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleDefinitions\GapsInSeriesExampleDefinition.xml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+    <Page Include="Resources\Xaml\Styles\AutoCompleteBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Xaml\Styles\Brushes.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Xaml\Styles\Button.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Xaml\Styles\ExampleStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Xaml\Styles\ListBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Xaml\Styles\ListBoxItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Xaml\Styles\SciChartExampleToolbar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Xaml\Styles\TabControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Xaml\Styles\TabItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Xaml\Styles\TextBlock.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Xaml\Styles\ToggleButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Resources\Xaml\Styles\ToolTip.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Xaml\Styles\TransitioningFrame.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Xaml\Styles\TreeViewItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <EmbeddedResource Include="Resources\EURUSD_Daily.csv" />
+    <EmbeddedResource Include="Resources\EURUSD_Hourly.csv" />
+    <EmbeddedResource Include="Resources\INDU_Daily.csv" />
+    <EmbeddedResource Include="Resources\AcousticPlots.csv" />
+    <Resource Include="Resources\Fonts\NEUROPOL.ttf" />
+    <Resource Include="Resources\Images\fit_to_size.png" />
+    <Resource Include="Resources\Images\media_pause.png" />
+    <Resource Include="Resources\Images\media_play_green.png" />
+    <Resource Include="Resources\Images\media_stop_red.png" />
+    <Resource Include="Resources\Images\selection.png" />
+    <Resource Include="Resources\Images\selection_view.png" />
+    <Resource Include="Resources\Images\view_1_1.png" />
+    <Resource Include="Resources\Images\camera2.png" />
+    <Resource Include="Resources\Images\hexgridgenerated.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\pan.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\rollover.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\cursor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\zoom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\br_next.png" />
+    <Resource Include="Resources\Images\chart_line_2.png" />
+    <Resource Include="Resources\Images\cog.png" />
+    <Resource Include="Resources\Images\cursor_arrow.png" />
+    <Resource Include="Resources\Images\cursor_drag_arrow.png" />
+    <Resource Include="Resources\Images\cursor_drag_arrow_2.png" />
+    <Resource Include="Resources\Images\cursor_drag_hand.png" />
+    <Resource Include="Resources\Images\cursor_hand.png" />
+    <Resource Include="Resources\Images\cursor_V_split.png" />
+    <Resource Include="Resources\Images\kservices.png" />
+    <Resource Include="Resources\Images\media_controls_dark_stop.png" />
+    <Resource Include="Resources\Images\playback_pause.png" />
+    <Resource Include="Resources\Images\playback_stop.png" />
+    <Resource Include="Resources\Images\sq_br_next.png" />
+    <Resource Include="Resources\Images\target.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Backgrounds\HomeBackground.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\back_tb.png" />
+    <Resource Include="Resources\Images\buy_tb.png" />
+    <Resource Include="Resources\Images\contact_tb.png" />
+    <Resource Include="Resources\Images\home_tb.png" />
+    <Resource Include="Resources\Images\next_tb.png" />
+    <Resource Include="Resources\Images\tutorials_tb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\scichartlogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleIcons\area_icon.png" />
+    <Resource Include="Resources\Images\ExampleIcons\candlestick_icon.png" />
+    <Resource Include="Resources\Images\ExampleIcons\column_icon.png" />
+    <Resource Include="Resources\Images\ExampleIcons\line_icon.png" />
+    <Resource Include="Resources\Images\ExampleIcons\scatter_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoOscilloscope.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoRealtimeUpdates.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoSciTrader.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoColumn.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoCandlestick.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoEEG.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoFIFO.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoLine.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoLinearRegression.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoMultiAxis.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoMountain.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoPointMarkers.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoTradeMarkers.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\ExampleSourceFiles\LinkMultipleCharts\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoScatter.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\16-Channel EEG.xml" />
+    <EmbeddedResource Include="Resources\ExampleDefinitions\Candlestick chart.xml" />
+    <EmbeddedResource Include="Resources\ExampleDefinitions\Column chart.xml" />
+    <EmbeddedResource Include="Resources\ExampleDefinitions\FIFO %28Scrolling%29 Charts.xml" />
+    <EmbeddedResource Include="Resources\ExampleDefinitions\Hit Test Datapoints.xml" />
+    <EmbeddedResource Include="Resources\ExampleDefinitions\Line and Scatter Chart.xml" />
+    <EmbeddedResource Include="Resources\ExampleDefinitions\CreateLineChartExampleDefinition.xml" />
+    <EmbeddedResource Include="Resources\ExampleDefinitions\Mountain chart.xml" />
+    <EmbeddedResource Include="Resources\ExampleDefinitions\Oscilloscope.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\DatapointMarkersExampleDefinition.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\Performance Demo.xml" />
+    <EmbeddedResource Include="Resources\ExampleDefinitions\Scatter chart.xml" />
+    <EmbeddedResource Include="Resources\ExampleDefinitions\SciChart Trader.xml" />
+    <EmbeddedResource Include="Resources\ExampleDefinitions\Trade Markers.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\OverlayTradeMarkers\TradeOverlayExampleView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\LineAndScatterExampleView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\CandlestickChartExampleView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\ColumnChartExampleView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\MountainChartExampleView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\ScatterChartExampleView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\InspectDatapoints\HitTestDatapoints.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\SeeFeaturedApplication\Oscilloscope\OscilloscopeView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\SeeFeaturedApplication\SciTrader\SciTraderView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\OverlayTradeMarkers\TradeOverlayExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\OverlayTradeMarkers\TradeOverlayExampleViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\LineAndScatterExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\LineAndScatterExampleViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\CandlestickChartExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\ColumnChartExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\MountainChartExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\ScatterChartExampleView.xaml.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\InspectDatapoints\HitTestDatapoints.xaml.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\SeeFeaturedApplication\Oscilloscope\OscilloscopeView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\SeeFeaturedApplication\Oscilloscope\OscilloscopeViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\SeeFeaturedApplication\SciTrader\IsChartTypeConverter.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\SeeFeaturedApplication\SciTrader\SciTraderView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\SeeFeaturedApplication\SciTrader\SciTraderViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\RealtimeFifoChartView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\RealtimeFifoChartView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\RealTimePerformanceDemoView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\RealTimePerformanceDemoView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\EEGChannelsDemo\EEGChannelViewModel.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\EEGChannelsDemo\EEGExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\EEGChannelsDemo\EEGExampleView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\EEGChannelsDemo\EEGExampleViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\LeftRightYAxisExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ModifyAxisBehaviour\LeftRightYAxes.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ModifyAxisBehaviour\LeftRightYAxes.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ModifyAxisBehaviour\LogarithmicAxisView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ModifyAxisBehaviour\LogarithmicAxisView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\MultipleLinesView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\MultipleLinesView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\MultipleLinesExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\CandlestickWithLinesView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\CandlestickWithLinesView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\CandlestickAndLinesExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\LogarithmicAxisExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\UseSciChartWithMvvm\BindToDataSeriesSetView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\UseSciChartWithMvvm\BindToDataSeriesSetView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\UseSciChartWithMvvm\BindToDataSeriesSetViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\BindToDataSeriesSetExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\BindMultipleChartsExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\UseSciChartWithMvvm\BindMultipleCharts\BindMultipleChartsGroupView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\UseSciChartWithMvvm\BindMultipleCharts\BindMultipleChartsGroupView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\UseSciChartWithMvvm\BindMultipleCharts\BindMultipleChartsGroupViewModel.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\UseSciChartWithMvvm\BindMultipleCharts\ChartView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\UseSciChartWithMvvm\BindMultipleCharts\ChartView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\UseSciChartWithMvvm\BindMultipleCharts\ChartViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\MouseDragToPanExampleDefinition.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ZoomAndPanAChart\MouseDragToPan.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ZoomAndPanAChart\MouseDragToPan.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ZoomAndPanAChart\MouseDragToPanXOrY.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ZoomAndPanAChart\MouseDragToPanXOrY.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\MouseDragToPanXorYExampleDefinition.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ZoomAndPanAChart\DragAxisToScale.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ZoomAndPanAChart\DragAxisToScale.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\DragAxisToScaleExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ZoomAndPanAChart\DragAreaToZoom.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ZoomAndPanAChart\DragAreaToZoom.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\DragAreaToZoomExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\MouseWheelToZoomPanExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ZoomAndPanAChart\MouseWheelToZoomPan.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ZoomAndPanAChart\MouseWheelToZoomPan.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\RolloverFeedbackExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\DatapointMarkersView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\DatapointMarkersView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\InspectDatapoints\RolloverFeedback.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\InspectDatapoints\RolloverFeedback.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\QuadLeftRightAxisExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ModifyAxisBehaviour\QuadLeftRightAxes.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ModifyAxisBehaviour\QuadLeftRightAxes.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\StyleAChart\ChangeTheme.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\StyleAChart\ChangeTheme.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\ChangeThemeExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ModifyAxisBehaviour\ModifyAxisProperties.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ModifyAxisBehaviour\ModifyAxisProperties.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\ModifyAxisPropertiesExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icon32.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\XamlStylingExampleDefinition.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\StyleAChart\XamlStyling.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\StyleAChart\XamlStyling.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\RealTimeCursorsExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\RealTimeCursors.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\RealTimeCursors.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoCandlestickAndLines.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoDragAxisToScale.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoDragToPan.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoDragToZoom.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoHitTest.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoLeftRightAxis.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoLineAndScatter.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoLogarithmicAxis.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoModifyAxisProperties.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoMousewheel.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoMultipleChartsMvvm.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoMultipleLines.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoPanXorYDirection.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoQuadAxis.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoRealtimeCursors.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoRolloverModifier.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoSingleChartMvvm.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoThemeManager.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoXamlStyling.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\SeriesSelectionExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\InspectDatapoints\SeriesSelectionExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\InspectDatapoints\SeriesSelectionExampleView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoSeriesSelect.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoGapsInSeries.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\SpectrumAnalyzerExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\SeeFeaturedApplication\SpectrumAnalyzer\FFT.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\SeeFeaturedApplication\SpectrumAnalyzer\SpectrumAnalyzerExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\SeeFeaturedApplication\SpectrumAnalyzer\SpectrumAnalyzerExampleView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\SeeFeaturedApplication\SpectrumAnalyzer\SpectrumAnalyzerExampleViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoSpectrumAnalyzer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\ECGMonitorExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoECGMonitor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\SeeFeaturedApplication\ECGMonitor\BeatToScaleConverter.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\SeeFeaturedApplication\ECGMonitor\ECGMonitorView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\SeeFeaturedApplication\ECGMonitor\ECGMonitorView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\SeeFeaturedApplication\ECGMonitor\ECGMonitorViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\ImpulseChartExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleIcons\impulse_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoImpulse.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\ImpulseChartExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\ImpulseChartExampleView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\AddRemoveSeriesExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ManipulateSeries\AddRemoveDataSeriesExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ManipulateSeries\AddRemoveDataSeriesExampleView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\ChangeRenderableSeriesTypeExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ManipulateSeries\ChangeRenderableSeriesTypeExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ManipulateSeries\ChangeRenderableSeriesTypeExampleView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\InteractionWithAnnotations.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\InteractionWithAnnotations.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\BandSeriesExampleDefinition.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\BandSeriesChartExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\BandSeriesChartExampleView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoBandSeries.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleIcons\band_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\OverlayTradeMarkers\BuyMarkerAnnotation.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\OverlayTradeMarkers\BuyMarkerAnnotation.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\OverlayTradeMarkers\SellMarkerAnnotation.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\OverlayTradeMarkers\SellMarkerAnnotation.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoAnnotationsAreEasy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\AnnotationsAreEasy.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\AnnotationsAreEasy.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\CreateSimpleStockChart.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateStockCharts\CreateSimpleStockChart.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateStockCharts\CreateSimpleStockChart.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\CreateAnnotationDynamicallyExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\CreateAnnotationsDynamically\CreateAnnotationsDynamically.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\CreateAnnotationsDynamically\CreateAnnotationsDynamically.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\CreateRealTimeTickingStockChartExampleDefinition.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\DragThresholdMvvm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\DragHorizontalThreshold\DragThresholdMvvm.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\DragHorizontalThreshold\DragThresholdMvvm.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\DragHorizontalThreshold\DragThresholdMvvmViewModel.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\AnnotateAChart\DragHorizontalThreshold\RedIfOverThresholdPaletteProvider.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoThreshold.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\ScrollChartUsingOverviewExampleView.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ZoomAndPanAChart\ScrollChartUsingOverviewControl.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ZoomAndPanAChart\ScrollChartUsingOverviewControl.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoCreateAStockChart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoRealTimeStockChart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoOverviewControl.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoCreateAnnotationsDynamically.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoInteractionWithAnnotations.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoAddRemoveDataSeries.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoChangeRenderableSeriesType.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\FeatureIcons\featureAnnotations.png" />
+    <Resource Include="Resources\Images\FeatureIcons\featureAxis.png" />
+    <Resource Include="Resources\Images\FeatureIcons\featureBandChart.png" />
+    <Resource Include="Resources\Images\FeatureIcons\featureCandlestickChart.png" />
+    <Resource Include="Resources\Images\FeatureIcons\featureColumnChart.png" />
+    <Resource Include="Resources\Images\FeatureIcons\featureCursors.png" />
+    <Resource Include="Resources\Images\FeatureIcons\featureDualAxis.png" />
+    <Resource Include="Resources\Images\FeatureIcons\featureImpulseChart.png" />
+    <Resource Include="Resources\Images\FeatureIcons\featureLineChart.png" />
+    <Resource Include="Resources\Images\FeatureIcons\featureLogAxis.png" />
+    <Resource Include="Resources\Images\FeatureIcons\featureMountainChart.png" />
+    <Resource Include="Resources\Images\FeatureIcons\featureMvvm.png" />
+    <Resource Include="Resources\Images\FeatureIcons\featureNew.png" />
+    <Resource Include="Resources\Images\FeatureIcons\featureQuadAxis.png" />
+    <Resource Include="Resources\Images\FeatureIcons\featureRealtime.png" />
+    <Resource Include="Resources\Images\FeatureIcons\featureScatterChart.png" />
+    <Resource Include="Resources\Images\FeatureIcons\featureXamlStyling.png" />
+    <Resource Include="Resources\Images\FeatureIcons\featureZoomingAndPanning.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Backgrounds\BlackSteel.jpg" />
+    <Resource Include="Resources\Images\Backgrounds\ECG.jpg" />
+    <Resource Include="Resources\Images\Backgrounds\Oscilloscope.jpg" />
+    <Resource Include="Resources\Images\Backgrounds\PerfDemo.jpg" />
+    <Resource Include="Resources\Images\Backgrounds\SpecAnalyzer.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateStockCharts\MultiPane\CreateMultiPaneStockCharts.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateStockCharts\MultiPane\CreateMultiPaneStockCharts.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateStockCharts\MultiPane\CreateMultiPaneStockChartsViewModel.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateStockCharts\RealtimeMvvm\CreateRealTimeTickingStockChart.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateStockCharts\RealtimeMvvm\CreateRealTimeTickingStockChart.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateStockCharts\RealtimeMvvm\CreateRealTimeTickingStockChartViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateStockCharts\MultiPane\BaseChartPaneViewModel.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateStockCharts\MultiPane\PricePaneViewModel.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateStockCharts\MultiPane\VolumePaneViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateStockCharts\MultiPane\IndicatorPaneViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\CreateMultiPaneStockChartExampleDefinition.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\SciChartLogo_Dark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\step_line.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\SynchronizeMouseAcrossChartsExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ZoomAndPanAChart\SynchronizeMouseAcrossCharts.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ZoomAndPanAChart\SynchronizeMouseAcrossCharts.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ZoomAndPanAChart\SynchronizeMouseAcrossChartsViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoSyncMouseEvents.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\CreateDigitalMountainChartExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\CreateDigitalLineChartExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\DigitalLineChartExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\DigitalLineChartExampleView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\DigitalMountainChartExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\DigitalMountainChartExampleView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\LineChartExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\LineChartExampleView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\DigitalBandSeriesExampleDefinition.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\DigitalBandSeriesChartExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\DigitalBandSeriesChartExampleView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\MultipleXAxesExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ModifyAxisBehaviour\MultipleXAxes.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ModifyAxisBehaviour\MultipleXAxes.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\VerticalChartsExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ModifyAxisBehaviour\VerticalCharts.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ModifyAxisBehaviour\VerticalCharts.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ModifyAxisBehaviour\MixedCharts.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\ModifyAxisBehaviour\MixedCharts.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\StackedColumnChart.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleIcons\stackedcolumn_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\StackedColumnSideBySideChart.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\StackedBarChart.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\StackedMountainChart.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleIcons\stackedarea_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\UsePointMarkers.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\StyleAChart\UsePointMarkers.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\StyleAChart\UsePointMarkers.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoPointMarkers2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\BubbleChart.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\BubbleChartExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\BubbleChartExampleView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoBubbleChart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleIcons\bubble_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\HeatmapChart.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\HeatMapExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\HeatMapExampleView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleIcons\heatmap_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoHeatmap.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\UsePaletteProvider.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\StyleAChart\UsePaletteProvider\SelectedRangePaletteProvider.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\StyleAChart\UsePaletteProvider\UsePaletteProvider.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\StyleAChart\UsePaletteProvider\UsePaletteProvider.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\StyleAChart\UsePaletteProvider\UsePaletteProviderViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\LineSeriesStylingExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\StyleAChart\LineSeriesStyling.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\StyleAChart\LineSeriesStyling.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\StyleAChart\LineSeriesStylingViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\StackedBarChartExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\StackedBarChartExampleView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\StackedColumnChartExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\StackedColumnChartExampleView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\StackedColumnChartSideBySideExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\StackedColumnChartSideBySideExampleView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\StackedMountainChartExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\StackedMountainChartExampleView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoVerticalCharts.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoStackedColumnChart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoStackedMountainChart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoStackedColumnSideBySideChart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoStepLine.png" />
+    <Resource Include="Resources\Images\ExampleImages\demoStepMountain.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoMultiXAxis.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoDashedLine.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoStackedBarChart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\ErrorSeriesExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoErrorBars.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\ErrorSeriesExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\ErrorSeriesExampleView.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\ErrorSeriesExampleViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleIcons\errorbars_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\FanChartExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\FanChartExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateMultiseriesChart\FanChartExampleView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleIcons\fanchart_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoFanChart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\BoxPlotExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\BoxPlotExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\BoxPlotExampleView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoBoxPlot.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\HeatmapChartWithTextInCells.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\HeatMapWithTextInCellsExampleView.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateSimpleChart\HeatMapWithTextInCellsExampleView.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoHeatmapWithText.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\UseHighQualityRenderingExampleDefinition.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\StyleAChart\UseHighQualityRendering.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\StyleAChart\UseHighQualityRendering.xaml.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\StyleAChart\UseHighQualityRenderingViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoHighQualityRasterizer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoPaletteProvider.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\RealTimeGhostedTracesExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\CircularBuffer.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\RealTimeGhostedTraces.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\RealTimeGhostedTraces.xaml.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoGhostedTraces.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\UsingSeriesValueModifierExampleDefinition.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\UsingSeriesValueModifier.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\UsingSeriesValueModifier.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoUsingSeriesValueModifier.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BrainCommon\BrainCommon.csproj">
+      <Project>{508d5173-a3a7-4ba8-8e24-fe8103141a5e}</Project>
+      <Name>BrainCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BrainNetwork\BrainNetwork.csproj">
+      <Project>{0A95E846-FDC6-4A00-A495-E2528E59E359}</Project>
+      <Name>BrainNetwork</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
+      <Project>{7713a1bd-a789-4f71-b713-d05dfe6a21c1}</Project>
+      <Name>DataAccess</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\SeriesTooltipsExampleDefinition.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\InspectDatapoints\SeriesTooltipsExample.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\InspectDatapoints\SeriesTooltipsExample.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\InspectDatapoints\SeriesTooltipsViewModel.c.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoSeriesTooltips.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoRealTimeStaticAxis.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\RealTimeStaticAxis.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoVerticalSliceModifier.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleDefinitions\SeriesVerticalSlicesExample.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\InspectDatapoints\SeriesVerticalSlicesExample.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\InspectDatapoints\SeriesVerticalSlicesExample.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\RealTimeStaticAxis\AnnotationGetXCoordinateConverter.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\RealTimeStaticAxis\RealTimeStaticAxis.xaml.c.txt" />
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\CreateRealtimeChart\RealTimeStaticAxis\RealTimeStaticAxis.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ExampleSourceFiles\StyleAChart\UsePointMarkersResourceDictionary.xaml.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoVerticallyStackedAxes.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\ExampleImages\demoCreateMultiPaneStockCharts.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

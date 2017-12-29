@@ -1,0 +1,30 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>CreateRealTimeCharts</ChartGroup>
+  <Title>RealTime Ghosted Traces</Title>
+  <View>Examples/IWantTo/CreateRealtimeChart/RealTimeGhostedTraces.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoGhostedTraces.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/line_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>This example shows persistence of old traces giving a 'ghosted' effect. As new series are drawn older series are made increasingly transparent until they become invisible. 
+    This example uses a background-thread Timer with variable interval of 20ms - 500ms to demonstrate the effect. 
+  </ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;RealTime Ghosted Traces&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;This example shows persistence of old traces giving a 'ghosted' effect. As new series are drawn older series are made increasingly transparent until they become invisible. &lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;c
+    &lt;Run FontSize="13" FontWeight="Bold" FontStyle="Italic"&gt;Tip!&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt;This example looks a lot better using the new HighQualityRenderSurface due to its superior handling of transparency. For maximum performance use the HighSpeedRenderSurface.&lt;/Run&gt;
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/CreateRealtimeChart/RealTimeGhostedTraces.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/CreateRealtimeChart/RealTimeGhostedTraces.xaml.cs.txt</string>
+    <string>Resources/ExampleSourceFiles/CreateRealtimeChart/CircularBuffer.cs.txt</string>
+  </CodeFiles>
+  <Features>
+    <Features>Realtime</Features>
+
+  </Features>
+</ExampleDefinition>

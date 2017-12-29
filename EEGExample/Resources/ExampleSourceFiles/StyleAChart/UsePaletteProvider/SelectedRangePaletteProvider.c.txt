@@ -1,0 +1,41 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using System.Windows.Media;
+using Abt.Controls.SciChart.Visuals.RenderableSeries;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.UsePaletteProvider
+{
+    public class SelectedRangePaletteProvider: IPaletteProvider
+    {
+        public AreaSelection AreaSelection { get; set; }
+
+        public Color LineSeriesColor { get; set; }
+
+        public Color ColumnSeriesColor { get; set; }
+
+        public Color CandlesticSeriesColor { get; set; }
+
+        public Color? OverrideColor(IRenderableSeries series, double xValue, double openValue, double highValue, double lowValue, double closeValue)
+        {
+            return GetOverriddenColor(xValue, CandlesticSeriesColor);
+        }
+
+        public Color? GetColor(IRenderableSeries series, double xValue, double yValue)
+        {
+            return GetOverriddenColor(xValue, series is FastLineRenderableSeries ? LineSeriesColor : ColumnSeriesColor);
+        }
+
+        public Color? GetOverriddenColor(double xValue, Color newColor)
+        {
+            if (AreaSelection != null && AreaSelection.Contains(xValue))
+            {
+                return newColor;
+            }
+
+            return null;
+        }
+    }
+}

@@ -1,0 +1,32 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>ZoomAndPanAChart</ChartGroup>
+  <Title>Sync Multi Chart Mouse</Title>
+  <View>Examples/IWantTo/ZoomAndPanAChart/SynchronizeMouseAcrossCharts.xaml</View>
+  <ViewModel>Examples.IWantTo.ZoomAndPanAChart.SynchronizeMouseAcrossChartsViewModel</ViewModel>
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoSyncMouseEvents.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/line_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>Demonstrates synchronizing of mouse events across multiple charts by using the MouseManager.MouseEventGroup attached property
+    
+    Two SciChartSurface panes are created and arranged vertically, this example shows how to synchronize Zoom, Pan, Rollover and Cursor operations using MVVM to enable and disable modifiers
+  </ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Synchronize Multi Chart Mouse&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Showcases how to synchronize mouse events across multiple charts by using the MouseManager.MouseEventGroup attached property.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Two SciChartSurface panes are created and arranged vertically. This example shows how to synchronize Zoom, Pan, Rollover and Cursor operations using MVVM to enable anddisable ChartModifiers.&lt;/Run&gt;    
+  </Description>
+  <HelpText>
+    Select the toolbar buttons to enable and disable modifiers, then drag or mouse-move over the charts to see synchronization. 
+  </HelpText>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/ZoomAndPanAChart/SynchronizeMouseAcrossCharts.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/ZoomAndPanAChart/SynchronizeMouseAcrossCharts.xaml.cs.txt</string>
+    <string>Resources/ExampleSourceFiles/ZoomAndPanAChart/SynchronizeMouseAcrossChartsViewModel.cs.txt</string>
+  </CodeFiles>
+  <Features>
+    <Features>WithZoom</Features>
+    <Features>Mvvm</Features>
+  </Features>
+</ExampleDefinition>

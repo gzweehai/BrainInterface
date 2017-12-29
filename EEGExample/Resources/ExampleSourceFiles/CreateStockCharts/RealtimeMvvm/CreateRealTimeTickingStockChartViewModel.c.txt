@@ -1,0 +1,239 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Windows.Input;
+using System.Windows.Media;
+using Abt.Controls.SciChart.Example.Data;
+using Abt.Controls.SciChart.Example.MVVM;
+using Abt.Controls.SciChart.Model.DataSeries;
+using Abt.Controls.SciChart.Visuals.RenderableSeries;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.CreateStockCharts.RealtimeMvvm
+{
+    public class CreateRealTimeTickingStockChartViewModel : BaseViewModel, IExampleAware
+    {
+        private readonly ActionCommand _zoomModeCommand;
+        private readonly ActionCommand _panModeCommand;        
+        private readonly IMarketDataService _marketDataService;        
+        private readonly MovingAverage _sma50 = new MovingAverage(50);
+        private readonly double _barTimeFrame = TimeSpan.FromMinutes(5).TotalSeconds;
+        private bool _isPanEnabled;
+        private bool _isZoomEnabled;
+        private PriceBar _lastPrice;
+        private IndexRange _xVisibleRange;
+        private string _selectedSeriesStyle;
+        private int _selectedStrokeThickness = 1;
+        private ObservableCollection<IChartSeriesViewModel> _seriesViewModels = new ObservableCollection<IChartSeriesViewModel>();
+        private bool _useAntialiasing = true;
+
+        public CreateRealTimeTickingStockChartViewModel()
+        {
+            _zoomModeCommand = new ActionCommand(SetZoomMode);
+            _panModeCommand = new ActionCommand(SetPanMode);
+
+            IsPanEnabled = true;
+
+            // Market data service simulates live ticks. We want to load the chart with 150 historical bars
+            // then later do real-time ticking as new data comes in
+            _marketDataService = new MarketDataService(new DateTime(2000, 08, 01, 12, 00, 00), 5, 20);
+
+            // Add ChartSeriesViewModels for the candlestick and SMA series
+            var ds0 = new OhlcDataSeries<DateTime, double>();
+            _seriesViewModels.Add(new ChartSeriesViewModel(ds0, new FastOhlcRenderableSeries()));
+
+            var ds1 = new XyDataSeries<DateTime, double>();
+            _seriesViewModels.Add(new ChartSeriesViewModel(ds1, new FastLineRenderableSeries() { SeriesColor = Color.FromArgb(0xFF, 0xFF, 0xA5, 0x00) }));
+
+            // Append 150 historical bars to data series
+            var prices = _marketDataService.GetHistoricalData(100);           
+            ds0.Append(
+                prices.Select(x => x.DateTime),
+                prices.Select(x => x.Open),
+                prices.Select(x => x.High),
+                prices.Select(x => x.Low),
+                prices.Select(x => x.Close));
+            ds1.Append(prices.Select(x => x.DateTime), prices.Select(y => _sma50.Push(y.Close).Current));
+
+            SelectedSeriesStyle = "Candle";
+        }
+
+        public ObservableCollection<IChartSeriesViewModel> SeriesViewModels
+        {
+            get { return _seriesViewModels; }
+            set
+            {
+                _seriesViewModels = value;
+                OnPropertyChanged("SeriesViewModels");
+            }
+        }
+
+        public double BarTimeFrame { get { return _barTimeFrame; } }
+
+        public bool UseAntialiasing
+        {
+            get { return _useAntialiasing; }
+            set
+            {
+                _useAntialiasing = value;
+                SeriesViewModels[0].RenderSeries.AntiAliasing = _useAntialiasing;
+                OnPropertyChanged("UseAntialiasing");
+            }
+        }
+
+        public ICommand TickCommand 
+        { 
+            get
+            {
+                return new ActionCommand(() => OnNewPrice(_marketDataService.GetNextBar()));
+            } 
+        }
+
+        public ICommand StartUpdatesCommand { get { return new ActionCommand(() => _marketDataService.SubscribePriceUpdate(OnNewPrice)); } }
+
+        public ICommand StopUpdatesCommand { get { return new ActionCommand(() => _marketDataService.ClearSubscriptions()); } }
+
+        public ICommand ZoomModeCommand { get { return _zoomModeCommand; } }
+
+        public ICommand PanModeCommand { get { return _panModeCommand; } }
+
+        public IEnumerable<string> SeriesStyles { get { return new[] {"OHLC", "Candle", "Line", "Mountain"}; } }
+
+        public IEnumerable<int> StrokeThicknesses { get { return new[] {1, 2, 3, 4, 5}; }}
+
+        public IEnumerable<string> AllThemes { get { return ThemeManager.AllThemes; } }
+
+        public int SelectedStrokeThickness
+        {
+            get { return _selectedStrokeThickness;}
+            set 
+		    {
+			    if (_selectedStrokeThickness == value) return;
+			    _selectedStrokeThickness = value;
+                var priceSeries = SeriesViewModels[0];
+		        priceSeries.RenderSeries.StrokeThickness = value;
+			    OnPropertyChanged("SelectedStrokeThickness");
+		    }
+        }
+    
+
+        public string SelectedSeriesStyle
+        {
+            get { return _selectedSeriesStyle; }    
+            set
+            {
+                _selectedSeriesStyle = value;
+                OnPropertyChanged("SelectedSeriesStyle");
+
+                var priceSeries = SeriesViewModels[0];
+                if (_selectedSeriesStyle == "OHLC")
+                {
+                    priceSeries.RenderSeries = new FastOhlcRenderableSeries() { AntiAliasing = UseAntialiasing, StrokeThickness = _selectedStrokeThickness}; 
+                }                   
+                else if (_selectedSeriesStyle == "Candle")
+                {
+                    priceSeries.RenderSeries = new FastCandlestickRenderableSeries() { AntiAliasing = UseAntialiasing, StrokeThickness = _selectedStrokeThickness }; 
+                }
+                else if (_selectedSeriesStyle == "Line")
+                {
+                    priceSeries.RenderSeries = new FastLineRenderableSeries() { AntiAliasing = UseAntialiasing, StrokeThickness = _selectedStrokeThickness };
+                }
+                else if (_selectedSeriesStyle == "Mountain")
+                {
+                    priceSeries.RenderSeries = new FastMountainRenderableSeries() { AntiAliasing = UseAntialiasing, StrokeThickness = _selectedStrokeThickness }; 
+                }
+            }
+        }      
+
+        public IndexRange XVisibleRange
+        {
+            get { return _xVisibleRange; }
+            set
+            {
+                if (Equals(_xVisibleRange, value)) 
+                    return;
+                _xVisibleRange = value;
+                OnPropertyChanged("XVisibleRange");
+            }
+        }
+
+        public bool IsPanEnabled
+        {
+            get { return _isPanEnabled; }
+            set 
+            { 
+                _isPanEnabled = value;            
+                OnPropertyChanged("IsPanEnabled");
+            }
+        }
+
+        public bool IsZoomEnabled
+        {
+            get { return _isZoomEnabled; }
+            set
+            {
+                _isZoomEnabled = value;
+                OnPropertyChanged("IsZoomEnabled");
+            }
+        }        
+
+        private void OnNewPrice(PriceBar price)
+        {
+            // Ensure only one update processed at a time from multi-threaded timer
+            lock (this)
+            {
+                // Update the last price, or append? 
+                var ds0 = (IOhlcDataSeries<DateTime, double>) _seriesViewModels[0].DataSeries;
+                var ds1 = (IXyDataSeries<DateTime, double>) _seriesViewModels[1].DataSeries;
+
+                if (_lastPrice != null && _lastPrice.DateTime == price.DateTime)
+                {
+                    ds0.Update(price.DateTime, price.Open, price.High, price.Low, price.Close);
+                    ds1.Update(price.DateTime, _sma50.Update(price.Close).Current);
+                }
+                else
+                {
+                    ds0.Append(price.DateTime, price.Open, price.High, price.Low, price.Close);
+                    ds1.Append(price.DateTime, _sma50.Push(price.Close).Current);
+
+                    // If the latest appending point is inside the viewport (i.e. not off the edge of the screen)
+                    // then scroll the viewport 1 bar, to keep the latest bar at the same place
+                    if (XVisibleRange.Max > ds0.Count)
+                    {
+                        var existingRange = _xVisibleRange;
+                        var newRange = new IndexRange(existingRange.Min + 1, existingRange.Max + 1);
+                        XVisibleRange = newRange;
+                    }
+                }
+
+                _lastPrice = price;
+            }
+        }
+
+        private void SetPanMode()
+        {
+            IsPanEnabled = true;
+            IsZoomEnabled = false;
+        }
+
+        private void SetZoomMode()
+        {
+            IsPanEnabled = false;
+            IsZoomEnabled = true;
+        }        
+
+        
+        public void OnExampleExit()
+        {
+            // Prevents update event firing with new prices when user switches away from this example 
+            _marketDataService.ClearSubscriptions();
+        }
+
+        public void OnExampleEnter()
+        {
+            UseAntialiasing = false;
+        }
+
+    }
+}

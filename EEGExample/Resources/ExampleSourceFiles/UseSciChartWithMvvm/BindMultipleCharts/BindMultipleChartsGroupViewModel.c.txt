@@ -1,0 +1,46 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Abt.Controls.SciChart.Example.Data;
+using Abt.Controls.SciChart.Example.MVVM;
+using Abt.Controls.SciChart.Model.DataSeries;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.UseSciChartWithMvvm.BindMultipleCharts
+{
+    public class BindMultipleChartsGroupViewModel : BaseViewModel
+    {
+        private readonly ObservableCollection<ChartViewModel> _chartViewModels = new ObservableCollection<ChartViewModel>();
+        private readonly RandomWalkGenerator _dataSource = new RandomWalkGenerator();
+
+        public BindMultipleChartsGroupViewModel()
+        {
+            // Instantiate 9 ChartViewModels
+            for (int i = 0; i < 9; i++)
+            {
+                // Create a ChartViewModel          
+                var chartViewModel = new ChartViewModel();                
+
+                // Create the data-series
+                var dataSeries = new XyDataSeries<double, double>();
+
+                // Create data
+                var dummyXyData = _dataSource.GetRandomWalkSeries(1000);
+
+                // Append X,Y data
+                dataSeries.Append(dummyXyData.XData, dummyXyData.YData);
+
+                // Set the DataSeries on the ChartViewModel
+                chartViewModel.ChartData = dataSeries;
+
+                _chartViewModels.Add(chartViewModel);
+            }
+        }
+
+        // Expose N ChartViewModels for each ChartView to bind to
+        public ObservableCollection<ChartViewModel> ChartViewModels
+        {
+            get { return _chartViewModels; }
+        }
+    }
+}

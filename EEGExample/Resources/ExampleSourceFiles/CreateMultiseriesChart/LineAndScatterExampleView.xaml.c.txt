@@ -1,0 +1,12 @@
+﻿using System.Windows.Controls;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.CreateMultiseriesChart
+{
+    public partial class LineAndScatterExampleView : UserControl
+    {
+        public LineAndScatterExampleView()
+        {
+            InitializeComponent();
+        }
+    }
+}

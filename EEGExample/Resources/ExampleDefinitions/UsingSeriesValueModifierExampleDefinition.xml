@@ -1,0 +1,28 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>CreateRealTimeCharts</ChartGroup>
+  <Title>RealTime Series-Values</Title>
+  <View>Examples/IWantTo/CreateRealtimeChart/UsingSeriesValueModifier.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoUsingSeriesValueModifier.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/line_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>This shows the SeriesValueModifier applied to a real-time chart, to display the latest value of a series on the YAxis with an AxisMarkerAnnotation.
+  </ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Realtime Series=Values&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;This shows the SeriesValueModifier applied to a real-time chart, to display the latest value of a series on the YAxis with an AxisMarkerAnnotation.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontWeight="Bold" FontStyle="Italic"&gt;Tip!&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt;By default AxisMarkerAnnotations bind to the SeriesColor, IsVisible and AxisId properties of the RenderableSeries. You can override the style via the SeriesValueModifier.AxisMarkerStyle property&lt;/Run&gt;
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/CreateRealtimeChart/UsingSeriesValueModifier.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/CreateRealtimeChart/UsingSeriesValueModifier.xaml.cs.txt</string>
+  </CodeFiles>
+  <Features>
+    <Features>Realtime</Features>
+
+  </Features>
+</ExampleDefinition>

@@ -1,0 +1,46 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Abt.Controls.SciChart.Example.Data;
+using Abt.Controls.SciChart.Model.DataSeries;
+using Abt.Controls.SciChart.Visuals.RenderableSeries;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.CreateStockCharts.MultiPane
+{
+    public class MacdPaneViewModel : BaseChartPaneViewModel
+    {
+        public MacdPaneViewModel(CreateMultiPaneStockChartsViewModel parentViewModel, PriceSeries prices)
+            : base(parentViewModel)
+        {
+            IEnumerable<MacdPoint> macdPoints = prices.CloseData.Macd(12, 26, 9).ToList();
+            
+            var histogramDataSeries = new XyDataSeries<DateTime, double>();
+            histogramDataSeries.Append(prices.TimeData, macdPoints.Select(x => x.Divergence));
+            base.ChartSeriesViewModels.Add(new ChartSeriesViewModel(histogramDataSeries, new FastColumnRenderableSeries()));
+
+            var macdDataSeries = new XyyDataSeries<DateTime, double>();
+            macdDataSeries.Append(prices.TimeData, macdPoints.Select(x => x.Macd), macdPoints.Select(x => x.Signal));
+            base.ChartSeriesViewModels.Add(new ChartSeriesViewModel(macdDataSeries, new FastBandRenderableSeries() { Opacity = 0.7, StrokeThickness = 2}));
+
+            YAxisTextFormatting = "0.00";
+
+            Height = 100;
+        }
+    }
+
+    public class RsiPaneViewModel : BaseChartPaneViewModel
+    {
+        public RsiPaneViewModel(CreateMultiPaneStockChartsViewModel parentViewModel, PriceSeries prices)
+            : base(parentViewModel)
+        {
+            var rsiSeries = new XyDataSeries<DateTime, double>();
+            rsiSeries.Append(prices.TimeData, prices.Rsi(14));
+            base.ChartSeriesViewModels.Add(new ChartSeriesViewModel(rsiSeries, new FastLineRenderableSeries()));
+
+            YAxisTextFormatting = "0.0";
+
+            Height = 100;
+        }
+    }
+}

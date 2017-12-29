@@ -1,0 +1,60 @@
+﻿using System.Collections.ObjectModel;
+using System.Windows.Media;
+using Abt.Controls.SciChart.Example.Data;
+using Abt.Controls.SciChart.Example.MVVM;
+using Abt.Controls.SciChart.Model.DataSeries;
+using Abt.Controls.SciChart.Visuals.RenderableSeries;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.AnnotateAChart.DragHorizontalThreshold
+{
+    public class DragThresholdMvvmViewModel : BaseViewModel
+    {
+        private readonly ObservableCollection<IChartSeriesViewModel> _chartSeries = new ObservableCollection<IChartSeriesViewModel>();
+        private readonly RedIfOverThresholdPaletteProvider _paletteProvider; 
+        private IViewportManager _viewportManager = new DefaultViewportManager(); // Allows us to call SciChart.InvalidateElement() from the viewmodel
+
+        public DragThresholdMvvmViewModel()
+        {
+            // In the MvvmSciChartSurface, we don't have to create a dataset. Just create DataSeries and append as usual
+            var ds0 = new XyDataSeries<double, double>();
+            var someData = DataManager.Instance.GetDampedSinewave(1.0, 0.01, 300);
+            ds0.Append(someData.XData, someData.YData);
+
+            // Add the DataSeries / RenderableSeries to the ChartSeriesViewModel collection
+            // These are paired so if you want to remove the series, just remove the viewmodel (it will remove the data and renderable series)
+            // Or, if you want to change the RenderableSeries properties, just update the RenderSeries on the ChartSeriesViewModel
+            _chartSeries.Add(new ChartSeriesViewModel(ds0, new FastColumnRenderableSeries() { DataPointWidth = 0.2}));
+
+            // Next, we use a PaletteProvider type to override render colors for the column depending on threshold
+            _paletteProvider = new RedIfOverThresholdPaletteProvider();
+            _chartSeries[0].RenderSeries.PaletteProvider = _paletteProvider;
+
+            Threshold = 0.5;
+        }
+
+        public IViewportManager ViewportManager
+        {
+            get { return _viewportManager; }
+        }
+
+        public ObservableCollection<IChartSeriesViewModel> ChartSeries
+        {
+            get { return _chartSeries; }
+        }
+
+        /// <summary>
+        /// We bind to Threshold in the view. This is the Y-value of the horizontal line. We pass through the value to the PaletteProvider, which 
+        /// alters the color of columns on render
+        /// </summary>
+        public double Threshold
+        {
+            get { return _paletteProvider.Threshold; }
+            set 
+            { 
+                _paletteProvider.Threshold = value;
+                _viewportManager.InvalidateParentSurface(RangeMode.None);
+                OnPropertyChanged("Threshold");
+            }
+        }
+    }
+}

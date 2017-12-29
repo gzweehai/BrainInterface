@@ -1,0 +1,26 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>CreateAMultiSeriesChart</ChartGroup>
+  <Title>Fan Chart</Title>
+  <View>Examples/IWantTo/CreateMultiSeriesChart/FanChartExampleView.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoFanChart.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/fanchart_icon.png</IconPath>
+  <ChartTypes>Column</ChartTypes>
+  <ToolTipDescription>Demonstrates how to use multiple Band-Series to simulate a Fan Chart</ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Fan Chart&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Demonstrates how to use multiple Band-Series to simulate a Fan Chart.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;The FastBandRenderableSeries requires an XyyDataSeries, which has X,Y0,Y1 points, to display a solid band between high and low Y-value.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;In this example, we overlay several Band-Series with varying opacity to simulate a Fan-chart.&lt;/Run&gt;
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/CreateMultiseriesChart/FanChartExampleView.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/CreateMultiseriesChart/FanChartExampleView.xaml.cs.txt</string>
+  </CodeFiles>
+  <Features>
+
+  </Features>
+</ExampleDefinition>

@@ -1,0 +1,32 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>ModifyAxisBehavior</ChartGroup>
+  <Title>Modify Axis Properties</Title>
+  <View>Examples/IWantTo/ModifyAxisBehaviour/ModifyAxisProperties.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoModifyAxisProperties.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/line_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>Demonstrates the properties on NumericAxis and DateTimeAxis including TextFormatting, VisibleRange, AxisAlignment and the effect of changing them. Includes how to collapse gaps in a Candlestick or OHLC Chart</ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Modify Axis Properties&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Demonstrates the properties on NumericAxis and DateTimeAxis including TextFormatting, VisibleRange, AxisAlignment and the effect of changing them.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontWeight="Bold" FontStyle="Italic"&gt;Interactivity Options&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - Show/Hide Major Grid Lines and Ticks.&lt;/Run&gt;
+    &lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - Change XAxis or YAxis Text Formatting.&lt;/Run&gt;
+    &lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - Swap YAxis from Right to Left alignment.&lt;/Run&gt;
+    &lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - Manually change XAxis or YAxis VisibleRange.&lt;/Run&gt;    
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/ModifyAxisBehaviour/ModifyAxisProperties.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/ModifyAxisBehaviour/ModifyAxisProperties.xaml.cs.txt</string>
+  </CodeFiles>
+  <Features>
+    <Features>WithAxis</Features>
+  </Features>
+</ExampleDefinition>

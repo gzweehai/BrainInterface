@@ -1,0 +1,34 @@
+﻿using System.Linq;
+using System.Windows.Controls;
+using System.Windows.Input;
+using Abt.Controls.SciChart.Example.Data;
+using Abt.Controls.SciChart.Model.DataSeries;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.CreateSimpleChart
+{
+    /// <summary>
+    /// Interaction logic for ScatterChartExampleView.xaml
+    /// </summary>
+    public partial class ScatterChartExampleView : UserControl
+    {
+        public ScatterChartExampleView()
+        {
+            InitializeComponent();
+        }
+
+        private void ScatterChartExampleView_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            // Create a dataseries of type X=double, Y=double
+            var dataSeries = new XyDataSeries<double, double>();
+
+            var data = DataManager.Instance.GetDampedSinewave(1.0, 0.02, 200);
+
+            // Append data to series. SciChart automatically redraws
+            dataSeries.Append(data.XData, data.YData);
+
+            scatterRenderSeries.DataSeries = dataSeries;
+
+            sciChart.ZoomExtents();
+        }
+    }
+}

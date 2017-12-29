@@ -1,0 +1,88 @@
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
+using Abt.Controls.SciChart.Example.MVVM;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.CreateStockCharts.MultiPane
+{    
+    public abstract class BaseChartPaneViewModel : BaseViewModel, IChildPane
+    {
+        private readonly CreateMultiPaneStockChartsViewModel _parentViewModel;
+        private readonly ObservableCollection<IChartSeriesViewModel> _chartSeriesViewModels = new ObservableCollection<IChartSeriesViewModel>();
+        private string _title;
+        private string _yAxisTextFormatting;
+        private bool _isFirstChartPane;
+        private double _height = double.NaN;
+
+        protected BaseChartPaneViewModel(CreateMultiPaneStockChartsViewModel parentViewModel)
+        {
+            _parentViewModel = parentViewModel;
+        }
+
+        public CreateMultiPaneStockChartsViewModel ParentViewModel
+        {
+            get { return _parentViewModel; }
+        }
+
+        public ObservableCollection<IChartSeriesViewModel> ChartSeriesViewModels
+        {
+            get { return _chartSeriesViewModels; }
+        }
+
+        public string YAxisTextFormatting
+        {
+            get { return _yAxisTextFormatting; }
+            set
+            {
+                if (_yAxisTextFormatting == value)
+                    return;
+
+                _yAxisTextFormatting = value;
+                OnPropertyChanged("YAxisTextFormatting");
+            }
+        }
+        
+        public string Title
+        {
+            get { return _title; }
+            set
+            {
+                if (_title == value) return;
+
+                _title = value;
+                OnPropertyChanged("Title");
+            }
+        }
+        
+        public bool IsFirstChartPane
+        {
+            get { return _isFirstChartPane; }
+            set
+            {
+                if (_isFirstChartPane == value) return;
+                _isFirstChartPane = value;
+                OnPropertyChanged("IsFirstChartPane");
+            }
+        }        
+
+        public double Height
+        {
+            get { return _height; }
+            set
+            {
+                if (Math.Abs(_height - value) < double.Epsilon) return;
+                _height = value;
+                OnPropertyChanged("Height");
+            }
+        }
+                        
+        public void ZoomExtents()
+        {
+        }
+
+        public ICommand ClosePaneCommand
+        {
+            get; set;
+        }
+    }
+}

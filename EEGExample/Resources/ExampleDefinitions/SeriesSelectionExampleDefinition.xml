@@ -1,0 +1,26 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>InspectDatapoints</ChartGroup>
+  <Title>Series Selection</Title>
+  <View>Examples/IWantTo/InspectDatapoints/SeriesSelectionExampleView.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoSeriesSelect.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/line_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>Demonstrates series-selection. Click a series to select it. It's color changes and it is brought to the top of the Z-order</ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Series Selection&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Demonstrates the use of the SeriesSelectionModifier, which hooks into the ChartModifier API to select series on mouse-clicks. This complex, but easy to implement example uses many concepts in the ChartModifier API to bind legends and series together.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;The selected series is styled via the SeriesSelectionModifier.SelectedSeriesStyle. A blanket style applied to any series which is selected. Also you can use the BaseRenderableSeries.SelectedStyle to achieve the same effect on an individual series level.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Finally, a LegendModifier exposes the currently selected series, and we can use a SciChartLegend to show the name of which series is selected.&lt;/Run&gt;
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/InspectDatapoints/SeriesSelectionExampleView.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/InspectDatapoints/SeriesSelectionExampleView.xaml.cs.txt</string>
+  </CodeFiles>
+  <Features>
+    <Features>WithCursor</Features>
+  </Features>
+</ExampleDefinition>

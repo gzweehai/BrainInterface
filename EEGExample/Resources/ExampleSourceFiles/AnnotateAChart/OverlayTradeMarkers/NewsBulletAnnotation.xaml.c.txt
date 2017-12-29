@@ -1,0 +1,15 @@
+﻿using Abt.Controls.SciChart.Visuals.Annotations;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.AnnotateAChart.OverlayTradeMarkers
+{
+    /// <summary>
+    /// Interaction logic for NewsBulletAnnotation.xaml
+    /// </summary>
+    public partial class NewsBulletAnnotation : CustomAnnotation
+    {
+        public NewsBulletAnnotation()
+        {
+            InitializeComponent();
+        }
+    }
+}

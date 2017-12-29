@@ -1,0 +1,62 @@
+﻿
+<UserControl x:Class="Abt.Controls.SciChart.Example.Examples.IWantTo.CreateSimpleChart.StackedMountainChartExampleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:SciChart="http://schemas.abtsoftware.co.uk/scichart"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
+             mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <LinearGradientBrush x:Key="chartFill1" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Offset="0" Color="#DDDBE0E1" />
+            <GradientStop Offset="1.0" Color="#88B6C1C3" />
+        </LinearGradientBrush>
+
+        <LinearGradientBrush x:Key="chartFill0" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Offset="0" Color="#DDACBCCA" />
+            <GradientStop Offset="1.0" Color="#88439AAF" />
+        </LinearGradientBrush>
+    </UserControl.Resources>
+
+    <Grid>
+        <SciChart:SciChartSurface Name="sciChart"
+                                  Grid.Row="0"
+                                  SciChart:ThemeManager.Theme="Electric">
+
+            <!--  Declare RenderableSeries  -->
+            <SciChart:SciChartSurface.RenderableSeries>
+                <SciChart:StackedMountainRenderableSeries x:Name="mountainSeries1"
+                                                          AreaBrush="{StaticResource chartFill0}"
+                                                          SeriesColor="#EEE"
+                                                          StrokeThickness="2" />
+                <SciChart:StackedMountainRenderableSeries x:Name="mountainSeries2"
+                                                          AreaBrush="{StaticResource chartFill1}"
+                                                          SeriesColor="#EEE"
+                                                          StrokeThickness="2" />
+            </SciChart:SciChartSurface.RenderableSeries>
+
+            <!--  Create an X Axis  -->
+            <SciChart:SciChartSurface.XAxis>
+                <SciChart:NumericAxis AxisTitle="Sample No" TextFormatting="0.########" />
+            </SciChart:SciChartSurface.XAxis>
+
+            <!--  Create a Y Axis with GrowBy  -->
+            <SciChart:SciChartSurface.YAxis>
+                <SciChart:NumericAxis AxisTitle="Value"
+                                      DrawMajorBands="True"
+                                      GrowBy="0,0.1" />
+            </SciChart:SciChartSurface.YAxis>
+            <SciChart:SciChartSurface.ChartModifier>
+                <SciChart:ModifierGroup>
+                    <SciChart:XAxisDragModifier ClipModeX="None" />
+                    <SciChart:YAxisDragModifier />
+                    <SciChart:ZoomExtentsModifier />
+                </SciChart:ModifierGroup>
+            </SciChart:SciChartSurface.ChartModifier>
+
+        </SciChart:SciChartSurface>
+    </Grid>
+</UserControl>

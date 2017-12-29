@@ -1,0 +1,173 @@
+﻿using System;
+using System.Timers;
+using Abt.Controls.SciChart.Example.MVVM;
+using Abt.Controls.SciChart.Model.DataSeries;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.SeeFeaturedApplication.SpectrumAnalyzer
+{
+    public class SpectrumAnalyzerExampleViewModel : BaseViewModel, IExampleAware
+    {
+        private Timer _updateTimer = new Timer(50);
+        private IXyDataSeries<double, double> _series0;
+        private Random _random = new Random();
+        private const int Count = 1024;
+        private FFT2 _transform;
+        private bool _isFrequencyDomain;
+        private DoubleRange _yVisibleRange;
+        private bool _isTimeDomain;
+        private DoubleRange _xVisibleRange;
+
+        public SpectrumAnalyzerExampleViewModel()
+        {
+            _series0 = new XyDataSeries<double, double>() {FifoCapacity = Count};
+
+            _transform = new FFT2();
+            _transform.init(10);
+
+            IsFrequencyDomain = true;
+
+            _updateTimer.Elapsed += TimerElapsed;
+            _updateTimer.AutoReset = true;
+        }
+
+        public string YAxisTitle
+        {
+            get { return IsTimeDomain ? "Voltage (V)" : "FFT(Voltage) (dB)"; }
+        }
+
+        public DoubleRange YVisibleRange
+        {
+            get { return _yVisibleRange; }
+            set
+            {
+                _yVisibleRange = value;
+                OnPropertyChanged("YVisibleRange");
+            }
+        }
+
+        public DoubleRange XVisibleRange
+        {
+            get { return _xVisibleRange; }
+            set
+            {
+                _xVisibleRange = value;
+                OnPropertyChanged("XVisibleRange");
+            }
+        }
+
+        public IXyDataSeries<double, double> DataSeries
+        {
+            get { return _series0; }
+            set
+            {
+                _series0 = value;
+                OnPropertyChanged("DataSeries");
+            }
+        }
+
+        public bool IsFrequencyDomain
+        {
+            get { return _isFrequencyDomain; }
+            set
+            {
+                if (_isFrequencyDomain == value)
+                    return;
+
+                _isFrequencyDomain = value;
+                IsTimeDomain = !value;
+
+                if (IsFrequencyDomain)
+                {
+                    UpdateData();
+                    ZoomExtents();
+                    XVisibleRange = new DoubleRange(0, (Count / 2) - 1);
+                }
+
+                OnPropertyChanged("IsFrequencyDomain");
+                OnPropertyChanged("YAxisTitle");
+            }
+        }
+
+        public bool IsTimeDomain
+        {
+            get { return _isTimeDomain; }
+            set
+            {
+                if (_isTimeDomain == value)
+                    return;
+                _isTimeDomain = value;
+                IsFrequencyDomain = !value;
+
+                if (IsTimeDomain)
+                {
+                    UpdateData();
+                    ZoomExtents();
+                    XVisibleRange = new DoubleRange(0, Count - 1);
+                }
+
+                OnPropertyChanged("IsTimeDomain");
+                OnPropertyChanged("YAxisTitle");
+            }
+        }
+
+        private void ZoomExtents()
+        {
+            _series0.InvalidateParentSurface(RangeMode.ZoomToFitY);
+        }
+
+        private void TimerElapsed(object sender, EventArgs e)
+        {
+            UpdateData();
+        }
+
+        private void UpdateData()
+        {
+            lock (this)
+            {
+                double[] re = new double[Count];
+                double[] im = new double[Count];
+                for (int i = 0; i < Count; i++)
+                {
+                    re[i] = 2.0 * Math.Sin(2 * Math.PI * i / 20) +
+                            5.0 * Math.Sin(2 * Math.PI * i / 10) +
+                            2.0 * _random.NextDouble();
+                    im[i] = IsFrequencyDomain ? 0.0 : i;
+                }
+
+                if (IsFrequencyDomain)
+                {
+                    _transform.run(re, im);
+                    for (int i = 0; i < Count; i++)
+                    {
+                        double mag = Math.Sqrt(re[i] * re[i] + im[i] * im[i]);
+                        re[i] = 20 * Math.Log10(mag / Count);
+                        im[i] = i;
+                    }
+                }                
+
+                _series0.SeriesName = YAxisTitle;
+
+                _series0.Append(im, re);
+            }
+        }
+
+        
+        // These methods are just used to do tidy up when switching between examples
+        public void OnExampleExit()
+        {
+            if (_updateTimer != null)
+            {
+                _updateTimer.Stop();
+            }
+        }
+
+        public void OnExampleEnter()
+        {
+            if (_updateTimer != null)
+            {
+                _updateTimer.Start();
+            }
+        }
+
+    }
+}

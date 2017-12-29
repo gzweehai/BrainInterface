@@ -1,0 +1,86 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:Common="clr-namespace:Abt.Controls.SciChart.Example.Common"
+                    xmlns:Controls="clr-namespace:System.Windows.Controls;assembly=System.Windows.Controls.Input.Toolkit">
+
+    <Common:BooleanToVisibilityConverter x:Key="boolToVisibility" />
+
+    <!--  BasedOn="{StaticResource DefaultAutoCompleteBoxStyle}"  -->
+    <Style x:Key="WatermarkedAutoCompleteBox" TargetType="Controls:AutoCompleteBox">
+        <Setter Property="Height" Value="30" />
+        <Setter Property="Foreground" Value="#EEE"></Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Controls:AutoCompleteBox">
+                    <Grid Margin="{TemplateBinding Padding}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="PopupStates">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition GeneratedDuration="0:0:0.1" To="PopupOpened" />
+                                    <VisualTransition GeneratedDuration="0:0:0.2" To="PopupClosed" />
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="PopupOpened">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="PopupBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1.0" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="PopupClosed">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="PopupBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0.0" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <TextBox x:Name="Text"
+                                 Margin="0"
+                                 Foreground="{TemplateBinding Foreground}"
+                                 IsTabStop="True"
+                                 MaxLength="50" />
+
+                        <StackPanel Name="Watermark"
+                                    Margin="10,0,0,0"
+                                    VerticalAlignment="Center"
+                                    IsHitTestVisible="False"
+                                    Opacity="0.7"
+                                    Orientation="Horizontal"
+                                    Visibility="{Binding IsFocused,
+                                                         ElementName=Text,
+                                                         Converter={StaticResource boolToVisibility},
+                                                         ConverterParameter=inverse}">
+                            <Image Source="/Abt.Controls.SciChart.Example;component/Resources/Images/search.png" Stretch="None" />
+                            <TextBlock Margin="5,0,0,0"
+                                       FontStyle="Italic"
+                                       Foreground="#FF7C8185"
+                                       Text="Search by feature, e.g. 'Logarithmic Axis' or 'Stock Charts'" />
+                        </StackPanel>
+
+                        <Popup x:Name="Popup">
+                            <Border x:Name="PopupBorder"
+                                    HorizontalAlignment="Stretch"
+                                    Background="#11000000"
+                                    BorderThickness="0"
+                                    CornerRadius="3"
+                                    Opacity="0">
+                                <Border.RenderTransform>
+                                    <TranslateTransform X="1" Y="1" />
+                                </Border.RenderTransform>
+                                <ListBox x:Name="Selector"
+                                         Background="{StaticResource ControlBackgroundBrush}"
+                                         BorderBrush="#FF000000"
+                                         ItemTemplate="{TemplateBinding ItemTemplate}"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                         ScrollViewer.VerticalScrollBarVisibility="Auto" />
+                            </Border>
+                        </Popup>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

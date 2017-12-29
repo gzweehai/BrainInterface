@@ -1,0 +1,31 @@
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
+using Abt.Controls.SciChart.Example.Common;
+using Abt.Controls.SciChart.Example.Data;
+using Abt.Controls.SciChart.Model.DataSeries;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.CreateStockCharts
+{
+    public partial class CreateSimpleStockChart : UserControl
+    {
+        public CreateSimpleStockChart()
+        {
+            InitializeComponent();
+        }
+
+        private void CreateSciTradeChartLoaded(object sender, RoutedEventArgs e)
+        {
+            var dataSeries = new OhlcDataSeries<DateTime, double>();
+
+            // Append price data
+            var prices = DataManager.Instance.GetPriceData(Instrument.Indu.Value, TimeFrame.Daily);
+            dataSeries.Append(prices.TimeData, prices.OpenData, prices.HighData, prices.LowData, prices.CloseData);
+
+            // Set BarTimeFrame = 3600 seconds (time of one bar in the input data)
+            stockChart.BarTimeFrame = TimeSpan.FromHours(1).TotalSeconds;
+
+            stockChart.RenderableSeries[0].DataSeries = dataSeries;
+        }
+    }
+}

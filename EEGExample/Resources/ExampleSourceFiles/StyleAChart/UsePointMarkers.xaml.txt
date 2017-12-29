@@ -1,0 +1,108 @@
+﻿<UserControl x:Class="Abt.Controls.SciChart.Example.Examples.IWantTo.StyleAChart.UsePointMarkers"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:s="http://schemas.abtsoftware.co.uk/scichart"
+             xmlns:common="clr-namespace:Abt.Controls.SciChart.Example.Common"
+             Loaded="UsePointMarkers_OnLoaded"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
+             mc:Ignorable="d">
+    
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- This external resource dictionary defines a ControlTemplate which we will transform into -->
+                <!-- a sprite for use in our SpritePointMarker below. This can take any WPF control template and -->
+                <!-- renders it to bitmap once, for repeated blitting on the screen. Note you cannot use triggers or -->
+                <!-- bindings in a SpritePointMarkers' template -->
+                <ResourceDictionary Source="UsePointMarkersResourceDictionary.xaml"></ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!--  Define the Toolbar  -->
+        <!--<common:SciChartInteractionToolbar Grid.Row="0" TargetSurface="{Binding ElementName=sciChart}" />-->
+
+        <!--  Create the chart surface  -->
+        <s:SciChartSurface Name="sciChart"
+                           Grid.Row="2"
+                           s:ThemeManager.Theme="Oscilloscope">
+
+            <!--  Declare RenderableSeries  -->
+            <s:SciChartSurface.RenderableSeries>
+                <s:FastLineRenderableSeries x:Name="lineSeries1"
+                                            SeriesColor="LightBlue"
+                                            StrokeThickness="2">
+                    <s:FastLineRenderableSeries.PointMarker>
+                        <s:EllipsePointMarker Width="9"
+                                              Height="9" Stroke="LightBlue"
+                                              Fill="#990077FF" StrokeThickness="2" />
+                    </s:FastLineRenderableSeries.PointMarker>
+                </s:FastLineRenderableSeries>
+                <s:FastLineRenderableSeries x:Name="lineSeries2"
+                                            SeriesColor="Red"
+                                            StrokeThickness="2">
+                    <s:FastLineRenderableSeries.PointMarker>
+                        <s:SquarePointMarker Width="15"
+                                             Height="15"
+                                             Stroke="Red"
+                                             Fill="#99FF0000" />
+                    </s:FastLineRenderableSeries.PointMarker>
+                </s:FastLineRenderableSeries>
+                <s:FastLineRenderableSeries x:Name="lineSeries3"
+                                            SeriesColor="Yellow"
+                                            StrokeThickness="2">
+                    <s:FastLineRenderableSeries.PointMarker>
+                        <s:TrianglePointMarker Width="15"
+                                               Height="15"
+                                               Stroke="#FF6600" 
+                                               Fill="#FFDD00" />
+                    </s:FastLineRenderableSeries.PointMarker>
+                </s:FastLineRenderableSeries>
+                <s:FastLineRenderableSeries x:Name="lineSeries4"
+                                            SeriesColor="Magenta"
+                                            StrokeThickness="2">
+                    <s:FastLineRenderableSeries.PointMarker>
+                        <s:CrossPointMarker Width="20"
+                                            Height="20" Stroke="Magenta"
+                                            StrokeThickness="4" />
+                    </s:FastLineRenderableSeries.PointMarker>
+                </s:FastLineRenderableSeries>
+                <s:FastLineRenderableSeries x:Name="lineSeries5"
+                                            SeriesColor="Wheat"
+                                            StrokeThickness="2">
+                    <s:FastLineRenderableSeries.PointMarker>
+                        <s:SpritePointMarker PointMarkerTemplate="{StaticResource AnyWpfControlTemplateCanGoHere}"/>
+                    </s:FastLineRenderableSeries.PointMarker>
+                </s:FastLineRenderableSeries>
+            </s:SciChartSurface.RenderableSeries>
+
+            <!--  Create an X Axis with Growby  -->
+            <s:SciChartSurface.XAxis>
+                <s:NumericAxis GrowBy="0.1, 0.1" />
+            </s:SciChartSurface.XAxis>
+
+            <!--  Create a Y Axis with Growby  -->
+            <s:SciChartSurface.YAxis>
+                <s:NumericAxis GrowBy="0.1, 0.1" />
+            </s:SciChartSurface.YAxis>
+
+            <s:SciChartSurface.ChartModifier>
+                <s:ModifierGroup>
+                <s:LegendModifier LegendPlacement="Top" HorizontalAlignment="Left" Margin="0,0,0,10"/>
+                <s:ZoomExtentsModifier />
+                </s:ModifierGroup>
+            </s:SciChartSurface.ChartModifier>
+        </s:SciChartSurface>
+
+    </Grid>
+</UserControl>

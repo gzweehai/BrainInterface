@@ -1,0 +1,114 @@
+﻿<UserControl x:Class="Abt.Controls.SciChart.Example.Examples.IWantTo.CreateMultiseriesChart.MultipleLinesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:SciChart="http://schemas.abtsoftware.co.uk/scichart"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             Loaded="MultipleLinesView_OnLoaded"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
+             mc:Ignorable="d">
+
+    <Grid SciChart:ThemeManager.Theme="ExpressionLight">
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <SciChart:SciChartSurface x:Name="sciChart" Grid.Row="1">
+
+            <!--  Declare RenderableSeries  -->
+            <SciChart:SciChartSurface.RenderableSeries>
+                <SciChart:FastLineRenderableSeries SeriesColor="Yellow">
+                    <SciChart:FastLineRenderableSeries.PointMarker>
+                        <SciChart:EllipsePointMarker/>
+                    </SciChart:FastLineRenderableSeries.PointMarker>
+                </SciChart:FastLineRenderableSeries>
+                
+                <SciChart:FastLineRenderableSeries SeriesColor="#279B27">
+                <SciChart:FastLineRenderableSeries.PointMarker>
+                    <SciChart:TrianglePointMarker/>
+                </SciChart:FastLineRenderableSeries.PointMarker>
+                </SciChart:FastLineRenderableSeries>
+
+                <SciChart:FastLineRenderableSeries SeriesColor="#FF1919">
+                <SciChart:FastLineRenderableSeries.PointMarker>
+                    <SciChart:SquarePointMarker/>
+                </SciChart:FastLineRenderableSeries.PointMarker>
+                </SciChart:FastLineRenderableSeries>
+        
+                <SciChart:FastLineRenderableSeries SeriesColor="#1964FF" IsVisible="False">
+                <SciChart:FastLineRenderableSeries.PointMarker>
+                    <SciChart:CrossPointMarker/>
+                </SciChart:FastLineRenderableSeries.PointMarker>
+                </SciChart:FastLineRenderableSeries>
+    
+            </SciChart:SciChartSurface.RenderableSeries>
+
+            <!--  Declare Axes  -->
+            <SciChart:SciChartSurface.XAxis>
+                <SciChart:NumericAxis VisibleRange="0, 60" />
+            </SciChart:SciChartSurface.XAxis>
+
+            <SciChart:SciChartSurface.YAxis>
+                <SciChart:NumericAxis VisibleRange="0, 200000" />
+            </SciChart:SciChartSurface.YAxis>
+
+            <!--  Declare ChartModifiers  -->
+            <SciChart:SciChartSurface.ChartModifier>
+                <SciChart:ModifierGroup>
+                    <SciChart:LegendModifier x:Name="legendModifier" ShowLegend="True" Orientation="Horizontal" Margin="10" />
+                    <SciChart:SeriesSelectionModifier>
+                        <SciChart:SeriesSelectionModifier.SelectedSeriesStyle>
+                            <Style TargetType="SciChart:BaseRenderableSeries">
+                                <Setter Property="StrokeThickness" Value="3" />
+                            </Style>
+                        </SciChart:SeriesSelectionModifier.SelectedSeriesStyle>
+                    </SciChart:SeriesSelectionModifier>
+                </SciChart:ModifierGroup>
+            </SciChart:SciChartSurface.ChartModifier>
+
+        </SciChart:SciChartSurface>
+
+        <Grid Grid.Row="0" Margin="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
+                <TextBlock Margin="5,0,5,0"
+                       Foreground="#EEE"
+                       Text="Legend source:" />
+                <ComboBox x:Name="cboGetLegendFor" SelectionChanged="OnLegendModeChanged" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="0" Grid.Row="1" Orientation="Horizontal">
+                <TextBlock Margin="5,0,5,0"
+                       Foreground="#EEE"
+                       Text="Legend placement:" />
+                <ComboBox x:Name="cboLegendPlacement" SelectionChanged="OnLegendPlacementChanged" />
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal">
+                <TextBlock Margin="5,0,5,0"
+                       Foreground="#EEE"
+                       Text="Legend orientation:" />
+                <ComboBox x:Name="cboLegendOrientation" SelectionChanged="OnLegendOrientationChanged" />
+            </StackPanel>
+
+            <CheckBox Grid.Column="1" Grid.Row="1" Content="Show legend" IsChecked="{Binding ShowLegend, ElementName=legendModifier, Mode=TwoWay}" />
+            <CheckBox Grid.Column="2" Grid.Row="0" Content="Show checkboxes" IsChecked="{Binding ShowVisibilityCheckboxes, ElementName=legendModifier, Mode=TwoWay}" />
+            <CheckBox Grid.Column="2" Grid.Row="1" Content="Show series markers" IsChecked="{Binding ShowSeriesMarkers, ElementName=legendModifier, Mode=TwoWay}" />
+        </Grid>
+
+    </Grid>
+
+</UserControl>

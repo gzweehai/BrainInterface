@@ -1,0 +1,78 @@
+﻿<UserControl x:Class="Abt.Controls.SciChart.Example.Examples.IWantTo.InspectDatapoints.HitTestDatapoints"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:sciChart="http://schemas.abtsoftware.co.uk/scichart"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
+             mc:Ignorable="d">
+
+    <Grid Background="#333">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="100" />
+        </Grid.RowDefinitions>
+
+        <sciChart:SciChartSurface x:Name="sciChartSurface"
+                                  MouseLeftButtonUp="SciChartSurfaceMouseLeftButtonUp"
+                                  sciChart:ThemeManager.Theme="ExpressionLight">
+
+            <!--  Declare line RenderableSeries with a circular point marker  -->
+            <sciChart:SciChartSurface.RenderableSeries>
+
+                <!--  Mountain Series  -->
+
+                <!--  Line Series  -->
+                <sciChart:FastLineRenderableSeries x:Name="renderableLineSeries"
+                                                   SeriesColor="SteelBlue"
+                                                   StrokeThickness="3">
+                    <sciChart:FastLineRenderableSeries.PointMarker>
+                        <sciChart:EllipsePointMarker Width="10"
+                                                     Height="10"
+                                                     Fill="Lavender"
+                                                     Stroke="SteelBlue"
+                                                     StrokeThickness="2" />
+                    </sciChart:FastLineRenderableSeries.PointMarker>
+                </sciChart:FastLineRenderableSeries>
+
+                <!--  Column Series  -->
+                <sciChart:FastColumnRenderableSeries x:Name="renderableColumnSeries" />
+
+                <!--  Candlestick Series  -->
+                <sciChart:FastCandlestickRenderableSeries x:Name="renderableCandlestickSeries" />
+
+            </sciChart:SciChartSurface.RenderableSeries>
+
+            <!--  Declare Axes  -->
+            <sciChart:SciChartSurface.XAxis>
+                <sciChart:NumericAxis />
+            </sciChart:SciChartSurface.XAxis>
+
+            <sciChart:SciChartSurface.YAxis>
+                <sciChart:NumericAxis AxisAlignment="Left" GrowBy="0, 0.1" />
+            </sciChart:SciChartSurface.YAxis>
+
+            <sciChart:SciChartSurface.ChartModifier>
+                <sciChart:CursorModifier UseInterpolation="True" ShowAxisLabels="True" ShowTooltip="False" />
+            </sciChart:SciChartSurface.ChartModifier>
+
+            <sciChart:SciChartSurface.Annotations>
+                <sciChart:TextAnnotation CoordinateMode="Relative"
+                                         HorizontalAnchorPoint="Right"
+                                         Text="Click on the chart series to use the hit-test API"
+                                         X1="0.99"
+                                         Y1="0.01" />
+            </sciChart:SciChartSurface.Annotations>
+        </sciChart:SciChartSurface>
+
+        <!--  Listbox to demonstrate hit-test results  -->
+        <ListBox x:Name="hitTestListbox"
+                 Grid.Row="1"
+                 Background="Transparent"
+                 VirtualizingStackPanel.VirtualizationMode="Standard" />
+
+    </Grid>
+</UserControl>
+

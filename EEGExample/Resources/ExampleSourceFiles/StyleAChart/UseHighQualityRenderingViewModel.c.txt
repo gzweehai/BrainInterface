@@ -1,0 +1,40 @@
+﻿using System;
+using Abt.Controls.SciChart.Example.MVVM;
+using Abt.Controls.SciChart.Model.DataSeries;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.StyleAChart
+{
+    public class UseHighQualityRenderingViewModel : BaseViewModel
+    {
+        private IXyDataSeries<double, double> _dataSeries0;
+
+        public UseHighQualityRenderingViewModel()
+        {
+            _dataSeries0 = CreateDataSeries();
+        }
+
+        public IXyDataSeries<double, double> DataSeries0
+        {
+            get { return _dataSeries0; }
+            set
+            {
+                if (_dataSeries0 == value) return;
+                _dataSeries0 = value;
+                OnPropertyChanged("DataSeries0");
+            }
+        }
+
+        private IXyDataSeries<double, double> CreateDataSeries()
+        {
+            var ds0 = new XyDataSeries<double, double>();
+
+            const int count = 1000;
+            for (int i = 0; i < count; i++)
+            {
+                ds0.Append(i, count * Math.Sin(i * Math.PI * 0.1) / i);
+            }
+
+            return ds0;
+        }
+    }
+}

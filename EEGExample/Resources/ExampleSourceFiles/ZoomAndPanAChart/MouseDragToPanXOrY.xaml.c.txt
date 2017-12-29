@@ -1,0 +1,77 @@
+﻿using System.Windows;
+using System.Windows.Controls;
+using Abt.Controls.SciChart.Example.Data;
+using Abt.Controls.SciChart.Model.DataSeries;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.ZoomAndPanAChart
+{
+    public partial class MouseDragToPanXOrY : UserControl
+    {
+        public MouseDragToPanXOrY()
+        {
+            InitializeComponent();
+        }
+
+        private void MouseDragToPanXOrY_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Performing multiple updates in a SuspendUpdates block is efficient as only one redraw is performed
+            using (sciChart.SuspendUpdates())
+            {
+                // Add some data series
+                var dataSeries0 = new XyDataSeries<double, double>();
+                var dataSeries1 = new XyDataSeries<double, double>();
+
+                var data2 = DataManager.Instance.GetFourierSeries(1.0, 0.1);
+                var data1 = DataManager.Instance.GetDampedSinewave(1500, 3.0, 0.0, 0.005, data2.Count);
+
+                // Append data to series.
+                dataSeries0.Append(data1.XData, data1.YData);
+                dataSeries1.Append(data2.XData, data2.YData);
+
+                // Assign data-series to renderable series
+                sciChart.RenderableSeries[0].DataSeries = dataSeries0;
+                sciChart.RenderableSeries[1].DataSeries = dataSeries1;
+
+                // Set initial zoom
+                sciChart.XAxis.VisibleRange = new DoubleRange(3, 6);
+                sciChart.ZoomExtentsY();
+            }
+        }
+
+        // Optional: demonstrates changing which direction the ZoomPanModifier operates in
+        private void YDirection_Checked(object sender, RoutedEventArgs e)
+        {
+            if (zoomPanModifier != null)
+            {
+                zoomPanModifier.XyDirection = XyDirection.YDirection;
+                if (chkZoomExtentsY != null) chkZoomExtentsY.IsEnabled = false;
+        }
+        }
+
+        private void XDirection_Checked(object sender, RoutedEventArgs e)
+        {
+            if (zoomPanModifier != null)
+            {
+                zoomPanModifier.XyDirection = XyDirection.XDirection;
+                if (chkZoomExtentsY != null) chkZoomExtentsY.IsEnabled = true;
+        }
+        }
+
+        private void XYDirection_Checked(object sender, RoutedEventArgs e)
+        {
+            if (zoomPanModifier != null)
+            {
+                zoomPanModifier.XyDirection = XyDirection.XYDirection;
+                if (chkZoomExtentsY != null) chkZoomExtentsY.IsEnabled = false;
+        }
+    }
+
+        private void ZoomExtentsY_Checked(object sender, RoutedEventArgs e)
+        {
+            if (zoomPanModifier != null)
+            {
+                zoomPanModifier.ZoomExtentsY = chkZoomExtentsY.IsChecked == true;
+            }
+        }
+    }
+}

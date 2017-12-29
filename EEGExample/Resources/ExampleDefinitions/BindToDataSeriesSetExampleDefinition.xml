@@ -1,0 +1,22 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>UseSciChartWithMvvm</ChartGroup>
+  <Title>Bind SciChart to Data</Title>
+  <View>Examples/IWantTo/UseSciChartWithMvvm/BindToDataSeriesSetView.xaml</View>
+  <ViewModel>Examples.IWantTo.UseSciChartWithMvvm.BindToDataSeriesSetViewModel</ViewModel>
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoSingleChartMvvm.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/line_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>Demonstrates how to use MVVM to databind SciChart to a DataSeriesSet. This example uses a single line chart, with View and ViewModel and shows how to bind SciChart to a data-source and append new data using the MVVM pattern.</ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Bind SciChart to Data&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Demonstrates how to use MVVM to databind SciChart to a DataSeriesSet. This example uses a single line chart, with View and ViewModel and shows how to bind SciChart to a data-source and append new data using the MVVM pattern.&lt;/Run&gt;
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/UseSciChartWithMvvm/BindToDataSeriesSetView.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/UseSciChartWithMvvm/BindToDataSeriesSetViewModel.cs.txt</string>
+  </CodeFiles>
+  <Features>
+    <Features>Mvvm</Features>
+  </Features>
+</ExampleDefinition>

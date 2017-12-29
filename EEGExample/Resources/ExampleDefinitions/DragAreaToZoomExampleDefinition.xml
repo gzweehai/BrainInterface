@@ -1,0 +1,29 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>ZoomAndPanAChart</ChartGroup>
+  <Title>Drag Area to Zoom</Title>
+  <View>Examples/IWantTo/ZoomAndPanAChart/DragAreaToZoom.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoDragToZoom.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/area_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>Demonstrates zooming of SciChart by dragging an area: Overlays two series on a SciChartSurface and applies the RubberBandXyZoomModifier. This is a built-in ChartModifierBase derived class which adds the behavior of zooming when you mouse-drag an area.
+Uses secondary Y-Axis to demontrate zooming with multiple axes
+  </ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Drag Area to Zoom&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Showcases how to add zooming to a SciChartSurface using the RubberBandXyZoomModifier. This ChartModifier can be restricted in the X-Axis only (in which case the Y-Axis autoranges according to RubberBandXyZoomModifier.AutoRangeY), or unbounded, in which case it zooms to the exact rectangle you draw.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Also try double-clicking to zoom to extents. This feature is provided by the ZoomExtentsModifier.&lt;/Run&gt;    
+  </Description>
+  <HelpText>
+    Left-Button Drag to Pan the Chart
+  </HelpText>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/ZoomAndPanAChart/DragAreaToZoom.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/ZoomAndPanAChart/DragAreaToZoom.xaml.cs.txt</string>
+  </CodeFiles>
+  <Features>
+    <Features>WithZoom</Features>
+  </Features>
+</ExampleDefinition>

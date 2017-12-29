@@ -1,0 +1,316 @@
+﻿<UserControl x:Class="Abt.Controls.SciChart.Example.Examples.IWantTo.ModifyAxisBehaviour.ModifyAxisProperties"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:common="clr-namespace:Abt.Controls.SciChart.Example.Common"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Abt.Controls.SciChart.Example.Examples.IWantTo.ModifyAxisBehaviour"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:sciChart="http://schemas.abtsoftware.co.uk/scichart"
+             Loaded="ModifyAxisPropertiesLoaded"
+             mc:Ignorable="d"
+             d:DesignHeight="400" d:DesignWidth="600">
+
+    <Grid x:Name="grid">
+
+        <Grid.Resources>
+            <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontFamily" Value="Segoe UI Semibold" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Margin" Value="5,3,5,3" />
+            </Style>
+
+            <Style x:Key="BorderStyle" TargetType="Border">
+                <Setter Property="BorderThickness" Value="3" />
+                <Setter Property="BorderBrush" Value="Gray" />
+                <Setter Property="CornerRadius" Value="4" />
+                <Setter Property="Padding" Value="5,0,5,3" />
+            </Style>
+
+            <common:ToValidDateTimeConverter x:Key="ToValidDateTimeConverter" />
+
+            <common:ValidateDateFormatStringConverter x:Key="validateTextFormattingConveter" />
+        </Grid.Resources>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <sciChart:SciChartSurface x:Name="sciChart"
+                                  Grid.ColumnSpan="3"
+                                  sciChart:ThemeManager.Theme="Chrome">
+
+            <!--  Add a DateTime XAxis  -->
+            <sciChart:SciChartSurface.XAxis>
+                <sciChart:DateTimeAxis x:Name="xAxis" VisibleRangeChanged="OnXVisibleRangeChanged" />
+            </sciChart:SciChartSurface.XAxis>
+
+            <!--  Add two YAxes, to display price and volume data  -->
+            <sciChart:SciChartSurface.YAxis>
+                <sciChart:NumericAxis x:Name="yAxis"
+                                      AxisAlignment="Right"
+                                      TextFormatting="#.0" />
+            </sciChart:SciChartSurface.YAxis>
+
+            <!--  Add some sample RenderableSeries. Each theme has a default style for these  -->
+            <sciChart:SciChartSurface.RenderableSeries>
+                <sciChart:FastColumnRenderableSeries x:Name="columnSeries" YAxisId="{Binding ElementName=yAxis, Path=Id, Mode=TwoWay}" />
+                <sciChart:FastOhlcRenderableSeries x:Name="ohlcSeries" YAxisId="{Binding ElementName=yAxis, Path=Id, Mode=TwoWay}" />
+                <sciChart:FastLineRenderableSeries x:Name="lineSeries" YAxisId="{Binding ElementName=yAxis, Path=Id, Mode=TwoWay}" />
+            </sciChart:SciChartSurface.RenderableSeries>
+
+            <!--  Add some modifiers to zoom, zoom extents  -->
+            <sciChart:SciChartSurface.ChartModifier>
+                <sciChart:ModifierGroup>
+                    <sciChart:RubberBandXyZoomModifier />
+                    <sciChart:ZoomExtentsModifier ExecuteOn="MouseDoubleClick" />
+                </sciChart:ModifierGroup>
+            </sciChart:SciChartSurface.ChartModifier>
+
+        </sciChart:SciChartSurface>
+
+        <!--  *******************************************************  -->
+        <!--  Ignore below here: Controls to modify the Axis Behavior  -->
+        <!--  *******************************************************  -->
+        <Border Grid.Row="1"
+                Grid.Column="0"
+                Style="{StaticResource BorderStyle}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Style="{StaticResource HeaderTextStyle}" Text="XAxis Controls" />
+
+                <CheckBox Grid.Row="1"
+                          Grid.ColumnSpan="2"
+                          Margin="2"
+                          Content="Draw Axis Bands"
+                          IsChecked="{Binding ElementName=xAxis,
+                                              Path=DrawMajorBands,
+                                              Mode=TwoWay}" />
+                
+                <CheckBox Grid.Row="2"
+                          Grid.ColumnSpan="2"
+                          Margin="2"
+                          Content="DrawMajorGridlines"
+                          IsChecked="{Binding ElementName=xAxis,
+                                              Path=DrawMajorGridLines,
+                                              Mode=TwoWay}" />
+                <CheckBox Grid.Row="3"
+                          Grid.ColumnSpan="2"
+                          Margin="2"
+                          Content="DrawMinorGridLines"
+                          IsChecked="{Binding ElementName=xAxis,
+                                              Path=DrawMinorGridLines,
+                                              Mode=TwoWay}" />
+                <CheckBox Grid.Row="4"
+                          Grid.ColumnSpan="2"
+                          Margin="2"
+                          Content="DrawMajorTicks"
+                          IsChecked="{Binding ElementName=xAxis,
+                                              Path=DrawMajorTicks,
+                                              Mode=TwoWay}" />
+                <CheckBox Grid.Row="5"
+                          Grid.ColumnSpan="2"
+                          Margin="2"
+                          Content="DrawMinorTicks"
+                          IsChecked="{Binding ElementName=xAxis,
+                                              Path=DrawMinorTicks,
+                                              Mode=TwoWay}" />
+                <CheckBox Grid.Row="6"
+                          Grid.ColumnSpan="2"
+                          Margin="2"
+                          Content="DrawLabels"
+                          IsChecked="{Binding ElementName=xAxis,
+                                              Path=DrawLabels,
+                                              Mode=TwoWay}" />
+
+                <TextBlock Grid.Row="7"
+                           Margin="2"
+                           Foreground="#EEE"
+                           Text="TextFormatting: " />
+                
+                <TextBox Grid.Row="7"
+                         Grid.Column="1"
+                         Margin="2"
+                         Text="{Binding ElementName=xAxis,
+                                        Path=TextFormatting,
+                                        Mode=TwoWay,
+                                        Converter={StaticResource validateTextFormattingConveter},
+                                        UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock Grid.Row="8"
+                           Margin="2"
+                           Foreground="#EEE"
+                           Text="VisibleRange.Min" />
+                <local:CompatibleDatePicker x:Name="minDatePicker"
+                                            Grid.Row="8"
+                                            Grid.Column="1"
+                                            Margin="2"
+                                            Foreground="Black"
+                                            SelectedDate="{Binding ElementName=xAxis,
+                                                                   Path=VisibleRange.Min,
+                                                                   Mode=TwoWay,
+                                                                   Converter={StaticResource ToValidDateTimeConverter},
+                                                                   ConverterParameter=Min}"
+                                             />
+                <TextBlock Grid.Row="9"
+                           Margin="2"
+                           Foreground="#EEE"
+                           Text="VisibleRange.Max" />
+                <local:CompatibleDatePicker x:Name="maxDatePicker"
+                                            Grid.Row="9"
+                                            Grid.Column="1"
+                                            Margin="2"
+                                            Foreground="Black"
+                                            SelectedDate="{Binding ElementName=xAxis,
+                                                                   Path=VisibleRange.Max,
+                                                                   Mode=TwoWay,
+                                                                   Converter={StaticResource ToValidDateTimeConverter},
+                                                                   ConverterParameter=Max}"
+                                            />
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="1"
+                Grid.Column="1"
+                Style="{StaticResource BorderStyle}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Style="{StaticResource HeaderTextStyle}" Text="YAxis Controls" />
+
+                <CheckBox Grid.Row="1"
+                          Grid.ColumnSpan="2"
+                          Margin="2"
+                          Content="Draw Axis Bands"
+                          IsChecked="{Binding ElementName=yAxis,
+                                              Path=DrawMajorBands,
+                                              Mode=TwoWay}" />
+
+                <CheckBox Grid.Row="2"
+                          Grid.ColumnSpan="2"
+                          Margin="2"
+                          Content="DrawMajorGridlines"
+                          IsChecked="{Binding ElementName=yAxis,
+                                              Path=DrawMajorGridLines,
+                                              Mode=TwoWay}" />
+                
+                <CheckBox Grid.Row="3"
+                          Grid.ColumnSpan="2"
+                          Margin="2"
+                          Content="DrawMinorGridLines"
+                          IsChecked="{Binding ElementName=yAxis,
+                                              Path=DrawMinorGridLines,
+                                              Mode=TwoWay}" />
+                <CheckBox Grid.Row="4"
+                          Grid.ColumnSpan="2"
+                          Margin="2"
+                          Content="DrawMajorTicks"
+                          IsChecked="{Binding ElementName=yAxis,
+                                              Path=DrawMajorTicks,
+                                              Mode=TwoWay}" />
+                <CheckBox Grid.Row="5"
+                          Grid.ColumnSpan="2"
+                          Margin="2"
+                          Content="DrawMinorTicks"
+                          IsChecked="{Binding ElementName=yAxis,
+                                              Path=DrawMinorTicks,
+                                              Mode=TwoWay}" />
+                <CheckBox Grid.Row="6"
+                          Grid.ColumnSpan="2"
+                          Margin="2"
+                          Content="DrawLabels"
+                          IsChecked="{Binding ElementName=yAxis,
+                                              Path=DrawLabels,
+                                              Mode=TwoWay}" />
+
+                <TextBlock Grid.Row="7"
+                           Margin="2"
+                           Foreground="#EEE"
+                           Text="TextFormatting: " />
+                <TextBox Grid.Row="7"
+                         Grid.Column="1"
+                         Margin="2"
+                         Text="{Binding ElementName=yAxis,
+                                        Path=TextFormatting,
+                                        Mode=TwoWay,
+                                        UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock Grid.Row="8"
+                           Margin="2"
+                           Foreground="#EEE"
+                           Text="AxisAlignment: " />
+                <ComboBox x:Name="cboAlignment"
+                          Grid.Row="8"
+                          Grid.Column="1"
+                          Margin="2"
+                          SelectedItem="{Binding ElementName=yAxis,
+                                                 Path=AxisAlignment,
+                                                 Mode=TwoWay}" />
+                <TextBlock Grid.Row="9"
+                           Margin="2"
+                           Foreground="#EEE"
+                           Text="VisibleRange.Min" />
+                <TextBox x:Name="minValueTb"
+                         Grid.Row="9"
+                         Grid.Column="1"
+                         Margin="2"
+                         LostFocus="OnMinYAxesChanged"
+                         Text="{Binding ElementName=yAxis,
+                                        Path=VisibleRange.Min,
+                                        Mode=OneWay}" />
+                <TextBlock Grid.Row="10"
+                           Margin="2"
+                           Foreground="#EEE"
+                           Text="VisibleRange.Max" />
+                <TextBox x:Name="maxValueTb"
+                         Grid.Row="10"
+                         Grid.Column="1"
+                         Margin="2"
+                         LostFocus="OnMaxYAxesChanged"
+                         Text="{Binding ElementName=yAxis,
+                                        Path=VisibleRange.Max,
+                                        Mode=OneWay}" />
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

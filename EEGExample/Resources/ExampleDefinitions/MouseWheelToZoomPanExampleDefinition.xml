@@ -1,0 +1,32 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>ZoomAndPanAChart</ChartGroup>
+  <Title>Mousewheel Zoom and Scroll</Title>
+  <View>Examples/IWantTo/ZoomAndPanAChart/MouseWheelToZoomPan.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoMousewheel.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/line_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>Demonstrates mouse-wheel zooming and scrolling of SciChart.
+
+    Overlays a candlestick and line chart series on a SciChartSurface and applies the MouseWheelZoomModifier. This is a built-in ChartModifierBase derived class which adds the behavior of scrolling and zooming on mouse-wheel.
+  </ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Mousewheel Zoom and Scroll&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Demonstrates the many modes of operation of the MouseWheelZoomModifier. The default mode is Zoom around a point in the X and Y directions.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Additional modes are the ability to zoom in one direction only, or pan via the mouse-wheel. Try pressing CTRL or SHIFT while mouse-wheel scrolling to see the effect.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Finally, double-click to reset zoom at any time.&lt;/Run&gt;
+  </Description>
+  <HelpText>
+    Use Mousewheel to zoom the chart, CTRL and Mouse-Wheel to scroll up/down, SHIFT and Mouse-Wheel to scroll left/right
+  </HelpText>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/ZoomAndPanAChart/MouseWheelToZoomPan.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/ZoomAndPanAChart/MouseWheelToZoomPan.xaml.cs.txt</string>
+  </CodeFiles>
+  <Features>
+    <Features>WithZoom</Features>
+  </Features>
+</ExampleDefinition>

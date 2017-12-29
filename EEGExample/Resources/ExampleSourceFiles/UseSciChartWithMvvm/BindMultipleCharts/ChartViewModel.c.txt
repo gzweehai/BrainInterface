@@ -1,0 +1,33 @@
+﻿using System;
+using Abt.Controls.SciChart.Example.MVVM;
+using Abt.Controls.SciChart.Model.DataSeries;
+using Abt.Controls.SciChart.Visuals.Axes;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.UseSciChartWithMvvm.BindMultipleCharts
+{
+    public class ChartViewModel : BaseViewModel
+    {
+        private IDataSeries _chartData;
+        private AutoRange _AutoRange;
+
+        public IDataSeries ChartData
+        {
+            get { return _chartData; }
+            set
+            {
+                _chartData = value;
+                OnPropertyChanged("ChartData");
+            }
+        }
+
+        public AutoRange AutoRange
+        {
+            get { return _AutoRange; }
+            set
+            {
+                _AutoRange = value;
+                OnPropertyChanged("AutoRange");
+            }
+        } 
+    }
+}

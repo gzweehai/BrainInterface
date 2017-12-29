@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="Abt.Controls.SciChart.Example.Examples.IWantTo.CreateMultiseriesChart.FanChartExampleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:s="http://schemas.abtsoftware.co.uk/scichart"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
+             mc:Ignorable="d">
+    <Grid>
+        <s:SciChartSurface x:Name="sciChart" s:ThemeManager.Theme="Chrome">
+
+            <s:SciChartSurface.RenderableSeries>
+                <!--  Visualise the three levels of projections, e.g the Fan  -->
+                
+                    <s:FastBandRenderableSeries x:Name="projectedVar3"
+                    BandUpColor="Red"
+                    Opacity="0.2"
+                    SeriesColor="Transparent" />
+                    <s:FastBandRenderableSeries x:Name="projectedVar2"
+                    BandUpColor="Red"
+                    Opacity="0.4"
+                    SeriesColor="Transparent" />
+                
+                <s:FastBandRenderableSeries x:Name="projectedVar1"
+                                            BandUpColor="Red"
+                                            Opacity="0.6"
+                                            SeriesColor="Transparent" />
+
+                <!--  Visualize the actual (known values) line  -->
+                <s:FastLineRenderableSeries x:Name="lineSeries" SeriesColor="Red" />  
+            </s:SciChartSurface.RenderableSeries>
+
+            <s:SciChartSurface.XAxis>
+                <s:DateTimeAxis GrowBy="0.1, 0.1" />
+            </s:SciChartSurface.XAxis>
+
+            <s:SciChartSurface.YAxis>
+                <s:NumericAxis GrowBy="0.1, 0.1" />
+            </s:SciChartSurface.YAxis>
+
+            <s:SciChartSurface.ChartModifier>
+                <s:ModifierGroup>
+                    <s:RubberBandXyZoomModifier />
+                    <s:ZoomExtentsModifier />
+                </s:ModifierGroup>
+            </s:SciChartSurface.ChartModifier>
+        </s:SciChartSurface>
+
+    </Grid>
+</UserControl>

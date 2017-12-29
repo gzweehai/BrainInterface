@@ -1,0 +1,26 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>StyleAChart</ChartGroup>
+  <Title>Dashed Line Styling</Title>
+  <View>Examples/IWantTo/StyleAChart/LineSeriesStyling.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoDashedLine.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/line_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>Demonstrates StrokeThickness, StrokeDashArray and PointMarker properties of a LineSeries which can be used to style a dashed or solid line with triangle markers</ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Line Series Styling&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Demonstrates StrokeThickness, StrokeDashArray and PointMarker properties of a LineSeries which can be used to style a dashed or solid line with triangle markers.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Almost any element in SciChart is stylable in Xaml and most parts of the chart are templated. You can easily set background, grid-line, axis label, viewport background and chart series colors in Xaml.&lt;/Run&gt;
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/StyleAChart/LineSeriesStyling.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/StyleAChart/LineSeriesStyling.xaml.cs.txt</string>
+    <string>Resources/ExampleSourceFiles/StyleAChart/LineSeriesStylingViewModel.cs.txt</string>
+  </CodeFiles>
+  <Features>
+
+    <Features>XamlStyling</Features>
+  </Features>
+</ExampleDefinition>

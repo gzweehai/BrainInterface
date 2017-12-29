@@ -1,0 +1,26 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>InspectDatapoints</ChartGroup>
+  <Title>Series Tooltips</Title>
+  <View>Examples/IWantTo/InspectDatapoints/SeriesTooltipsExample.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoSeriesTooltips.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/line_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>Demonstrates using of Tooltip Modifier for getting information about Renderable Series and its displaying on tooltips.</ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Series Tooltips&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;Demonstrates using of Tooltip Modifier for getting information about Renderable Series and its displaying on tooltips.&lt;/Run&gt;
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/InspectDatapoints/SeriesTooltipsExample.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/InspectDatapoints/SeriesTooltipsExample.xaml.cs.txt</string>
+    <string>Resources/ExampleSourceFiles/InspectDatapoints/SeriesTooltipsViewModel.cs.txt</string>
+  </CodeFiles>
+  <Features>
+    <Features>WithCursor</Features>
+    <Features>WithAnnotations</Features>
+    <Features>Mvvm</Features>
+
+  </Features>
+</ExampleDefinition>

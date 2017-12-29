@@ -51,6 +51,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECGExample", "ECGExample\EC
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "32ChannelEEG", "32ChannelEEG\32ChannelEEG.csproj", "{984E36A0-D1F4-4ECC-9415-0A3BE0EBF9D6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EEGExample", "EEGExample\EEGExample.csproj", "{1544B864-EB5B-464C-B392-BAA01FC581A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -129,6 +131,10 @@ Global
 		{FD0DD120-232E-46C7-BC19-79B09D4F66E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD0DD120-232E-46C7-BC19-79B09D4F66E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD0DD120-232E-46C7-BC19-79B09D4F66E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1544B864-EB5B-464C-B392-BAA01FC581A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1544B864-EB5B-464C-B392-BAA01FC581A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1544B864-EB5B-464C-B392-BAA01FC581A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1544B864-EB5B-464C-B392-BAA01FC581A1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{984E36A0-D1F4-4ECC-9415-0A3BE0EBF9D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{984E36A0-D1F4-4ECC-9415-0A3BE0EBF9D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{984E36A0-D1F4-4ECC-9415-0A3BE0EBF9D6}.Release|Any CPU.ActiveCfg = Release|Any CPU

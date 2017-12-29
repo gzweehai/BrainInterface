@@ -1,0 +1,95 @@
+﻿using System;
+using System.Linq;
+using System.Windows.Controls;
+using Abt.Controls.SciChart.Example.Data;
+using Abt.Controls.SciChart.Model.DataSeries;
+using Abt.Controls.SciChart.Visuals.RenderableSeries;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.ManipulateSeries
+{
+    /// <summary>
+    /// Interaction logic for ChangeRenderableSeriesType.xaml
+    /// </summary>
+    public partial class ChangeRenderableSeriesType : UserControl
+    {
+        public ChangeRenderableSeriesType()
+        {
+            InitializeComponent();
+
+            Loaded += ChangeRenderableSeriesTypeLoaded;
+
+            seriesTypesCombo.Items.Add(typeof (FastLineRenderableSeries));
+            seriesTypesCombo.Items.Add(typeof (FastColumnRenderableSeries));
+            seriesTypesCombo.Items.Add(typeof (FastMountainRenderableSeries));
+            seriesTypesCombo.Items.Add(typeof (FastImpulseRenderableSeries));
+        }
+
+        private void SeriesComboSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // When the selected series type combo changes, update the selected series type
+            if (seriesTypesCombo.SelectedValue == null ||
+                !sciChartSurface.SelectedRenderableSeries.Any()) return;
+
+            // Get the selected series
+            var oldSelectedSeries = sciChartSurface.SelectedRenderableSeries.First();
+
+            // Replace it with a new series of the requested type
+            int index = sciChartSurface.RenderableSeries.IndexOf(oldSelectedSeries);
+
+            var oldRenderableSeries = sciChartSurface.RenderableSeries[index];
+            var newSelectedSeries = (BaseRenderableSeries)Activator.CreateInstance((Type) seriesTypesCombo.SelectedValue);
+            newSelectedSeries.SeriesColor = oldSelectedSeries.SeriesColor;
+            sciChartSurface.RenderableSeries[index] = newSelectedSeries;
+            newSelectedSeries.DataSeries = oldRenderableSeries.DataSeries;
+            newSelectedSeries.IsSelected = true;
+        }
+
+        private void SeriesSelectionModifierSelectionChanged(object sender, EventArgs e)
+        {
+            seriesTypesCombo.SelectionChanged -= SeriesComboSelectionChanged;
+
+            OnSeriesSelectionChanged();
+
+            seriesTypesCombo.SelectionChanged += SeriesComboSelectionChanged;
+        }
+
+        private void OnSeriesSelectionChanged()
+        {
+            // When the user selects a new series, set the series type on the combo box
+            var selectedSeries = sciChartSurface.SelectedRenderableSeries;
+            bool hasSelection = selectedSeries != null && selectedSeries.Count > 0;
+
+            seriesTypesCombo.IsEnabled = hasSelection;
+            if (hasSelection)
+            {
+                seriesTypesCombo.SelectedValue = selectedSeries[0].GetType();
+            }
+        }
+
+        private void ChangeRenderableSeriesTypeLoaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            // OnLoad, create three data and renderable series
+            FillData(new XyDataSeries<double, double>());
+            FillData(new XyDataSeries<double, double>());
+            FillData(new XyDataSeries<double, double>());
+
+            // Select the first series
+            sciChartSurface.RenderableSeries[0].IsSelected = true;
+            OnSeriesSelectionChanged();
+
+            sciChartSurface.ZoomExtents();
+        }
+
+        private void FillData(IXyDataSeries<double, double> dataSeries)
+        {
+            var data = DataManager.Instance.GetRandomDoubleSeries(100);
+            dataSeries.Append(data.XData, data.YData);
+
+            sciChartSurface.RenderableSeries.Add(new FastLineRenderableSeries()
+                {
+                    SeriesColor = DataManager.Instance.GetRandomColor(),
+                    DataSeries = dataSeries,
+                });
+        }
+    }
+}

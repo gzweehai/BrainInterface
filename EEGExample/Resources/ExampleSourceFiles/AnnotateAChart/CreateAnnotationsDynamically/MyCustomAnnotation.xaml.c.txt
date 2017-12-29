@@ -1,0 +1,12 @@
+﻿using Abt.Controls.SciChart.Visuals.Annotations;
+
+namespace Abt.Controls.SciChart.Example.Examples.IWantTo.AnnotateAChart.CreateAnnotationsDynamically
+{
+    public partial class MyCustomAnnotation : CustomAnnotation
+    {
+        public MyCustomAnnotation()
+        {
+            InitializeComponent();
+        }
+    }
+}

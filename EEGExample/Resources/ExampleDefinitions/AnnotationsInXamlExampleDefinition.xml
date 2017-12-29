@@ -1,0 +1,36 @@
+﻿<ExampleDefinition xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ChartGroup>AnnotateAChart</ChartGroup>
+  <Title>Annotations are Easy!</Title>
+  <View>Examples/IWantTo/AnnotateAChart/AnnotationsAreEasy.xaml</View>
+  <ViewModel />
+  <ImagePath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleImages/demoAnnotationsAreEasy.png</ImagePath>
+  <IconPath>/Abt.Controls.SciChart.Example;component/Resources/Images/ExampleIcons/line_icon.png</IconPath>
+  <ChartTypes>Line</ChartTypes>
+  <ToolTipDescription>Demonstrates the Annotations API to create Text, Line, Box, LineArrow and Custom Annotations in Xaml.</ToolTipDescription>
+  <Description>
+    &lt;Run FontSize="14" FontWeight="Bold"&gt;Annotations are Easy!&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13"&gt;An introduction to the Annotations API available in the Premium Edition of SciChart.&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontWeight="Bold" FontStyle="Italic"&gt;Shows how to place programmatically, at relative or absolute coordinates:&lt;/Run&gt;
+    &lt;LineBreak/&gt;&lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - TextAnnotation&lt;/Run&gt;
+    &lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - LineAnnotation&lt;/Run&gt;
+    &lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - LineArrowAnnotation&lt;/Run&gt;
+    &lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - HorizontalLineAnnotation&lt;/Run&gt;
+    &lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - PathAnnotation (custom shapes)&lt;/Run&gt;
+    &lt;LineBreak/&gt;
+    &lt;Run FontSize="13" FontStyle="Italic"&gt; - BoxAnnotation&lt;/Run&gt;
+  </Description>
+  <CodeFiles>
+    <string>Resources/ExampleSourceFiles/AnnotateAChart/AnnotationsAreEasy.xaml.txt</string>
+    <string>Resources/ExampleSourceFiles/AnnotateAChart/AnnotationsAreEasy.xaml.cs.txt</string>
+  </CodeFiles>
+  <Features>
+    <Features>WithAnnotations</Features>
+  </Features>
+</ExampleDefinition>

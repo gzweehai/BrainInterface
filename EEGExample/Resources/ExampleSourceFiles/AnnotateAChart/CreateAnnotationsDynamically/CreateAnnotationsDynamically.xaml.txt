@@ -1,0 +1,217 @@
+﻿<UserControl x:Class="Abt.Controls.SciChart.Example.Examples.IWantTo.AnnotateAChart.CreateAnnotationsDynamically.CreateAnnotationsDynamically"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:Common="clr-namespace:Abt.Controls.SciChart.Example.Common"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:s="http://schemas.abtsoftware.co.uk/scichart"
+             Loaded="CreateAnnotationsDynamicallyLoaded"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+
+        <!--  Defines Default Colors for annotations via implicit styles  -->
+        <Style x:Key="TextAnnotationStyle" TargetType="s:TextAnnotation">
+            <Setter Property="Background" Value="#22B22020" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground" Value="#666666" />
+        </Style>
+
+        <Style x:Key="BoxAnnotationStyle" TargetType="s:BoxAnnotation">
+            <Setter Property="BorderBrush" Value="#279B27" />
+            <Setter Property="Background" Value="#551964FF" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+
+        <Style x:Key="AxisMarkerAnnotationStyle" TargetType="s:AxisMarkerAnnotation">
+            <Setter Property="Background" Value="#FF6600" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="#EEE" />
+        </Style>
+
+        <Style x:Key="HorizontalLineAnnotationStyle" TargetType="s:HorizontalLineAnnotation">
+            <Setter Property="Stroke" Value="#FFFF6600" />
+            <Setter Property="StrokeThickness" Value="2" />
+            <Setter Property="ShowLabel" Value="True" />
+            <Setter Property="LabelPlacement" Value="Axis" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+        </Style>
+
+        <Style x:Key="VerticalLineAnnotationStyle" TargetType="s:VerticalLineAnnotation">
+            <Setter Property="Stroke" Value="#FFFF6600" />
+            <Setter Property="StrokeThickness" Value="2" />
+            <Setter Property="ShowLabel" Value="True" />
+            <Setter Property="LabelPlacement" Value="Axis" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!--  Defines the SciChartSurface, with CreateAnnotationModifier  -->
+        <s:SciChartSurface x:Name="sciChart"
+                           Grid.Row="1"
+                           ClipModifierSurface="True"
+                           s:ThemeManager.Theme="Chrome">
+
+            <s:SciChartSurface.RenderableSeries>
+                <s:FastCandlestickRenderableSeries />
+            </s:SciChartSurface.RenderableSeries>
+
+            <s:SciChartSurface.XAxis>
+                <s:CategoryDateTimeAxis />
+            </s:SciChartSurface.XAxis>
+
+            <s:SciChartSurface.YAxis>
+                <s:NumericAxis TextFormatting="0.0#" />
+            </s:SciChartSurface.YAxis>
+
+            <s:SciChartSurface.ChartModifier>
+                <s:ModifierGroup>
+                    <s:AnnotationCreationModifier x:Name="annotationCreation" AnnotationCreated="OnAnnotationCreated" />
+                    <s:YAxisDragModifier />
+                    <s:XAxisDragModifier />
+                </s:ModifierGroup>
+            </s:SciChartSurface.ChartModifier>
+
+        </s:SciChartSurface>
+
+        <!--  ************************************  -->
+        <!--  IGNORE BELOW HERE: Toolbar creation  -->
+        <!--  ************************************  -->
+
+        <StackPanel Grid.Row="0"
+                    Margin="2,4"
+                    HorizontalAlignment="Left"
+                    Orientation="Horizontal">
+
+            <ToggleButton x:Name="pointerButton"
+                          Margin="2"
+                          Checked="OnEditingEnabled"
+                          Tag="LineAnnotation"
+                          Unchecked="OnEditDisabled"
+                          s:ToggleButtonExtensions.GroupName="Modifiers">
+                <StackPanel Orientation="Horizontal">
+                    <Image />
+                    <TextBlock Margin="3" Text="Pointer" />
+                </StackPanel>
+            </ToggleButton>
+
+            <Line Margin="5"
+                  Stroke="Gray"
+                  Y2="16" />
+
+            <ToggleButton Margin="2"
+                          Checked="OnAnnotationTypeChanged"
+                          Tag="LineAnnotation"
+                          s:ToggleButtonExtensions.GroupName="Modifiers">
+                <StackPanel Orientation="Horizontal">
+                    <Image />
+                    <TextBlock Margin="3" Text="Line" />
+                </StackPanel>
+            </ToggleButton>
+
+            <ToggleButton Margin="2"
+                          Checked="OnAnnotationTypeChanged"
+                          Tag="LineArrowAnnotation"
+                          s:ToggleButtonExtensions.GroupName="Modifiers">
+                <StackPanel Orientation="Horizontal">
+                    <Image />
+                    <TextBlock Margin="3" Text="Line Arrow" />
+                </StackPanel>
+            </ToggleButton>
+
+            <ToggleButton Margin="2"
+                          Checked="OnAnnotationTypeChanged"
+                          Tag="HorizontalLineAnnotation"
+                          s:ToggleButtonExtensions.GroupName="Modifiers">
+                <StackPanel Orientation="Horizontal">
+                    <Image />
+                    <TextBlock Margin="3" Text="Horizontal Line" />
+                </StackPanel>
+            </ToggleButton>
+
+            <ToggleButton Margin="2"
+                          Checked="OnAnnotationTypeChanged"
+                          Tag="VerticalLineAnnotation"
+                          s:ToggleButtonExtensions.GroupName="Modifiers">
+                <StackPanel Orientation="Horizontal">
+                    <Image />
+                    <TextBlock Margin="3" Text="Vertical Line" />
+                </StackPanel>
+            </ToggleButton>
+
+            <Line Margin="5"
+                  Stroke="Gray"
+                  Y2="16" />
+
+            <ToggleButton Margin="2"
+                          Checked="OnAnnotationTypeChanged"
+                          Tag="TextAnnotation"
+                          s:ToggleButtonExtensions.GroupName="Modifiers">
+                <StackPanel Orientation="Horizontal">
+                    <Image />
+                    <TextBlock Margin="3" Text="Text" />
+                </StackPanel>
+            </ToggleButton>
+
+            <ToggleButton Margin="2"
+                          Checked="OnAnnotationTypeChanged"
+                          Tag="BoxAnnotation"
+                          s:ToggleButtonExtensions.GroupName="Modifiers">
+                <StackPanel Orientation="Horizontal">
+                    <Image />
+                    <TextBlock Margin="3" Text="Box" />
+                </StackPanel>
+            </ToggleButton>
+
+            <Line Margin="5"
+                  Stroke="Gray"
+                  Y2="16" />
+
+            <ToggleButton Margin="2"
+                          Checked="OnAnnotationTypeChanged"
+                          Tag="AxisMarkerAnnotation"
+                          s:ToggleButtonExtensions.GroupName="Modifiers">
+                <StackPanel Orientation="Horizontal">
+                    <Image />
+                    <TextBlock Margin="3" Text="Axis Marker" />
+                </StackPanel>
+            </ToggleButton>
+
+            <Line Margin="5"
+                  Stroke="Gray"
+                  Y2="16" />
+
+            <ToggleButton Margin="2"
+                          Checked="OnAnnotationTypeChanged"
+                          Tag="MyCustomAnnotation"
+                          s:ToggleButtonExtensions.GroupName="Modifiers">
+                <StackPanel Orientation="Horizontal">
+                    <Image />
+                    <TextBlock Margin="3" Text="Custom" />
+                </StackPanel>
+            </ToggleButton>
+
+            <Line Margin="5"
+                  Stroke="Gray"
+                  Y2="16" />
+
+            <Button Margin="2" Click="OnDeleteSelectedAnnotationsClick">
+                <StackPanel Orientation="Horizontal">
+                    <Image />
+                    <TextBlock Margin="3" Text="Delete Selected" />
+                </StackPanel>
+            </Button>
+
+        </StackPanel>
+
+    </Grid>
+</UserControl>
