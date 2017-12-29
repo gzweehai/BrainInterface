@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:Example="clr-namespace:Abt.Controls.SciChart.Example.Examples.IWantTo.CreateRealtimeChart.EEGChannelsDemo"
         xmlns:local="clr-namespace:GreatBrainClient"
-        xmlns:d3="clr-namespace:InteractiveDataDisplay.WPF;assembly=InteractiveDataDisplay.WPF"
         xmlns:monitorViews="clr-namespace:GreatBrainClient.MonitorViews"
         mc:Ignorable="d"
         Title="诺益脑电检测系统采集端" Height="800" Width="1000">

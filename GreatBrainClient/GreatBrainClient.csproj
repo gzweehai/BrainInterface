@@ -182,10 +182,6 @@
       <Project>{7713a1bd-a789-4f71-b713-d05dfe6a21c1}</Project>
       <Name>DataAccess</Name>
     </ProjectReference>
-    <ProjectReference Include="..\InteractiveDataDisplay.WPF\src\InteractiveDataDisplay.WPF.csproj">
-      <Project>{2d34544c-2df2-4b20-a43a-6c8d2df3dd82}</Project>
-      <Name>InteractiveDataDisplay.WPF</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Waveform.txt">
