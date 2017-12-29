@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreatBrainClient", "GreatBrainClient\GreatBrainClient.csproj", "{F6163624-FC4E-4333-ADDF-10CFBEFBD20B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B701C6D3-1E84-4B14-83C7-F58959264BB6}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainNetwork", "BrainNetwork\BrainNetwork.csproj", "{0A95E846-FDC6-4A00-A495-E2528E59E359}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimulator", "BrainSimulator\BrainSimulator.csproj", "{A74A836C-51B9-46FE-89C7-7B89CEE25031}"
