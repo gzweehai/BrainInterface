@@ -57,7 +57,7 @@ namespace BrainNetwork.RxSocket.Protocol
                             AppLogger.Warning($"corruted packet: invalid frame header");
                             break;
                         }
-                        var length = LengthBitConverter.FromByte(headerBuffer, 1, decoderLenByteCount);
+                        var length = LengthBitConverter.FromByte(headerBuffer, 1, decoderLenByteCount) - 1;
 
                         var buffer = bufferManager.TakeBuffer(length);
                         if (await socket.ReceiveCompletelyAsync(buffer, length, receivedFlag, token) != length)
@@ -72,7 +72,7 @@ namespace BrainNetwork.RxSocket.Protocol
                             break;
                         if (headerBuffer[0] != decoderTail)
                         {
-                            AppLogger.Warning($"corruted packet: invalid frame tail");
+                            AppLogger.Warning($"corruted packet: invalid frame tail,"+ headerBuffer[0].Show());
                             break;
                         }
                     }

@@ -84,15 +84,24 @@ namespace BrainNetwork.RxSocket.Common
         public static async Task<int> SendCompletelyAsync(this Socket socket, IList<ArraySegment<byte>> buffers,
             SocketFlags socketFlags, CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
             var sent = 0;
+            var count = 0;
             for (var i = 0; i < buffers.Count; i++)
             {
-                token.ThrowIfCancellationRequested();
-                var bytes = await socket.SendCompletelyAsync(buffers[i], socketFlags, token);
-                if (bytes == 0)
-                    break;
-                sent += bytes;
+                count += buffers[i].Count;
             }
+            var copy = new byte[count];
+            count = 0;
+            for (var i = 0; i < buffers.Count; i++)
+            {
+                ArraySegment<byte> arraySegment = buffers[i];
+                Buffer.BlockCopy(arraySegment.Array, arraySegment.Offset, copy, count, arraySegment.Count);
+                count += arraySegment.Count;
+            }
+            
+            var bytes = await socket.SendCompletelyAsync(copy,count, socketFlags, token);
+            sent += bytes;
             AppLogger.Debug($"SendCompletelyAsync:{sent},{buffers.Show()}");
             return sent;
         }

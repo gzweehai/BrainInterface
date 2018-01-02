@@ -68,30 +68,14 @@ namespace BrainNetwork.BrainDeviceProtocol
         {
             public DevCommandEnum CmdName => DevCommandEnum.SetSampleRate;
             public int CntSize => 2;
-            public byte FuncId => 11;
+            public byte FuncId => 0X11;
             public bool DontCheckResponse => false;
             public bool ReponseHasErrorFlag => true;
 
             public object FillCnt(byte[] buffer, object[] args)
             {
                 var rate = (SampleRateEnum) args[0];
-                byte rateB = 0;
-                switch (rate)
-                {
-                    case SampleRateEnum.SPS_250:
-                        rateB = 1;
-                        break;
-                    case SampleRateEnum.SPS_500:
-                        rateB = 2;
-                        break;
-                    case SampleRateEnum.SPS_1k:
-                        rateB = 3;
-                        break;
-                    case SampleRateEnum.SPS_2k:
-                        rateB = 4;
-                        break;
-                }
-                buffer[1] = rateB;
+                buffer[1] = (byte)rate;
                 return rate;
             }
 
@@ -109,7 +93,7 @@ namespace BrainNetwork.BrainDeviceProtocol
         {
             public DevCommandEnum CmdName => DevCommandEnum.SetTrap;
             public int CntSize => 2;
-            public byte FuncId => 12;
+            public byte FuncId => 0X12;
             public bool DontCheckResponse => false;
             public bool ReponseHasErrorFlag => true;
 
@@ -148,7 +132,7 @@ namespace BrainNetwork.BrainDeviceProtocol
         {
             public DevCommandEnum CmdName => DevCommandEnum.SetFilter;
             public int CntSize => 2;
-            public byte FuncId => 13;
+            public byte FuncId => 0X13;
             public bool DontCheckResponse => false;
             public bool ReponseHasErrorFlag => true;
 
@@ -203,7 +187,7 @@ namespace BrainNetwork.BrainDeviceProtocol
         {
             public DevCommandEnum CmdName => DevCommandEnum.QueryParam;
             public int CntSize => 1;
-            public byte FuncId => 21;
+            public byte FuncId => 0X21;
             public bool DontCheckResponse => false;
             public bool ReponseHasErrorFlag => false;
 

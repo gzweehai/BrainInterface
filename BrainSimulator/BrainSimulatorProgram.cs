@@ -21,7 +21,7 @@ namespace BrainSimulator
 
         public static void Main(string[] args)
         {
-            var endpoint = ProgramArgs.Parse(args, new[] {"127.0.0.1:9211"}).EndPoint;
+            var endpoint = ProgramArgs.Parse(args, new[] { "127.0.0.1:9211" }).EndPoint;
             var bufferManager = BufferManager.CreateBufferManager(2 << 16, 1024);
             var decoder = new DynamicFrameDecoder(0xA0, 0XC0);
 
@@ -99,16 +99,16 @@ namespace BrainSimulator
                     case 1:
                         HandlerStartStop(socket, buffer, ctsToken);
                         return;
-                    case 11:
+                    case 0x11:
                         await SetSampleRate(socket, buffer, ctsToken);
                         return;
-                    case 12:
+                    case 0x12:
                         await SetTrap(socket, buffer, ctsToken);
                         return;
-                    case 13:
+                    case 0x13:
                         await SetFilter(socket, buffer, ctsToken);
                         return;
-                    case 21:
+                    case 0x21:
                         await QueryParam(socket, buffer, ctsToken);
                         return;
                 }
@@ -175,13 +175,13 @@ namespace BrainSimulator
             var buf = bmgr.TakeBuffer(size);
             //_r.NextBytes(buf);
             var passTimes=BrainDevState.PassTimeMs(rate, sampleTimeTick);
-            const float max = 4.5f / 72;
+            const float max = 4.5f / 24;
             buf[0] = 1;
             buf[1] = _brainState.SamplePacketOrder++;
             for (int i = 0; i < ChannelCount; i++)
             {
                 var sampleValue= Math.Sin(passTimes * 2 /1000f * Math.PI + i*simalatedDelta)*max;
-                var (b0, b1, b2) = BitDataConverter.ConvertTo(sampleValue);
+                var (b0, b1, b2) = BitDataConverter.ConvertTo(sampleValue, 4.5f, 24);
                 buf[2+i*3]= b0;
                 buf[2 + 1+i*3] = b1;
                 buf[2 + 2+i*3] = b2;
@@ -193,7 +193,7 @@ namespace BrainSimulator
         private static async Task SetSampleRate(Socket socket, ArraySegment<byte> buffer, CancellationToken ctsToken)
         {
             var buf = bmgr.TakeBuffer(2);
-            buf[0] = 11;
+            buf[0] = 0x11;
             if (buffer.Array != null)
             {
                 var flag = (SampleRateEnum) buffer.Array[buffer.Offset + 1];
@@ -220,7 +220,7 @@ namespace BrainSimulator
         {
             var buf = bmgr.TakeBuffer(2);
             buf[1] = 1;
-            buf[0] = 12;
+            buf[0] = 0x12;
             await SendWithHeadTail(socket, buf, 2,ctsToken);
             bmgr.ReturnBuffer(buf);
         }
@@ -229,7 +229,7 @@ namespace BrainSimulator
         {
             var buf = bmgr.TakeBuffer(2);
             buf[1] = 1;
-            buf[0] = 13;
+            buf[0] = 0x13;
             await SendWithHeadTail(socket, buf, 2,ctsToken);
             bmgr.ReturnBuffer(buf);
         }
@@ -239,10 +239,10 @@ namespace BrainSimulator
         private static async Task QueryParam(Socket socket, ArraySegment<byte> buffer, CancellationToken ctsToken)
         {
             var buf = bmgr.TakeBuffer(7);
-            buf[0] = 21;
+            buf[0] = 0x21;
             buf[1] = DevCode;
             buf[2] = ChannelCount;
-            buf[3] = 72;
+            buf[3] = 24;
             buf[4] = (byte) _brainState.SampleRate;
             buf[5] = (byte) _brainState.TrapOption;
             buf[6] = _brainState.EnableFilter ? (byte) 1 : (byte) 0;
@@ -253,8 +253,10 @@ namespace BrainSimulator
 
         private static async Task SendWithHeadTail(Socket socket, byte[] buf, byte bufSize, CancellationToken ctsToken)
         {
+            byte len = bufSize;
+            len++;
             var size = buf.Length + 3;
-            var lenByte = new ArraySegment<byte>(new[] {bufSize});
+            var lenByte = new ArraySegment<byte>(new[] { len });
             var sent = await socket.SendCompletelyAsync(new[]
             {
                 _frameHeader,
