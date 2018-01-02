@@ -10,16 +10,25 @@ namespace BrainCommon
         {
             if (seg.Array == null) return null;
             var result = new int[seg.Count];
-            Array.Copy(seg.Array,seg.Offset,result,0,seg.Count);
+            Array.Copy(seg.Array, seg.Offset, result, 0, seg.Count);
             return result;
         }
-        
+
+        public static ArraySegment<int> CopyToArray(this ArraySegment<int> seg, SyncBufManager bufMgr)
+        {
+            RecycleIntBuf buf = new RecycleIntBuf(seg.Count,bufMgr);
+            if (seg.Array == null) return new ArraySegment<int>();
+            var result = bufMgr.TakeIntBuf(seg.Count);
+            Array.Copy(seg.Array, seg.Offset, result, 0, seg.Count);
+            return new ArraySegment<int>(result, 0, seg.Count);
+        }
+
         public static string Show(this byte data)
         {
             return $"{data:X2}";
         }
-        
-        public static string Show(this byte[] data,int count=-1)
+
+        public static string Show(this byte[] data, int count = -1)
         {
             var sb = new StringBuilder();
             if (count < 0) count = data.Length;
@@ -30,10 +39,10 @@ namespace BrainCommon
             }
             return sb.ToString();
         }
-        
+
         public static string Show(this int[] data)
         {
-            var sb = new StringBuilder(); 
+            var sb = new StringBuilder();
             for (var i = 0; i < data.Length; i++)
             {
                 sb.Append(data[i]);
@@ -41,7 +50,7 @@ namespace BrainCommon
             }
             return sb.ToString();
         }
-        
+
         public static string Show(this ArraySegment<byte> data)
         {
             var sb = new StringBuilder();
@@ -64,4 +73,5 @@ namespace BrainCommon
             }
             return sb.ToString();
         }
-    }}
+    }
+}

@@ -50,7 +50,7 @@
     <Reference Include="System.Reactive.PlatformServices">
       <HintPath>..\packages\Rx-PlatformServices.2.2.5\lib\net45\System.Reactive.PlatformServices.dll</HintPath>
     </Reference>
-    <Reference Include="System.ServiceModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <Reference Include="System.ServiceModel">
       <HintPath>..\..\..\..\..\..\Library\Frameworks\Mono.framework\Versions\5.4.1\lib\mono\4.7-api\System.ServiceModel.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />

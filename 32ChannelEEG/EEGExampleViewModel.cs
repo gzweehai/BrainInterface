@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive.Linq;
@@ -230,7 +231,6 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         #region brain device
 
         private BrainDevState _currentState;
-        private Subject<int[]> _viewStream;
         private int _pakNum;
         private Dispatcher _uithread;
         private DevCommandSender _devCtl;
@@ -243,26 +243,21 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
             _uithread = Dispatcher.CurrentDispatcher;
             _currentState = default(BrainDevState);
-            _viewStream = new Subject<int[]>();
-            _viewStream.SubscribeOn(_uithread).Subscribe(UpdateChannelDataWithBuffer);
         }
-
-        private void UpdateChannelData(int[] intArr)
+        
+        private void CheckUpdate(object sender, ElapsedEventArgs e)
         {
-            var passTimes = BrainDevState.PassTimeMs(_currentState.SampleRate, _pakNum) / 1000;
-            _pakNum++;
-            for (int i = 0; i < _channelViewModels.Count; i++)
+            while (cache.TryDequeue(out var intArr))
+            {
+                UpdateChannelDataWithBuffer(intArr);
+            }
+            for (var i = 0; i < _channelViewModels.Count; i++)
             {
                 // Get the dataseries created for this channel
                 var channel = _channelViewModels[i];
-                var dataseries = channel.ChannelDataSeries;
-
-                var val = intArr[i];
-                var voltage = BitDataConverter.Calculatevoltage(val, 4.5f, _currentState.Gain);
-                dataseries.Append(passTimes, voltage);
-
+                channel.FlushBuf();
                 // For reporting current size to GUI
-                _currentSize = dataseries.Count;
+                _currentSize = channel.ChannelDataSeries.Count;
             }
         }
 
@@ -270,7 +265,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         {
             var passTimes = BrainDevState.PassTimeMs(_currentState.SampleRate, _pakNum);
             _pakNum++;
-            for (int i = 0; i < _channelViewModels.Count; i++)
+            for (var i = 0; i < _channelViewModels.Count; i++)
             {
                 var voltage = BitDataConverter.Calculatevoltage(intArr[i], 4.5f, _currentState.Gain);
                 // Get the dataseries created for this channel
@@ -279,14 +274,6 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 // For reporting current size to GUI
                 _currentSize = channel.ChannelDataSeries.Count;
             }
-        }
-
-        // Manages the state of the example on enter
-        public void OnExampleEnter()
-        {
-            //Reset();
-            //_startDelegate = TimedMethod.Invoke(Start).After(500).Go();
-            StartDevCmd();
         }
 
         private void Disconnect()
@@ -298,11 +285,14 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         private void StartAsync()
         {
-            Task.Factory.StartNew(StartDevCmd);
+            Task.Factory.StartNew(StartDevCmd).ContinueWith((t)=>
+            {
+                UpdateRuningStates();
+            },TaskScheduler.FromCurrentSynchronizationContext());
             //StartDevCmd();
         }
         
-        private async Task StartDevCmd()
+        private async void StartDevCmd()
         {
             if (!_running)
             {
@@ -310,7 +300,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 if (_devCtl != null)
                 {
                     _isReset = false;
-                    //_pakNum = 0;
+                    _pakNum = 0;
                     if (!await StartSampleAsync(_devCtl))
                     {
                         Disconnect();
@@ -335,7 +325,6 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                     _isReset = false;
                     _pakNum = 0;
                 }
-                _uithread.Invoke(UpdateRuningStates);
             }
         }
 
@@ -343,15 +332,23 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         {
             IsReset = _isReset;
             IsRunning = _running;
+            if (_running)
+            {
+                _timer = new Timer(_timerInterval);
+                _timer.Elapsed += CheckUpdate;
+                _timer.AutoReset = true;
+                _timer.Start();
+            }
         }
 
         private async void StopDevCmd()
         {
             if (IsRunning)
             {
+                IsRunning = false;
+                _timer.Stop();
                 if (_devCtl != null)
                     await _devCtl.Stop();
-                IsRunning = false;
             }
         }
 
@@ -380,6 +377,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             }
         }
 
+        private ConcurrentQueue<int[]> cache = new ConcurrentQueue<int[]>();
         private async Task<DevCommandSender> ConnectDevAsync()
         {
             try
@@ -388,22 +386,27 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 //TODO config IP and port
                 var sender = await BrainDeviceManager.Connnect("127.0.0.1", 9211);
                 //TODO config vRef (default = 4.5f)
+
                 //保证设备参数正常才继续跑逻辑
                 BrainDeviceManager.BrainDeviceState.Subscribe(ss =>
                 {
                     _currentState = ss;
                     ChannelCount = _currentState.ChannelCount;
                     _uithread.InvokeAsync(CreateChannelParts);
-                    var pmax = 4.5f * 2 / _currentState.Gain;
+                    //var pmax = 4.5f * 2 / _currentState.Gain;
                     //YVisibleRange = new DoubleRange(-pmax, pmax);
                     AppLogger.Debug($"Brain Device State Changed Detected: {ss}");
                 }, () => { AppLogger.Debug("device stop detected"); });
                 BrainDeviceManager.SampleDataStream.Subscribe(tuple =>
                 {
                     var (order, datas, arr) = tuple;
+                    
                     var copyArr = datas.CopyToArray();
-                    if (copyArr != null)
-                        _viewStream.OnNext(copyArr);
+                    cache.Enqueue(copyArr);
+
+//                    var copyArr = datas.CopyToArray();
+//                    if (copyArr != null)
+//                        _viewStream.OnNext(copyArr);
                     //Console.Write($" {order} ");
                     //AppLogger.Debug($"order:{order}");
                     //AppLogger.Debug($"converted values:{datas.Show()}");
@@ -411,7 +414,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 }, () =>
                 {
                     _devCtl = null;
-                    _uithread.Invoke(ResetDevCmd);
+                    _uithread.InvokeAsync(ResetDevCmd);
                     AppLogger.Debug("device sampling stream closed detected");
                 });
 
@@ -423,6 +426,8 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                     BrainDeviceManager.DisConnect();
                     return null;
                 }
+                cmdResult = await sender.SetSampleRate(SampleRateEnum.SPS_2k);
+                AppLogger.Debug("SetSampleRate result:" + cmdResult);
                 return sender;
             }
             catch (Exception)

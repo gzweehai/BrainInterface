@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Windows.Media;
 using SciChart.Charting.Model.DataSeries;
 using SciChart.Examples.ExternalDependencies.Common;
@@ -9,10 +10,8 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         private readonly int _size;
         private Color _color;
         private IXyDataSeries<double, double> _channelDataSeries;
-        private double[] xBuffer;
-        private double[] yBuffer;
-        private int xBufferInd;
-        private int yBufferInd;
+        private List<double> xBuffer;
+        private List<double> yBuffer;
 
         public EEGChannelViewModel(int size, Color color, int count)
         {
@@ -29,9 +28,8 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
             if (count > 0)
             {
-                xBuffer = new double[count];
-                yBuffer = new double[count];
-                xBufferInd = yBufferInd = 0;
+                xBuffer = new List<double>(count);
+                yBuffer = new List<double>(count);
                 ChannelDataSeries.AcceptsUnsortedData = true;
             }
         }
@@ -65,12 +63,17 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         public void BufferChannelData(float passTimes, double voltage)
         {
-            xBuffer[xBufferInd++] = passTimes;
-            yBuffer[yBufferInd++] = voltage;
-            if (xBufferInd >= xBuffer.Length)
+            xBuffer.Add(passTimes);
+            yBuffer.Add(voltage);
+        }
+
+        public void FlushBuf()
+        {
+            if (xBuffer.Count > 0)
             {
-                xBufferInd = yBufferInd = 0;
                 _channelDataSeries.Append(xBuffer,yBuffer);
+                xBuffer.Clear();
+                yBuffer.Clear();
             }
         }
     }
