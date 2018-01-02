@@ -10,14 +10,14 @@ namespace BrainCommon
         }
         
         #region Disposable Implmentation
-        public static DisposableValue<ArraySegment<int>> ConvertFrom(ArraySegment<byte> data, SyncBufManager mgr)
+        private static ArraySegment<int> Empty=new ArraySegment<int>();
+        public static ArraySegment<int> ConvertFrom(ArraySegment<byte> data, SyncBufManager mgr)
         {
             var arr = data.Array;
-            if (arr == null) return DisposableValue<ArraySegment<int>>.Empty;
+            if (arr == null) return Empty;
             var ind = data.Offset;
             var count = data.Count;
-            var t = new RecycleIntBuf(count / 3,mgr);
-            var buf =t.Buffer;
+            var buf =mgr.TakeIntBuf(count / 3);
             for (int i = 0; i < buf.Length; i++)
             {
                 buf[i] = (arr[ind] << 16) + (arr[ind + 1] << 8) + arr[ind + 2];
@@ -27,15 +27,15 @@ namespace BrainCommon
                 }
                 ind += 3;
             }
-            return t.AsDisposableValue();
+            return new ArraySegment<int>(buf,0,count / 3);
         }
-        public static DisposableValue<ArraySegment<int>> FastConvertFrom(ArraySegment<byte> data, SyncBufManager mgr)
+        
+        public static ArraySegment<int> FastConvertFrom(ArraySegment<byte> data, SyncBufManager mgr)
         {
-            if (data.Array == null) return DisposableValue<ArraySegment<int>>.Empty;
+            if (data.Array == null) return Empty;
             var startInd = data.Offset;
             var count = data.Count;
-            var t = new RecycleIntBuf(count / 3,mgr);
-            var result =t.Buffer;
+            var result =mgr.TakeIntBuf(count / 3);
             unsafe
             {
                 fixed (byte* arr = data.Array)
@@ -62,10 +62,10 @@ namespace BrainCommon
                     }
                 }
             }
-            return t.AsDisposableValue(); 
+            return new ArraySegment<int>(result,0,count / 3);
         }
         
-        public static DisposableValue<ArraySegment<int>> ConvertFromPlatform(ArraySegment<byte> data, SyncBufManager mgr)
+        public static ArraySegment<int> ConvertFromPlatform(ArraySegment<byte> data, SyncBufManager mgr)
         {
             if (Environment.OSVersion.Platform == PlatformID.Unix)
             {

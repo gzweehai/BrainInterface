@@ -79,9 +79,9 @@ namespace DataAccess
                 }
                 var arraySegment = new ArraySegment<byte>(buf,0,bufferSize);
                 var converted = BitDataConverter.FastConvertFrom(arraySegment, _bufMgr);
-                _dataStream.OnNext((_order++, converted.Value, arraySegment));
+                _dataStream.OnNext((_order++, converted, arraySegment));
                 _currentlCount++;
-                converted.Dispose();
+                _bufMgr.ReturnBuffer(converted.Array);
             }
             finally
             {

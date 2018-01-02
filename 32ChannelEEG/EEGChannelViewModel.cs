@@ -28,8 +28,8 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
             if (count > 0)
             {
-                xBuffer = new List<double>(count);
-                yBuffer = new List<double>(count);
+                xBuffer = new List<double>(count*2);
+                yBuffer = new List<double>(count*2);
                 ChannelDataSeries.AcceptsUnsortedData = true;
             }
         }

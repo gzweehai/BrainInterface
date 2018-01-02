@@ -247,32 +247,39 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         
         private void CheckUpdate(object sender, ElapsedEventArgs e)
         {
-            while (cache.TryDequeue(out var intArr))
+            lock (_syncRoot)
             {
-                UpdateChannelDataWithBuffer(intArr);
-            }
-            for (var i = 0; i < _channelViewModels.Count; i++)
-            {
-                // Get the dataseries created for this channel
-                var channel = _channelViewModels[i];
-                channel.FlushBuf();
-                // For reporting current size to GUI
-                _currentSize = channel.ChannelDataSeries.Count;
+                var count = 0;
+                while (cache.TryDequeue(out var intArr))
+                {
+                    UpdateChannelBuffer(intArr);
+                    count++;
+                    if (count >= BufferSize) break;
+                }
+                if (_channelViewModels == null) return;
+                for (var i = 0; i < _channelViewModels.Count; i++)
+                {
+                    // Get the dataseries created for this channel
+                    var channel = _channelViewModels[i];
+                    channel.FlushBuf();
+                    // For reporting current size to GUI
+                    _currentSize = channel.ChannelDataSeries.Count;
+                }
             }
         }
 
-        private void UpdateChannelDataWithBuffer(int[] intArr)
+        private void UpdateChannelBuffer(double[] voltageArr)
         {
+            if (_channelViewModels == null) return;
             var passTimes = BrainDevState.PassTimeMs(_currentState.SampleRate, _pakNum);
             _pakNum++;
             for (var i = 0; i < _channelViewModels.Count; i++)
             {
-                var voltage = BitDataConverter.Calculatevoltage(intArr[i], 4.5f, _currentState.Gain);
                 // Get the dataseries created for this channel
                 var channel = _channelViewModels[i];
-                channel.BufferChannelData(passTimes, voltage);
+                channel.BufferChannelData(passTimes, voltageArr[i]);
                 // For reporting current size to GUI
-                _currentSize = channel.ChannelDataSeries.Count;
+                //_currentSize = channel.ChannelDataSeries.Count;
             }
         }
 
@@ -289,7 +296,6 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             {
                 UpdateRuningStates();
             },TaskScheduler.FromCurrentSynchronizationContext());
-            //StartDevCmd();
         }
         
         private async void StartDevCmd()
@@ -377,7 +383,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             }
         }
 
-        private ConcurrentQueue<int[]> cache = new ConcurrentQueue<int[]>();
+        private ConcurrentQueue<double[]> cache = new ConcurrentQueue<double[]>();
         private async Task<DevCommandSender> ConnectDevAsync()
         {
             try
@@ -400,9 +406,17 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 BrainDeviceManager.SampleDataStream.Subscribe(tuple =>
                 {
                     var (order, datas, arr) = tuple;
-                    
-                    var copyArr = datas.CopyToArray();
-                    cache.Enqueue(copyArr);
+                    var buf = datas.Array;
+                    if (buf != null)
+                    {
+                        var startIdx = datas.Offset;
+                        var voltageArr = new double[datas.Count];
+                        for (var i = 0; i < datas.Count; i++)
+                        {
+                            voltageArr[i] = BitDataConverter.Calculatevoltage(buf[startIdx + i], 4.5f, _currentState.Gain);
+                        }
+                        cache.Enqueue(voltageArr);
+                    }
 
 //                    var copyArr = datas.CopyToArray();
 //                    if (copyArr != null)
@@ -426,8 +440,8 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                     BrainDeviceManager.DisConnect();
                     return null;
                 }
-                cmdResult = await sender.SetSampleRate(SampleRateEnum.SPS_2k);
-                AppLogger.Debug("SetSampleRate result:" + cmdResult);
+                //cmdResult = await sender.SetSampleRate(SampleRateEnum.SPS_2k);
+                //AppLogger.Debug("SetSampleRate result:" + cmdResult);
                 return sender;
             }
             catch (Exception)

@@ -187,9 +187,9 @@ namespace BrainNetwork.BrainDeviceProtocol
                 }
                 */
                 var dataSeg = new ArraySegment<byte>(buf, startIdx, (extraBlockCount + 3) * 3);
-                var disIntBuf = BitDataConverter.FastConvertFrom(dataSeg,bufferManager);
-                _dataStream?.OnNext((order,disIntBuf.Value,dataSeg));
-                disIntBuf.Dispose();
+                var disIntBuf = BitDataConverter.ConvertFromPlatform(dataSeg,bufferManager);
+                _dataStream?.OnNext((order,disIntBuf,dataSeg));
+                bufferManager.ReturnBuffer(disIntBuf.Array);
             }
         }
 
