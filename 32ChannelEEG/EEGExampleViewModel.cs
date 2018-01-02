@@ -249,14 +249,12 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         {
             lock (_syncRoot)
             {
-                var count = 0;
                 while (cache.TryDequeue(out var intArr))
                 {
                     UpdateChannelBuffer(intArr);
-                    count++;
-                    if (count >= BufferSize) break;
                 }
-                if (_channelViewModels == null) return;
+                
+                if (!IsRunning || _channelViewModels == null) return;
                 for (var i = 0; i < _channelViewModels.Count; i++)
                 {
                     // Get the dataseries created for this channel
@@ -345,6 +343,10 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 _timer.AutoReset = true;
                 _timer.Start();
             }
+            else
+            {
+                _timer?.Stop();
+            }
         }
 
         private async void StopDevCmd()
@@ -390,15 +392,20 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             {
                 BrainDeviceManager.Init();
                 //TODO config IP and port
-                var sender = await BrainDeviceManager.Connnect("127.0.0.1", 9211);
+                var sender = await BrainDeviceManager.Connnect("192.168.0.101", 8088);
+                //var sender = await BrainDeviceManager.Connnect("127.0.0.1", 9211);
                 //TODO config vRef (default = 4.5f)
 
                 //保证设备参数正常才继续跑逻辑
                 BrainDeviceManager.BrainDeviceState.Subscribe(ss =>
                 {
+                    var reCreateChannels = _currentState.ChannelCount != ss.ChannelCount;
                     _currentState = ss;
-                    ChannelCount = _currentState.ChannelCount;
-                    _uithread.InvokeAsync(CreateChannelParts);
+                    if (reCreateChannels)
+                    {
+                        ChannelCount = _currentState.ChannelCount;
+                        _uithread.InvokeAsync(CreateChannelParts);
+                    }
                     //var pmax = 4.5f * 2 / _currentState.Gain;
                     //YVisibleRange = new DoubleRange(-pmax, pmax);
                     AppLogger.Debug($"Brain Device State Changed Detected: {ss}");
@@ -462,9 +469,11 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             AppLogger.Debug("QueryParam result:"+cmdResult);
             */
         }
-
+        private FileResource currentFileResource;
         private async Task<bool> StartSampleAsync(DevCommandSender sender)
         {
+            currentFileResource?.Dispose();
+            currentFileResource = null;
             FileResource fs = null;
             try
             {
@@ -477,6 +486,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                     AppLogger.Error("Failed to start sampler");
                     return false;
                 }
+                currentFileResource = fs;
                 return true;
             }
             catch (Exception)
