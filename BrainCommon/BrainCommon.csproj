@@ -48,6 +48,7 @@
     <Compile Include="BitDataConverter.cs" />
     <Compile Include="CASHelper.cs" />
     <Compile Include="DisposableValue.cs" />
+    <Compile Include="DoubleBufManager.cs" />
     <Compile Include="IntBufManager.cs" />
     <Compile Include="LengthBitConverter.cs" />
     <Compile Include="MiscUtility.cs" />

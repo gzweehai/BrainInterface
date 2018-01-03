@@ -186,6 +186,7 @@ namespace BrainNetwork.BrainDeviceProtocol
                     AppLogger.Debug($"extra {extraBlockCount} channel data:{blocks.Show()}");
                 }
                 */
+                CommitStartStop(true);
                 var dataSeg = new ArraySegment<byte>(buf, startIdx, (extraBlockCount + 3) * 3);
                 var disIntBuf = BitDataConverter.ConvertFromPlatform(dataSeg,bufferManager);
                 _dataStream?.OnNext((order,disIntBuf,dataSeg));
