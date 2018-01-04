@@ -28,6 +28,14 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
             _uithread = Dispatcher.CurrentDispatcher;
             _currentState = default(BrainDevState);
+            AppDomain.CurrentDomain.ProcessExit += ProcessExit;
+            ClientConfig.GetConfig();
+        }
+
+        private void ProcessExit(object sender, EventArgs e)
+        {
+            BrainDeviceManager.DisConnect();
+            ClientConfig.OnAppExit();
         }
 
         private void CheckUpdate(object sender, ElapsedEventArgs e)
@@ -191,10 +199,8 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             try
             {
                 BrainDeviceManager.Init();
-                //TODO config IP and port
-                //var sender = await BrainDeviceManager.Connnect("192.168.0.101", 8088);
-                var sender = await BrainDeviceManager.Connnect("127.0.0.1", 9211);
-                //TODO config vRef (default = 4.5f)
+                var cfg = ClientConfig.GetConfig();
+                var sender = await BrainDeviceManager.Connnect(cfg.Ip, cfg.Port);
 
                 //保证设备参数正常才继续跑逻辑
                 BrainDeviceManager.BrainDeviceState.Subscribe(ss =>
@@ -210,13 +216,14 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                     var buf = datas.Array;
                     if (buf != null)
                     {
+                        var cfglocal = ClientConfig.GetConfig();
                         var startIdx = datas.Offset;
                         var voltageArr = BrainDeviceManager.BufMgr.TakeDoubleBuf(datas.Count);
                         //var voltageArr = new double[datas.Count];
                         for (var i = 0; i < datas.Count; i++)
                         {
                             voltageArr[i] =
-                                BitDataConverter.Calculatevoltage(buf[startIdx + i], 4.5f, _currentState.Gain);
+                                BitDataConverter.Calculatevoltage(buf[startIdx + i], cfglocal.ReferenceVoltage, _currentState.Gain);
                         }
                         cache.Enqueue(voltageArr);
                     }
@@ -257,8 +264,8 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             FileResource fs = null;
             try
             {
-                //TODO config device ID
-                fs = new FileResource(_currentState, 19801983, 1, BrainDeviceManager.BufMgr);
+                var cfg = ClientConfig.GetConfig();
+                fs = new FileResource(_currentState, cfg.DeviceId, 1, BrainDeviceManager.BufMgr);
                 fs.StartRecord(BrainDeviceManager.SampleDataStream);
                 var cmdResult = await sender.Start();
                 if (cmdResult != CommandError.Success)

@@ -32,6 +32,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\Dll\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Reactive.Linq">
@@ -44,9 +47,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbsBufManager.cs" />
     <Compile Include="AppLogger.cs" />
     <Compile Include="BitDataConverter.cs" />
     <Compile Include="CASHelper.cs" />
+    <Compile Include="ClientConfig.cs" />
     <Compile Include="DisposableValue.cs" />
     <Compile Include="DoubleBufManager.cs" />
     <Compile Include="IntBufManager.cs" />
