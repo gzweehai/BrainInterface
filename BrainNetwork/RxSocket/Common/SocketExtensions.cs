@@ -82,7 +82,7 @@ namespace BrainNetwork.RxSocket.Common
         }
 
         public static async Task<int> SendCompletelyAsync(this Socket socket, IList<ArraySegment<byte>> buffers,
-            SocketFlags socketFlags, CancellationToken token)
+            SocketFlags socketFlags, CancellationToken token,SyncBufManager bufMgr)
         {
             token.ThrowIfCancellationRequested();
             var sent = 0;
@@ -91,21 +91,46 @@ namespace BrainNetwork.RxSocket.Common
             {
                 count += buffers[i].Count;
             }
-            var copy = new byte[count];
-            count = 0;
+            var copy = bufMgr.TakeBuffer(count);
+            try
+            {
+                count = 0;
+                for (var i = 0; i < buffers.Count; i++)
+                {
+                    ArraySegment<byte> arraySegment = buffers[i];
+                    Buffer.BlockCopy(arraySegment.Array, arraySegment.Offset, copy, count, arraySegment.Count);
+                    count += arraySegment.Count;
+                }
+            
+                var bytes = await socket.SendCompletelyAsync(copy,count, socketFlags, token);
+                sent += bytes;
+                AppLogger.Debug($"SendCompletelyAsync:{sent},{buffers.Show()}");
+                return sent;
+            }
+            finally
+            {
+                bufMgr.ReturnBuffer(copy);
+            }
+        }
+        
+        public static async Task<int> SendCompletelyAsync(this Socket socket, IList<ArraySegment<byte>> buffers,
+            SocketFlags socketFlags, CancellationToken token)
+        {
+            token.ThrowIfCancellationRequested();
+            var sent = 0;
             for (var i = 0; i < buffers.Count; i++)
             {
-                ArraySegment<byte> arraySegment = buffers[i];
-                Buffer.BlockCopy(arraySegment.Array, arraySegment.Offset, copy, count, arraySegment.Count);
-                count += arraySegment.Count;
+                token.ThrowIfCancellationRequested();
+                var bytes = await socket.SendCompletelyAsync(buffers[i], socketFlags, token);
+                if (bytes == 0)
+                    break;
+                sent += bytes;
             }
             
-            var bytes = await socket.SendCompletelyAsync(copy,count, socketFlags, token);
-            sent += bytes;
             AppLogger.Debug($"SendCompletelyAsync:{sent},{buffers.Show()}");
             return sent;
         }
-
+        
         public static async Task<int> SendCompletelyAsync(this Socket socket, ArraySegment<byte> buf,
             SocketFlags socketFlags, CancellationToken token)
         {

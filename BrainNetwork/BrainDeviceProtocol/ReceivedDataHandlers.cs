@@ -138,7 +138,7 @@ namespace BrainNetwork.BrainDeviceProtocol
 
         public class SampleDataHandler : IReceivedDataProcessor
         {
-            public byte FuncId => 1;
+            public byte FuncId => (byte)DevCommandFuncId.StartStop;
 
             public void Process(ArraySegment<byte> data)
             {
@@ -196,7 +196,7 @@ namespace BrainNetwork.BrainDeviceProtocol
 
         public class SetSampleRateHandler : IReceivedDataProcessor
         {
-            public byte FuncId => 0x11;
+            public byte FuncId => (byte)DevCommandFuncId.SetSampleRate;
 
             public void Process(ArraySegment<byte> data)
             {
@@ -218,7 +218,7 @@ namespace BrainNetwork.BrainDeviceProtocol
 
         public class SetTrapHandler : IReceivedDataProcessor
         {
-            public byte FuncId => 0x12;
+            public byte FuncId => (byte)DevCommandFuncId.SetTrap;
 
             public void Process(ArraySegment<byte> data)
             {
@@ -240,7 +240,7 @@ namespace BrainNetwork.BrainDeviceProtocol
 
         public class SetFilterHandler : IReceivedDataProcessor
         {
-            public byte FuncId => 0x13;
+            public byte FuncId => (byte)DevCommandFuncId.SetFilter;
 
             public void Process(ArraySegment<byte> data)
             {
@@ -262,7 +262,7 @@ namespace BrainNetwork.BrainDeviceProtocol
 
         public class QueryParamHandler : IReceivedDataProcessor
         {
-            public byte FuncId => 0x21;
+            public byte FuncId => (byte)DevCommandFuncId.QueryParam;
 
             public void Process(ArraySegment<byte> data)
             {

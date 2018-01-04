@@ -13,6 +13,15 @@ namespace BrainNetwork.BrainDeviceProtocol
         QueryParam,
     }
 
+    public enum DevCommandFuncId
+    {
+        StartStop=1,
+        SetSampleRate=0x11,
+        SetTrap=0x12,
+        SetFilter=0x13,
+        QueryParam=0x21,
+    }
+
     public static partial class BrainDeviceManager
     {
         #region Start Command
@@ -44,7 +53,7 @@ namespace BrainNetwork.BrainDeviceProtocol
         {
             public DevCommandEnum CmdName => DevCommandEnum.Stop;
             public int CntSize => 2;
-            public byte FuncId => 1;
+            public byte FuncId => (byte)DevCommandFuncId.StartStop;
             public bool DontCheckResponse => true;
             public bool ReponseHasErrorFlag => false;
 
@@ -68,7 +77,7 @@ namespace BrainNetwork.BrainDeviceProtocol
         {
             public DevCommandEnum CmdName => DevCommandEnum.SetSampleRate;
             public int CntSize => 2;
-            public byte FuncId => 0X11;
+            public byte FuncId => (byte)DevCommandFuncId.SetSampleRate;
             public bool DontCheckResponse => false;
             public bool ReponseHasErrorFlag => true;
 
@@ -93,7 +102,7 @@ namespace BrainNetwork.BrainDeviceProtocol
         {
             public DevCommandEnum CmdName => DevCommandEnum.SetTrap;
             public int CntSize => 2;
-            public byte FuncId => 0X12;
+            public byte FuncId => (byte)DevCommandFuncId.SetTrap;
             public bool DontCheckResponse => false;
             public bool ReponseHasErrorFlag => true;
 
@@ -132,7 +141,7 @@ namespace BrainNetwork.BrainDeviceProtocol
         {
             public DevCommandEnum CmdName => DevCommandEnum.SetFilter;
             public int CntSize => 2;
-            public byte FuncId => 0X13;
+            public byte FuncId => (byte)DevCommandFuncId.SetFilter;
             public bool DontCheckResponse => false;
             public bool ReponseHasErrorFlag => true;
 
@@ -187,7 +196,7 @@ namespace BrainNetwork.BrainDeviceProtocol
         {
             public DevCommandEnum CmdName => DevCommandEnum.QueryParam;
             public int CntSize => 1;
-            public byte FuncId => 0X21;
+            public byte FuncId => (byte)DevCommandFuncId.QueryParam;
             public bool DontCheckResponse => false;
             public bool ReponseHasErrorFlag => false;
 

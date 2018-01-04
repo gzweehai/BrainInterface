@@ -18,19 +18,19 @@ namespace BrainNetwork.RxSocket.Protocol
                 SyncBufManager bufferManager, CancellationToken token)
         {
             return Subject.Create<DisposableValue<ArraySegment<byte>>, DisposableValue<ArraySegment<byte>>>(
-                socket.ToFrameClientObserver(encoder, token),
+                socket.ToFrameClientObserver(encoder, token,bufferManager),
                 socket.ToFixedLenFrameObservable(bufferManager, decoder));
         }
 
         public static IObserver<DisposableValue<ArraySegment<byte>>> ToFrameClientObserver(this Socket socket,
-            ISimpleFrameEncoder encoder, CancellationToken token)
+            ISimpleFrameEncoder encoder, CancellationToken token,SyncBufManager bufMgr)
         {
             return Observer.Create<DisposableValue<ArraySegment<byte>>>(async disposableBuffer =>
             {
                 await socket.SendCompletelyAsync(
                     encoder.EncoderSendFrame(disposableBuffer.Value),
                     encoder.SendFlags,
-                    token);
+                    token,bufMgr);
             });
         }
 
@@ -89,15 +89,15 @@ namespace BrainNetwork.RxSocket.Protocol
         #region dynamic frame
         public static ISubject<DisposableValue<ArraySegment<byte>>, DisposableValue<ArraySegment<byte>>>
             ToDynamicFrameSubject(this Socket socket, ISimpleFrameEncoder encoder, IDynamicFrameDecoder decoder,
-                BufferManager bufferManager, CancellationToken token)
+                SyncBufManager bufferManager, CancellationToken token)
         {
             return Subject.Create<DisposableValue<ArraySegment<byte>>, DisposableValue<ArraySegment<byte>>>(
-                socket.ToFrameClientObserver(encoder, token),
+                socket.ToFrameClientObserver(encoder, token,bufferManager),
                 socket.ToDynamicFrameObservable(bufferManager, decoder));
         }
 
         public static IObservable<DisposableValue<ArraySegment<byte>>> ToDynamicFrameObservable(this Socket socket,
-            BufferManager bufferManager, IDynamicFrameDecoder decoder)
+            SyncBufManager bufferManager, IDynamicFrameDecoder decoder)
         {
             return Observable.Create<DisposableValue<ArraySegment<byte>>>(async (observer, token) =>
             {

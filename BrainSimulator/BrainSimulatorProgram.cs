@@ -22,7 +22,7 @@ namespace BrainSimulator
         public static void Main(string[] args)
         {
             var endpoint = ProgramArgs.Parse(args, new[] { "127.0.0.1:9211" }).EndPoint;
-            var bufferManager = BufferManager.CreateBufferManager(2 << 16, 1024);
+            var bufferManager = SyncBufManager.Create(2 << 16, 1024,1024);
             var decoder = new DynamicFrameDecoder(0xA0, 0XC0);
 
             var cts = new CancellationTokenSource();
@@ -92,23 +92,23 @@ namespace BrainSimulator
             var count = buffer.Count;
             if (count > 0 && buf != null)
             {
-                var funcId = buf[buffer.Offset];
+                var funcId = (DevCommandFuncId)buf[buffer.Offset];
                 AppLogger.Debug($"func:{funcId},{buffer.Show()}");
                 switch (funcId)
                 {
-                    case 1:
+                    case DevCommandFuncId.StartStop:
                         HandlerStartStop(socket, buffer, ctsToken);
                         return;
-                    case 0x11:
+                    case DevCommandFuncId.SetSampleRate:
                         await SetSampleRate(socket, buffer, ctsToken);
                         return;
-                    case 0x12:
+                    case DevCommandFuncId.SetTrap:
                         await SetTrap(socket, buffer, ctsToken);
                         return;
-                    case 0x13:
+                    case DevCommandFuncId.SetFilter:
                         await SetFilter(socket, buffer, ctsToken);
                         return;
-                    case 0x21:
+                    case DevCommandFuncId.QueryParam:
                         await QueryParam(socket, buffer, ctsToken);
                         return;
                 }
@@ -176,7 +176,7 @@ namespace BrainSimulator
             //_r.NextBytes(buf);
             var passTimes=BrainDevState.PassTimeMs(rate, sampleTimeTick);
             const float max = 4.5f / 24;
-            buf[0] = 1;
+            buf[0] = (byte)DevCommandFuncId.StartStop;
             buf[1] = _brainState.SamplePacketOrder++;
             for (int i = 0; i < ChannelCount; i++)
             {
@@ -193,7 +193,7 @@ namespace BrainSimulator
         private static async Task SetSampleRate(Socket socket, ArraySegment<byte> buffer, CancellationToken ctsToken)
         {
             var buf = bmgr.TakeBuffer(2);
-            buf[0] = 0x11;
+            buf[0] = (byte)DevCommandFuncId.SetSampleRate;
             if (buffer.Array != null)
             {
                 var flag = (SampleRateEnum) buffer.Array[buffer.Offset + 1];
@@ -220,7 +220,7 @@ namespace BrainSimulator
         {
             var buf = bmgr.TakeBuffer(2);
             buf[1] = 1;
-            buf[0] = 0x12;
+            buf[0] = (byte)DevCommandFuncId.SetTrap;
             await SendWithHeadTail(socket, buf, 2,ctsToken);
             bmgr.ReturnBuffer(buf);
         }
@@ -229,7 +229,7 @@ namespace BrainSimulator
         {
             var buf = bmgr.TakeBuffer(2);
             buf[1] = 1;
-            buf[0] = 0x13;
+            buf[0] = (byte)DevCommandFuncId.SetFilter;
             await SendWithHeadTail(socket, buf, 2,ctsToken);
             bmgr.ReturnBuffer(buf);
         }
@@ -239,7 +239,7 @@ namespace BrainSimulator
         private static async Task QueryParam(Socket socket, ArraySegment<byte> buffer, CancellationToken ctsToken)
         {
             var buf = bmgr.TakeBuffer(7);
-            buf[0] = 0x21;
+            buf[0] = (byte)DevCommandFuncId.QueryParam;
             buf[1] = DevCode;
             buf[2] = ChannelCount;
             buf[3] = 24;
