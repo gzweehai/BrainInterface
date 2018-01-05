@@ -58,7 +58,9 @@ namespace BrainNetwork.BrainDeviceProtocol
             try
             {
                 processor.Process(data);
+#if DEBUG
                 AppLogger.Debug($"recieved data:{data.Show()}");
+#endif
                 return true;
             }
             finally

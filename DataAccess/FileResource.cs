@@ -50,7 +50,7 @@ namespace DataAccess
                 _rid = _devId + "." + _startTick + ".bin";
                 _fHandler = File.Create(_rid, 1024, FileOptions.Asynchronous|FileOptions.RandomAccess);
                 isFirst = true;
-                AppLogger.Debug("FileResource Create");
+                AppLogger.Debug($"FileResource Created:{_rid}");
             }
 
             //copy data is needed because I use async writing
@@ -81,13 +81,13 @@ namespace DataAccess
         private void OnComplete()
         {
             Dispose();
-            AppLogger.Debug("FileResource Complete");
+            AppLogger.Debug($"FileResource Complete:{_rid}");
         }
 
         private void OnErr(Exception e)
         {
             Dispose();
-            AppLogger.Warning("FileResource error:" + e.Message);
+            AppLogger.Warning($"FileResource error,{_rid} : {e.Message}");
         }
 
         private static readonly byte[] Emptyblock = new byte[0];
@@ -115,7 +115,7 @@ namespace DataAccess
                 });
                 //Console.WriteLine(hash.Show(SampleDataFileFormat.Md5Len));
             }
-            AppLogger.Debug("FileResource Dispose");
+            AppLogger.Debug($"FileResource Dispose:{_rid}");
         }
     }
 }

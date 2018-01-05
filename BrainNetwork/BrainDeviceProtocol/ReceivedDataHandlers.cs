@@ -130,7 +130,9 @@ namespace BrainNetwork.BrainDeviceProtocol
 
         private static void CommiteState()
         {
+#if DEBUG
             AppLogger.Debug($"CommiteState: {_devState}");
+#endif
             _stateStream?.OnNext(_devState);
         }
         

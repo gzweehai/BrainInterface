@@ -2,9 +2,9 @@
 {
     public class SyncBufManager
     {
-        private IAbsBufManager<int> _intBufMgr;
-        private IAbsBufManager<byte> _bufferManager;
-        private IAbsBufManager<double> _doubleBufMgr;
+        private readonly IAbsBufManager<int> _intBufMgr;
+        private readonly IAbsBufManager<byte> _bufferManager;
+        private readonly IAbsBufManager<double> _doubleBufMgr;
 
         public static SyncBufManager Create(long maxBufferPoolSize, int maxBufferSize, int maxIntBufSize)
         {
@@ -13,9 +13,9 @@
 
         private SyncBufManager(long maxBufferPoolSize, int maxBufferSize, int maxIntBufSize)
         {
-            _intBufMgr = new SyncAbsBufManager<int>(IntBufManager.Create(maxBufferPoolSize, maxIntBufSize));
-            _doubleBufMgr = new SyncAbsBufManager<double>(DoubleBufManager.Create(maxBufferPoolSize, maxIntBufSize));
-            _bufferManager = new SyncByteBufManager(maxBufferPoolSize, maxBufferSize);
+            _intBufMgr = SyncAbsBufManager<int>.Create(maxBufferPoolSize, maxIntBufSize);
+            _doubleBufMgr = SyncAbsBufManager<double>.Create(maxBufferPoolSize, maxIntBufSize);
+            _bufferManager = SyncByteBufManager.Create(maxBufferPoolSize, maxBufferSize);
         }
 
         public void Clear()

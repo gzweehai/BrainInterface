@@ -55,7 +55,7 @@ namespace BrainNetwork.BrainDeviceProtocol
                         {
                             var segment = managedBuffer.Value;
                             if (!ReceivedDataProcessor.Instance.Process(segment) && segment.Array != null)
-                                AppLogger.Debug("Echo: " + segment.Show());
+                                AppLogger.Warning($"Not Process data: {segment.Show()}");
                             managedBuffer.Dispose();
                         },
                         error =>
