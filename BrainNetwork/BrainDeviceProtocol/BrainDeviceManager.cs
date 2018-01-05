@@ -19,6 +19,7 @@ namespace BrainNetwork.BrainDeviceProtocol
         private static FixedLenFrameDecoder decoder;
         private static IDisposable observerDisposable;
         private static CancellationTokenSource cts;
+        private static Socket socket;
 
         public static SyncBufManager BufMgr => bufferManager;
 
@@ -38,9 +39,9 @@ namespace BrainNetwork.BrainDeviceProtocol
 
         public static async Task<DevCommandSender> Connnect(string ip, int port)
         {
-            cts?.Cancel();
+            DisConnect();
             var endPoint = new IPEndPoint(IPAddress.Parse(ip), port);
-            var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             await socket.ConnectAsync(endPoint);
             cts = new CancellationTokenSource();
 
@@ -76,16 +77,26 @@ namespace BrainNetwork.BrainDeviceProtocol
 
         public static void DisConnect()
         {
+            var tmpCts=Interlocked.Exchange(ref cts, null);
+            if (tmpCts == null) return;
             CommitEnableFiler(false);
-            cts?.Cancel();
-            cts = null;
-            observerDisposable?.Dispose();
-            observerDisposable = null;
-            _dataStream?.OnCompleted();
-            _dataStream = null;
-            _stateStream?.OnCompleted();
-            _stateStream = null;
+            tmpCts.Cancel();
+            var tmpObs=Interlocked.Exchange(ref observerDisposable, null);
+            tmpObs?.Dispose();
+            var tmpDataS=Interlocked.Exchange(ref _dataStream, null);
+            tmpDataS?.OnCompleted();
+            var tmpStateS=Interlocked.Exchange(ref _stateStream, null);
+            tmpStateS?.OnCompleted();
             bufferManager.Clear();
+            var tmp = Interlocked.Exchange(ref socket, null);
+            try
+            {
+                tmp?.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
             AppLogger.Debug("BrainDeviceManager.DisConnect");
         }
     }

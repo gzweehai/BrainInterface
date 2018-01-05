@@ -79,11 +79,14 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         private void StartAsync()
         {
-            Task.Factory.StartNew(StartDevCmd).ContinueWith((t) => { UpdateRuningStates(); },
+            Task.Factory.StartNew(() =>
+            {
+                StartDevCmd().Wait();
+            }).ContinueWith(t => { UpdateRuningStates(); },
                 TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        private async void StartDevCmd()
+        private async Task StartDevCmd()
         {
             if (_running) return;
 
@@ -133,7 +136,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             if (IsRunning)
             {
                 IsRunning = false;
-                _timer.Stop();
+                _timer?.Stop();
                 if (_devCtl != null)
                     await _devCtl.Stop();
                 //PauseChart(true);
@@ -158,6 +161,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             IsReset = true;
             StopDevCmd();
             Disconnect();
+            currentFileResource = null;
             ResetChannelParts();
         }
 
@@ -259,21 +263,24 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         private async Task<bool> StartSampleAsync(DevCommandSender sender)
         {
-            currentFileResource?.Dispose();
-            currentFileResource = null;
             FileResource fs = null;
             try
             {
-                var cfg = ClientConfig.GetConfig();
-                fs = new FileResource(_currentState, cfg.DeviceId, 1, BrainDeviceManager.BufMgr);
-                fs.StartRecord(BrainDeviceManager.SampleDataStream);
+                if (currentFileResource == null)
+                {
+                    var cfg = ClientConfig.GetConfig();
+                    fs = new FileResource(_currentState, cfg.DeviceId, 1, BrainDeviceManager.BufMgr);
+                    fs.StartRecord(BrainDeviceManager.SampleDataStream);
+                }
                 var cmdResult = await sender.Start();
                 if (cmdResult != CommandError.Success)
                 {
                     AppLogger.Error("Failed to start sampler");
+                    fs?.Dispose();
                     return false;
                 }
-                currentFileResource = fs;
+                if (currentFileResource == null)
+                    currentFileResource = fs;
                 return true;
             }
             catch (Exception)
