@@ -13,11 +13,16 @@ namespace BrainCommon
     public static class AppLogger
     {
         private static readonly StreamWriter LogFile;
-
+#if DEBUG
+        private const string logfilepostfix = ".log";
+#else
+        private const string logfilepostfix = ".log.gz";
+#endif
+        
         static AppLogger()
         {
             var utcNow = DateTime.UtcNow;
-            var logFn = $"{utcNow.Year}.{utcNow.Month}.{utcNow.Day}.{utcNow.Ticks}.log";
+            var logFn = $"{utcNow.Year}.{utcNow.Month}.{utcNow.Day}.{utcNow.Ticks}{logfilepostfix}";
             try
             {
                 Stream baseStream = File.Create(logFn);
