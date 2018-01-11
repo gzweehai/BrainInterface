@@ -76,6 +76,15 @@ namespace BrainNetwork.BrainDeviceProtocol
             return $"{nameof(DevCode)}: {DevCode}, {nameof(ChannelCount)}: {ChannelCount}, {nameof(Gain)}: {Gain}, {nameof(SampleRate)}: {SampleRate}, {nameof(TrapOption)}: {TrapOption}, {nameof(EnalbeFilter)}: {EnalbeFilter}, {nameof(IsStart)}: {IsStart}, {nameof(FaultStateCode)}: {FaultStateCode}, {nameof(LastSelectedSingleImpedanceChannel)}: {LastSelectedSingleImpedanceChannel}, {nameof(LastSingleImpedanceCode)}: {LastSingleImpedanceCode}, " +
                    $"{nameof(LastMultiImpedanceCodes)}: {LastMultiImpedanceCodes?.Count}";
         }
+
+        public int GetChannelImpedance(int i)
+        {
+            if (LastMultiImpedanceCodes != null && i < LastMultiImpedanceCodes.Count)
+            {
+                return LastMultiImpedanceCodes[i];
+            }
+            return 0;
+        }
     }
 
     public enum TrapSettingEnum

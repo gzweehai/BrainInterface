@@ -37,6 +37,8 @@ namespace BrainNetwork.BrainDeviceProtocol
            //_stateStream.OnNext(_devState);
         }
 
+        public static event Action OnConnected;
+        
         public static async Task<DevCommandSender> Connnect(string ip, int port)
         {
             DisConnect();
@@ -72,6 +74,7 @@ namespace BrainNetwork.BrainDeviceProtocol
 
             var cmdSender = new DevCommandSender(frameClientSubject, bufferManager);
             ReceivedDataProcessor.Instance.Sender = cmdSender;
+            OnConnected?.Invoke();
             return cmdSender;
         }
 

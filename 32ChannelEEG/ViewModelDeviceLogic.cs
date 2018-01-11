@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows.Input;
 using System.Windows.Threading;
 using BrainCommon;
 using BrainNetwork.BrainDeviceProtocol;
 using DataAccess;
 using SciChart.Charting.Common.Helpers;
+using SciChart_50ChannelEEG;
 
 namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 {
@@ -20,11 +23,44 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         private ConcurrentQueue<double[]> cache = new ConcurrentQueue<double[]>();
         private FileResource currentFileResource;
 
+        private readonly ActionCommand _impedanceCommand;
+        private ImpedanceViewWin _impedanceView;
+        public ICommand ImpedanceCommand
+        {
+            get { return _impedanceCommand; }
+        }
+
+        private void ShowImpedanceView()
+        {
+            if (_devCtl == null)
+            {
+                _impedanceView?.Activate();
+                return;
+            }
+            if (_impedanceView == null)
+            {
+                _impedanceView = new ImpedanceViewWin(_currentState);
+                _impedanceView.Closing += OnImpedanceViewClosing;
+            }
+            else
+            {
+                _impedanceView.Activate();
+            }
+            _devCtl.TestMultiImpedance(_currentState.ChannelCount);
+            _impedanceView.Show();
+        }
+
+        private void OnImpedanceViewClosing(object sender, CancelEventArgs e)
+        {
+            _impedanceView = null;
+        }
+
         public EEGExampleViewModel()
         {
             _startCommand = new ActionCommand(StartAsync, () => !IsRunning);
             _stopCommand = new ActionCommand(StopDevCmd, () => IsRunning);
             _resetCommand = new ActionCommand(ResetDevCmd, () => !IsRunning && !IsReset);
+            _impedanceCommand = new ActionCommand(ShowImpedanceView, () => _impedanceView != null || _devCtl != null);
 
             _uithread = Dispatcher.CurrentDispatcher;
             _currentState = default(BrainDevState);
@@ -117,6 +153,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         {
             IsReset = _isReset;
             IsRunning = _running;
+            _impedanceCommand.RaiseCanExecuteChanged();
             if (_running)
             {
                 _timer = new Timer(_timerInterval);
@@ -176,6 +213,8 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         private void RefreshChannelParts()
         {
+            _impedanceCommand.RaiseCanExecuteChanged();
+
             if (ChannelViewModels != null && ChannelViewModels.Count == ChannelCount)
             {
                 PauseChart(!_currentState.IsStart);
