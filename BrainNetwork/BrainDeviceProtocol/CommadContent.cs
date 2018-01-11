@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using BrainCommon;
 
 namespace BrainNetwork.BrainDeviceProtocol
 {
@@ -11,6 +10,9 @@ namespace BrainNetwork.BrainDeviceProtocol
         SetTrap,
         SetFilter,
         QueryParam,
+        QueryFaultState,
+        TestSingleImpedance,
+        TestMultiImpedance,
     }
 
     public enum DevCommandFuncId
@@ -20,6 +22,9 @@ namespace BrainNetwork.BrainDeviceProtocol
         SetTrap=0x12,
         SetFilter=0x13,
         QueryParam=0x21,
+        QueryFaultState=0x22,
+        TestSingleImpedance=0x31,
+        TestMultiImpedance=0x32,
     }
 
     public static partial class BrainDeviceManager
@@ -160,6 +165,58 @@ namespace BrainNetwork.BrainDeviceProtocol
         }
 
         #endregion
+
+        #region TestSingleImpedance Command
+
+        public class FillTestSingleImpedanceCommadContent : ICommandContent
+        {
+            public DevCommandEnum CmdName => DevCommandEnum.TestSingleImpedance;
+            public int CntSize => 2;
+            public byte FuncId => (byte)DevCommandFuncId.TestSingleImpedance;
+            public bool DontCheckResponse => false;
+            public bool ReponseHasErrorFlag => false;
+
+            public object FillCnt(byte[] buffer, object[] args)
+            {
+                var selectedChannel = (byte) args[0];
+                buffer[1] = selectedChannel;
+                return selectedChannel;
+            }
+
+            public void HandlerSuccess(object cmdCnt)
+            {
+                var selectedChannel = (byte) cmdCnt;
+                CommitSingleImpedanceChannel(selectedChannel);
+            }
+        }
+
+        #endregion
+        
+        #region TestMultiImpedance Command
+
+        public class FillTestMultiImpedanceCommadContent : ICommandContent
+        {
+            public DevCommandEnum CmdName => DevCommandEnum.TestMultiImpedance;
+            public int CntSize => 2;
+            public byte FuncId => (byte)DevCommandFuncId.TestMultiImpedance;
+            public bool DontCheckResponse => false;
+            public bool ReponseHasErrorFlag => false;
+
+            public object FillCnt(byte[] buffer, object[] args)
+            {
+                var channelCount = (byte) args[0];
+                buffer[1] = channelCount;
+                return args[0];
+            }
+
+            public void HandlerSuccess(object cmdCnt)
+            {
+                //var channelCount = (byte) cmdCnt;
+                //CommitMultiImpedanceCount(channelCount);
+            }
+        }
+
+        #endregion
     }
 
     public sealed partial class DevCommandSender
@@ -189,6 +246,15 @@ namespace BrainNetwork.BrainDeviceProtocol
             return await ExecCmd(DevCommandEnum.SetFilter, useFilter);
         }
 
+        public async Task<CommandError> TestSingleImpedance(byte selectedChannel)
+        {
+            return await ExecCmd(DevCommandEnum.TestSingleImpedance, selectedChannel);
+        }
+        
+        public async Task<CommandError> TestMultiImpedance(byte channelCount)
+        {
+            return await ExecCmd(DevCommandEnum.TestMultiImpedance, channelCount);
+        }
         
         #region Query Parameters Command
 
@@ -209,10 +275,38 @@ namespace BrainNetwork.BrainDeviceProtocol
             {
             }
         }
+        
+        #region QueryFaultState Command
+
+        public class FillQueryFaultStateCommadContent : ICommandContent
+        {
+            public DevCommandEnum CmdName => DevCommandEnum.QueryFaultState;
+            public int CntSize => 1;
+            public byte FuncId => (byte)DevCommandFuncId.QueryFaultState;
+            public bool DontCheckResponse => false;
+            public bool ReponseHasErrorFlag => false;
+
+            public object FillCnt(byte[] buffer, object[] args)
+            {
+                return null;
+            }
+
+            public void HandlerSuccess(object cmdCnt)
+            {
+            }
+        }
+
+        #endregion
+        
 
         public async Task<CommandError> QueryParam()
         {
             return await ExecCmd(DevCommandEnum.QueryParam);
+        }
+        
+        public async Task<CommandError> QueryFaultState()
+        {
+            return await ExecCmd(DevCommandEnum.QueryFaultState);
         }
 
         #endregion

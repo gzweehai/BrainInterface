@@ -111,6 +111,16 @@ namespace BrainSimulator
                     case DevCommandFuncId.QueryParam:
                         await QueryParam(socket, buffer, ctsToken);
                         return;
+
+                    case DevCommandFuncId.QueryFaultState:
+                        await QueryFaultState(socket, buffer, ctsToken);
+                        return;
+                    case DevCommandFuncId.TestSingleImpedance:
+                        await TestSingleImpedance(socket, buffer, ctsToken);
+                        return;
+                    case DevCommandFuncId.TestMultiImpedance:
+                        await TestMultiImpedance(socket, buffer, ctsToken);
+                        return;
                 }
             }
             await SimpleSend(socket, buffer);
@@ -248,6 +258,42 @@ namespace BrainSimulator
             buf[6] = _brainState.EnableFilter ? (byte) 1 : (byte) 0;
 
             await SendWithHeadTail(socket, buf, 7,ctsToken);
+            bmgr.ReturnBuffer(buf);
+        }
+
+        private static async Task QueryFaultState(Socket socket, ArraySegment<byte> buffer, CancellationToken ctsToken)
+        {
+            var buf = bmgr.TakeBuffer(2);
+            buf[0] = (byte)DevCommandFuncId.QueryFaultState;
+            buf[1] = _r.Next() < 1 ? (byte) 1 : (byte) 0;
+
+            await SendWithHeadTail(socket, buf, 2,ctsToken);
+            bmgr.ReturnBuffer(buf);
+        }
+
+        private static async Task TestSingleImpedance(Socket socket, ArraySegment<byte> buffer, CancellationToken ctsToken)
+        {
+            var buf = bmgr.TakeBuffer(3);
+            _r.NextBytes(buf);
+            buf[0] = (byte)DevCommandFuncId.TestSingleImpedance;
+
+            await SendWithHeadTail(socket, buf, 3,ctsToken);
+            bmgr.ReturnBuffer(buf);
+        }
+
+        private static async Task TestMultiImpedance(Socket socket, ArraySegment<byte> buffer, CancellationToken ctsToken)
+        {
+            byte channelCount = 32;
+            if (buffer.Array != null)
+            {
+                channelCount = buffer.Array[buffer.Offset + 1];
+            }
+            byte bufferSize = (byte) (channelCount*2+1);
+            var buf = bmgr.TakeBuffer(bufferSize);
+            _r.NextBytes(buf);
+            buf[0] = (byte)DevCommandFuncId.TestMultiImpedance;
+
+            await SendWithHeadTail(socket, buf, bufferSize,ctsToken);
             bmgr.ReturnBuffer(buf);
         }
 

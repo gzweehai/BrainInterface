@@ -1,4 +1,6 @@
-﻿namespace BrainNetwork.BrainDeviceProtocol
+﻿using System.Collections.Generic;
+
+namespace BrainNetwork.BrainDeviceProtocol
 {
     public struct BrainDevState
     {
@@ -8,9 +10,14 @@
         public SampleRateEnum SampleRate;
         public TrapSettingEnum TrapOption;
         public bool EnalbeFilter;
-        public bool IsStart;
-        
         public const int StoreSize = 6;
+        
+        public bool IsStart;
+        public byte FaultStateCode;
+        public byte LastSelectedSingleImpedanceChannel;
+        public int LastSingleImpedanceCode;
+        public List<int> LastMultiImpedanceCodes;
+        
         
         public const int SampleCount_250 = 20 * 250 / 1000;
         public const int SampleCount_500 = 20 * 500 / 1000;
@@ -66,7 +73,8 @@
         
         public override string ToString()
         {
-            return $"{nameof(DevCode)}: {DevCode}, {nameof(ChannelCount)}: {ChannelCount},  {nameof(Gain)}: {Gain}, {nameof(SampleRate)}: {SampleRate}, {nameof(TrapOption)}: {TrapOption}, {nameof(EnalbeFilter)}: {EnalbeFilter}, {nameof(IsStart)}: {IsStart}";
+            return $"{nameof(DevCode)}: {DevCode}, {nameof(ChannelCount)}: {ChannelCount}, {nameof(Gain)}: {Gain}, {nameof(SampleRate)}: {SampleRate}, {nameof(TrapOption)}: {TrapOption}, {nameof(EnalbeFilter)}: {EnalbeFilter}, {nameof(IsStart)}: {IsStart}, {nameof(FaultStateCode)}: {FaultStateCode}, {nameof(LastSelectedSingleImpedanceChannel)}: {LastSelectedSingleImpedanceChannel}, {nameof(LastSingleImpedanceCode)}: {LastSingleImpedanceCode}, " +
+                   $"{nameof(LastMultiImpedanceCodes)}: {LastMultiImpedanceCodes?.Count}";
         }
     }
 
@@ -80,7 +88,7 @@
     public enum SampleRateEnum
     {
         SPS_2k =3,
-        SPS_1k=4,
+        SPS_1k =4,
         SPS_500=5,
         SPS_250=6,
     }

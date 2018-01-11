@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reactive.Subjects;
 using System.Threading;
 using BrainCommon;
@@ -69,6 +70,30 @@ namespace BrainNetwork.BrainDeviceProtocol
             if (changed)
                 CommiteState();
         }
+
+        private static void SetSingleImpedance(int code)
+        {
+            //spin lock
+            while (Interlocked.CompareExchange(ref _stateLock, CASHelper.LockUsed, CASHelper.LockFree) != CASHelper.LockFree){}
+            _devState.LastSingleImpedanceCode = code;
+            //free lock
+            Interlocked.CompareExchange(ref _stateLock, CASHelper.LockFree, CASHelper.LockUsed);
+        }
+        private static void CommitSingleImpedanceChannel(byte impedanceChannel)
+        {
+            var changed = false;
+            //spin lock
+            while (Interlocked.CompareExchange(ref _stateLock, CASHelper.LockUsed, CASHelper.LockFree) != CASHelper.LockFree){}
+            if (_devState.LastSelectedSingleImpedanceChannel != impedanceChannel)
+            {
+                changed = true;
+                _devState.LastSelectedSingleImpedanceChannel = impedanceChannel;
+            }
+            //free lock
+            Interlocked.CompareExchange(ref _stateLock, CASHelper.LockFree, CASHelper.LockUsed);
+            if (changed)
+                CommiteState();
+        }
         
         private static void CommitParam(byte devCode,byte chanCount,byte gain,SampleRateEnum sampleRate,TrapSettingEnum trapOpt,bool enalbeFilter)
         {
@@ -121,6 +146,32 @@ namespace BrainNetwork.BrainDeviceProtocol
             {
                 changed = true;
                 _devState.IsStart = isStart;
+            }
+            //free lock
+            Interlocked.CompareExchange(ref _stateLock, CASHelper.LockFree, CASHelper.LockUsed);
+            if (changed)
+                CommiteState();
+        }
+
+        private static void CommitMultiImpedance(List<int> lst)
+        {
+            //spin lock
+            while (Interlocked.CompareExchange(ref _stateLock, CASHelper.LockUsed, CASHelper.LockFree) != CASHelper.LockFree){}
+            _devState.LastMultiImpedanceCodes = lst;
+            //free lock
+            Interlocked.CompareExchange(ref _stateLock, CASHelper.LockFree, CASHelper.LockUsed);
+            CommiteState();
+        }
+
+        private static void CommitFaultState(byte faultState)
+        {
+            var changed = false;
+            //spin lock
+            while (Interlocked.CompareExchange(ref _stateLock, CASHelper.LockUsed, CASHelper.LockFree) != CASHelper.LockFree){}
+            if (_devState.FaultStateCode != faultState)
+            {
+                changed = true;
+                _devState.FaultStateCode = faultState;
             }
             //free lock
             Interlocked.CompareExchange(ref _stateLock, CASHelper.LockFree, CASHelper.LockUsed);
@@ -282,5 +333,81 @@ namespace BrainNetwork.BrainDeviceProtocol
                 CommitParam(buf[startIdx + 1],buf[startIdx + 2],buf[startIdx + 3],(SampleRateEnum) buf[startIdx + 4],(TrapSettingEnum) buf[startIdx + 5],buf[startIdx + 6] == 1);
             }
         }
+        
+        public class QueryFaultStateHandler : IReceivedDataProcessor
+        {
+            public byte FuncId => (byte)DevCommandFuncId.QueryFaultState;
+
+            public void Process(ArraySegment<byte> data)
+            {
+                var count = data.Count;
+                var buf = data.Array;
+                const int leastLen = 1 + 1;
+                if (buf == null || count < leastLen)
+                {
+                    AppLogger.Error($"corruted QueryFaultState result,received len: {count}");
+                    return;
+                }
+
+                var startIdx = data.Offset;
+                CommitFaultState(buf[startIdx + 1]);
+            }
+        }
+        
+        public class TestSingleImpedanceHandler : IReceivedDataProcessor
+        {
+            public byte FuncId => (byte)DevCommandFuncId.TestSingleImpedance;
+
+            public void Process(ArraySegment<byte> data)
+            {
+                var count = data.Count;
+                var buf = data.Array;
+                const int leastLen = 1 + 2;
+                if (buf == null || count < leastLen)
+                {
+                    AppLogger.Error($"corruted SetFilter result,received len: {count}");
+                    return;
+                }
+
+                var startIdx = data.Offset;
+                var flag0 = buf[startIdx + 1];
+                var flag1 = buf[startIdx + 2];
+                var code = BitDataConverter.ImpedanceCode(flag0, flag1);
+                SetSingleImpedance(code);
+                AppLogger.Debug($"TestSingleImpedance: {flag0},{flag1}");
+            }
+        }
+
+        public class TestMultiImpedanceHandler : IReceivedDataProcessor
+        {
+            public byte FuncId => (byte)DevCommandFuncId.TestMultiImpedance;
+
+            public void Process(ArraySegment<byte> data)
+            {
+                var count = data.Count;
+                var buf = data.Array;
+                const int leastLen = 1;
+                if (buf == null || count < leastLen)
+                {
+                    AppLogger.Error($"corruted SetFilter result,received len: {count}");
+                    return;
+                }
+                
+                count = (count-1) /2;
+                var lst = new List<int>(count);
+                var startIdx = data.Offset+1;
+                for (var i = 0; i < count; i++)
+                {
+                    var index0 = i*2+startIdx;
+                    var flag0 = buf[index0];
+                    var flag1 = buf[index0 + 1];
+                    var code = BitDataConverter.ImpedanceCode(flag0, flag1);
+                    lst.Add(code);
+                }
+                CommitMultiImpedance(lst);
+                AppLogger.Debug($"TestMultiImpedanceHandler: Data Processed");
+            }
+        }
+
     }
 }

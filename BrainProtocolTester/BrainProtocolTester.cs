@@ -58,7 +58,7 @@ namespace BrainProtocolTester
             BrainDeviceManager.BrainDeviceState.Subscribe(ss =>
             {
                 currentState = ss;
-                AppLogger.Debug($"Brain Device State Changed Detected: {ss}");
+                //AppLogger.Debug($"Brain Device State Changed Detected: {ss}");
             }, () =>
             {
                 AppLogger.Debug("device stop detected");
@@ -104,6 +104,15 @@ namespace BrainProtocolTester
             
             cmdResult = await sender.QueryParam();
             AppLogger.Debug("QueryParam result:"+cmdResult);
+
+            cmdResult = await sender.QueryFaultState();
+            AppLogger.Debug("QueryFaultState result:"+cmdResult);
+            
+            cmdResult = await sender.TestSingleImpedance(1);
+            AppLogger.Debug("TestSingleImpedance result:"+cmdResult);
+            
+            cmdResult = await sender.TestMultiImpedance(30);
+            AppLogger.Debug("TestMultiImpedance result:"+cmdResult);
 
             Console.ReadLine();
             var fs = new FileResource(currentState, 19801983, 1, BrainDeviceManager.BufMgr);

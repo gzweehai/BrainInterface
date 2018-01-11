@@ -4,6 +4,11 @@ namespace BrainCommon
 {
     public static class BitDataConverter
     {
+        public static int ImpedanceCode(byte f0, byte f1)
+        {
+            return (f0 << 8) + f1;
+        }
+        
         public static double Calculatevoltage(int num,float vRef = 4.5f, int gain = 72)
         {
             return (num * vRef) / (maxVal * gain);
