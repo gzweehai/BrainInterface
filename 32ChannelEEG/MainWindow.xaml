@@ -2,5 +2,5 @@
   <Window.Resources>
     <example:EEGExampleViewModel x:Key="ViewModel" />
   </Window.Resources>
-  <example:EEGExampleView DataContext="{StaticResource ViewModel}" />
+  <example:EEGExampleView x:Name="MainView" DataContext="{StaticResource ViewModel}" />
 </Window>

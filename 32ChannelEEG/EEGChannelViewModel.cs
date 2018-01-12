@@ -13,12 +13,12 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         private readonly int _size;
         private Color _color;
         private IXyDataSeries<double, double> _channelDataSeries;
-        private List<double> xBuffer;
-        private List<double> yBuffer;
+        private List<(double,double)> xyBuffer;
         private double _lastX;
         private bool _pause;
         private bool _isvisible;
         private IUpdateSuspender _updateCtl;
+        private readonly List<(double, double)> _emptyList = new List<(double, double)>(0);
 
         public EEGChannelViewModel(int size, Color color, int count)
         {
@@ -35,8 +35,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
             if (count > 0)
             {
-                xBuffer = new List<double>(count);
-                yBuffer = new List<double>(count);
+                xyBuffer = new List<(double, double)>(count);
                 //_channelDataSeries.AcceptsUnsortedData = true;
             }
             _lastX = _channelDataSeries.HasValues ? (double)_channelDataSeries.XMax : 0;
@@ -70,23 +69,24 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             _channelDataSeries.Clear();
             _pause = false;
             _lastX = 0;
-            xBuffer.Clear();
-            yBuffer.Clear();
+            var empty = new List<(double, double)>();
+            Interlocked.Exchange(ref xyBuffer, empty);
         }
 
         public void BufferChannelData(float passTimes, double voltage)
         {
             if (_pause) return;
-            xBuffer.Add(passTimes);
-            yBuffer.Add(voltage);
+            var local = Interlocked.Exchange(ref xyBuffer, _emptyList);
+            local.Add((passTimes,voltage));
+            Interlocked.Exchange(ref xyBuffer, local);
         }
 
         public void PauseX()
         {
             _lastX=_channelDataSeries.HasValues ?(double)_channelDataSeries.XMax:0;
             _pause = true;
-            xBuffer.Clear();
-            yBuffer.Clear();
+            var empty = new List<(double, double)>();
+            Interlocked.Exchange(ref xyBuffer, empty);
         }
 
         public void Resume()
@@ -97,49 +97,51 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         public void OptVisible(bool isVisible)
         {
             _isvisible = isVisible;
-            /*if (_isvisible)
+            if (_isvisible)
             {
                 if (_updateCtl != null)
                 {
-                    //Interlocked.Exchange
                     var tmp = _updateCtl;
                     _updateCtl = null;
-                    //_channelDataSeries.ResumeUpdates(tmp);
                     tmp.Dispose();
                 }
                 else
                     AppLogger.Debug("_updateCtl is null");
             }
             else
-                _updateCtl = _channelDataSeries.SuspendUpdates();
-            */
+            {
+                if (_updateCtl == null)
+                    _updateCtl = _channelDataSeries.SuspendUpdates();
+            }
         }
 
         public void FlushBuf()
         {
-            if (xBuffer.Count > 0)
+            var empty = new List<(double, double)>();
+            var local = Interlocked.Exchange(ref xyBuffer, empty);
+
+            if (local.Count <= 0) return;
+            if (_isvisible)
             {
-                if (_isvisible)
+                using (_channelDataSeries.SuspendUpdates())
                 {
-                    using (_channelDataSeries.SuspendUpdates())
-                    {
-                        int count = xBuffer.Count;
-                        for (var i = 0; i < count; i++)
-                        {
-                            _channelDataSeries.Append(_lastX + xBuffer[i], yBuffer[i]);
-                        }
-                    }
-                    xBuffer.Clear();
-                    yBuffer.Clear();
+                    UpdateSeriesData(local);
                 }
-                /*else
-                {
-                    int count = xBuffer.Count;
-                    for (var i = 0; i < count; i++)
-                    {
-                        _channelDataSeries.Append(_lastX + xBuffer[i], yBuffer[i]);
-                    }
-                }*/
+            }
+            else
+            {
+                UpdateSeriesData(local);
+            }
+            local.Clear();
+        }
+
+        private void UpdateSeriesData(List<(double, double)> local)
+        {
+            var count = local.Count;
+            for (var i = 0; i < count; i++)
+            {
+                var xy = local[i];
+                _channelDataSeries.Append(_lastX + xy.Item1, xy.Item2);
             }
         }
     }

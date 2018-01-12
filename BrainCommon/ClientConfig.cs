@@ -13,9 +13,14 @@ namespace BrainCommon
 
         private ClientConfig()
         {
-            
+            AppDomain.CurrentDomain.ProcessExit += ProcessExit;
         }
-        
+
+        private void ProcessExit(object sender, EventArgs e)
+        {
+            _instance?.WriteToFile("BrainInterfaceClientConfig.json");
+        }
+
         public string ToJson()
         {
             return JsonC.SerializeObject(this);
@@ -62,11 +67,6 @@ namespace BrainCommon
             if (_instance == null)
                 _instance = LoadFromFile("BrainInterfaceClientConfig.json");
             return _instance;
-        }
-
-        public static void OnAppExit()
-        {
-            _instance?.WriteToFile("BrainInterfaceClientConfig.json");
         }
     }
 }

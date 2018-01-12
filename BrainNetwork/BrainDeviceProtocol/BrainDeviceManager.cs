@@ -34,7 +34,13 @@ namespace BrainNetwork.BrainDeviceProtocol
         {
             _dataStream = new Subject<(byte, ArraySegment<int>, ArraySegment<byte>)>();
             _stateStream = new Subject<BrainDevState>();
-           //_stateStream.OnNext(_devState);
+            //_stateStream.OnNext(_devState);
+            AppDomain.CurrentDomain.ProcessExit += ProcessExit;
+        }
+
+        private static void ProcessExit(object sender, EventArgs e)
+        {
+            DisConnect();
         }
 
         public static event Action OnConnected;

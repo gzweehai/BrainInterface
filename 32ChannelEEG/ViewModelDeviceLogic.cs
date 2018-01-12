@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -12,7 +14,9 @@ using BrainCommon;
 using BrainNetwork.BrainDeviceProtocol;
 using DataAccess;
 using SciChart.Charting.Common.Helpers;
+using SciChart.Charting.Visuals;
 using SciChart_50ChannelEEG;
+using Timer = System.Timers.Timer;
 
 namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 {
@@ -22,11 +26,13 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         private int _pakNum;
         private Dispatcher _uithread;
         private DevCommandSender _devCtl;
-        private ConcurrentQueue<double[]> cache = new ConcurrentQueue<double[]>();
+        private List<(double[],float)> cache = new List<(double[],float)>();
         private FileResource currentFileResource;
 
         private readonly ActionCommand _impedanceCommand;
         private ImpedanceViewWin _impedanceView;
+        private readonly List<(double[],float)> _emptyList=new List<(double[],float)>(0);
+
         public ICommand ImpedanceCommand
         {
             get { return _impedanceCommand; }
@@ -66,28 +72,40 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
             _uithread = Dispatcher.CurrentDispatcher;
             _currentState = default(BrainDevState);
-            AppDomain.CurrentDomain.ProcessExit += ProcessExit;
             ClientConfig.GetConfig();
         }
 
-        private void ProcessExit(object sender, EventArgs e)
-        {
-            BrainDeviceManager.DisConnect();
-            ClientConfig.OnAppExit();
-        }
-
+        private int _updatingTag = CASHelper.LockFree;
         private void CheckUpdate(object sender, ElapsedEventArgs e)
         {
-            lock (_syncRoot)
+            var tag=Interlocked.Exchange(ref _updatingTag, CASHelper.LockUsed);
+            if (tag == CASHelper.LockUsed) return;
+            var empty=new List<(double[],float)>();
+            var local = Interlocked.Exchange(ref cache, empty);
+            if (local.Count > 0)
             {
-                while (cache.TryDequeue(out var voltageArr))
+                for (var i = 0; i < local.Count; i++)
                 {
-                    UpdateChannelBuffer(voltageArr);
+                    var pair = local[i];
+                    var voltageArr = pair.Item1;
+                    UpdateChannelBuffer(voltageArr, pair.Item2);
                     BrainDeviceManager.BufMgr.ReturnBuffer(voltageArr);
                 }
+                local.Clear();
+            }
+            Interlocked.Exchange(ref _updatingTag, CASHelper.LockFree);
 
-                if (!IsRunning || _channelViewModels == null) return;
-                _uithread.InvokeAsync(FlushAllChannels);
+            if (!IsRunning || _channelViewModels == null) return;
+            FlushAllChannels();
+        }
+
+        private void UpdateChannelBuffer(double[] voltageArr, float passTimes)
+        {
+            if (_channelViewModels == null) return;
+            for (var i = 0; i < _channelViewModels.Count; i++)
+            {
+                var channel = _channelViewModels[i];
+                channel.BufferChannelData(passTimes, voltageArr[i]);
             }
         }
 
@@ -98,18 +116,6 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 var channel = _channelViewModels[i];
                 channel.FlushBuf();
                 _currentSize = channel.ChannelDataSeries.Count;
-            }
-        }
-
-        private void UpdateChannelBuffer(double[] voltageArr)
-        {
-            if (_channelViewModels == null) return;
-            var passTimes = BrainDevState.PassTimeMs(_currentState.SampleRate, _pakNum);
-            _pakNum++;
-            for (var i = 0; i < _channelViewModels.Count; i++)
-            {
-                var channel = _channelViewModels[i];
-                channel.BufferChannelData(passTimes, voltageArr[i]);
             }
         }
 
@@ -269,13 +275,17 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                         var cfglocal = ClientConfig.GetConfig();
                         var startIdx = datas.Offset;
                         var voltageArr = BrainDeviceManager.BufMgr.TakeDoubleBuf(datas.Count);
-                        //var voltageArr = new double[datas.Count];
                         for (var i = 0; i < datas.Count; i++)
                         {
                             voltageArr[i] =
                                 BitDataConverter.Calculatevoltage(buf[startIdx + i], cfglocal.ReferenceVoltage, _currentState.Gain);
                         }
-                        cache.Enqueue(voltageArr);
+                        var localpak = Interlocked.Increment(ref _pakNum);
+                        var passTimes = BrainDevState.PassTimeMs(_currentState.SampleRate, localpak - 1);
+                        var item = (voltageArr, passTimes);
+                        var local = Interlocked.Exchange(ref cache, _emptyList);
+                        local.Add(item);
+                        Interlocked.Exchange(ref cache, local);
                     }
                 }, () =>
                 {
@@ -335,6 +345,11 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 return false;
             }
         }
+
+        public void OnClosing(CancelEventArgs cancelEventArgs)
+        {
+            _impedanceView?.Close();
+        }
     }
 
     public partial class EEGExampleView
@@ -346,36 +361,35 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             //e.ViewportHeight: Number of list view items shown in the current view.
             var scrollViewer = sender as FrameworkElement;
             var eegExampleViewModel = (DataContext as EEGExampleViewModel);
-            try
+            var count =eegExampleViewModel?.ChannelViewModels?.Count ?? 0;
+            if (count <= 0) return;
+            var lastIdx = (int) (e.VerticalOffset + e.ViewportHeight);
+            lastIdx = lastIdx < count ? lastIdx : count - 1;
+            var itemGrid = (ChannelListBox.Items[lastIdx] as EEGChannelViewModel)?.ChannelDataSeries?.ParentSurface?.RootGrid as FrameworkElement;
+            var lastVisible = IsFullyOrPartiallyVisible(itemGrid, scrollViewer);
+            if (!lastVisible) lastIdx--;
+            //AppLogger.Debug($"ChannelListBox_ScrollChanged: {scrollViewer}, {e.VerticalOffset},{e.ViewportHeight},{lastVisible}");
+            for (var i = 0;i< ChannelListBox.Items.Count; i++)
             {
-                var count = eegExampleViewModel.ChannelViewModels.Count;
-                int lastIdx = (int) (e.VerticalOffset + e.ViewportHeight);
-                lastIdx = lastIdx < count ? lastIdx : count - 1;
-                var vm = ChannelListBox.Items[lastIdx] as EEGChannelViewModel;
-                var tmp = vm?.ChannelDataSeries?.ParentSurface?.RootGrid;
-                var tmp2 = tmp as FrameworkElement;
-                var lastVisible = tmp2 == null ? false : IsFullyOrPartiallyVisible(tmp2, scrollViewer);
-                if (!lastVisible) lastIdx--;
-                AppLogger.Debug($"ChannelListBox_ScrollChanged: {scrollViewer}, {e.VerticalOffset},{e.ViewportHeight},{lastVisible}");
-                for (int i = 0;i< ChannelListBox.Items.Count; i++)
-                {
-                    var isvisible = e.VerticalOffset <= i && i <= lastIdx;
-                    var viewmodel = ChannelListBox.Items[i] as EEGChannelViewModel;
-                    viewmodel.OptVisible(isvisible);
-                }
-            }
-            catch (Exception ex)
-            {
-                AppLogger.Error(ex.Message);
+                var isvisible = e.VerticalOffset <= i && i <= lastIdx;
+                var viewmodel = ChannelListBox.Items[i] as EEGChannelViewModel;
+                viewmodel?.OptVisible(isvisible);
             }
         }
 
-        protected bool IsFullyOrPartiallyVisible(FrameworkElement child, FrameworkElement scrollViewer)
+        public static bool IsFullyOrPartiallyVisible(FrameworkElement child, FrameworkElement scrollViewer)
         {
+            if (child == null || scrollViewer == null) return false;
             var childTransform = child.TransformToAncestor(scrollViewer);
             var childRectangle = childTransform.TransformBounds(new Rect(new Point(0, 0), child.RenderSize));
             var ownerRectangle = new Rect(new Point(0, 0), scrollViewer.RenderSize);
             return ownerRectangle.IntersectsWith(childRectangle);
+        }
+
+        public void OnClsing(CancelEventArgs cancelEventArgs)
+        {
+            var eegExampleViewModel = (DataContext as EEGExampleViewModel);
+            eegExampleViewModel?.OnClosing(cancelEventArgs);
         }
     }
 }
