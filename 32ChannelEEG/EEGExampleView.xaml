@@ -316,14 +316,15 @@
         </Border>
 
         <!--  Define the listbox which will host the N channels of the EEG  -->
-        <ListBox Grid.Row="1"
+        <ListBox x:Name="ChannelListBox" Grid.Row="1"
                  Background="#1c1c1e"
                  BorderThickness="0"
                  ItemContainerStyle="{StaticResource ChannelListBoxItemStyle}"
                  ItemTemplate="{StaticResource ChannelItemTemplate}"
                  ItemsSource="{Binding ChannelViewModels}"
                  Grid.IsSharedSizeScope="True"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Grid.RowSpan="1" />
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Grid.RowSpan="1" 
+                 ScrollViewer.ScrollChanged="ChannelListBox_ScrollChanged"/>
 
 
         <StatusBar Grid.Row="2" Background="#1c1c1e" Foreground="White" >test</StatusBar>

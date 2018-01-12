@@ -4,6 +4,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using BrainCommon;
@@ -85,12 +87,17 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 }
 
                 if (!IsRunning || _channelViewModels == null) return;
-                for (var i = 0; i < _channelViewModels.Count; i++)
-                {
-                    var channel = _channelViewModels[i];
-                    channel.FlushBuf();
-                    _currentSize = channel.ChannelDataSeries.Count;
-                }
+                _uithread.InvokeAsync(FlushAllChannels);
+            }
+        }
+
+        private void FlushAllChannels()
+        {
+            for (var i = 0; i < _channelViewModels.Count; i++)
+            {
+                var channel = _channelViewModels[i];
+                channel.FlushBuf();
+                _currentSize = channel.ChannelDataSeries.Count;
             }
         }
 
@@ -327,6 +334,48 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 fs?.Dispose();
                 return false;
             }
+        }
+    }
+
+    public partial class EEGExampleView
+    {
+
+        private void ChannelListBox_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            //e.VerticalOffset: In the current view, index of the element which is first in the list view
+            //e.ViewportHeight: Number of list view items shown in the current view.
+            var scrollViewer = sender as FrameworkElement;
+            var eegExampleViewModel = (DataContext as EEGExampleViewModel);
+            try
+            {
+                var count = eegExampleViewModel.ChannelViewModels.Count;
+                int lastIdx = (int) (e.VerticalOffset + e.ViewportHeight);
+                lastIdx = lastIdx < count ? lastIdx : count - 1;
+                var vm = ChannelListBox.Items[lastIdx] as EEGChannelViewModel;
+                var tmp = vm?.ChannelDataSeries?.ParentSurface?.RootGrid;
+                var tmp2 = tmp as FrameworkElement;
+                var lastVisible = tmp2 == null ? false : IsFullyOrPartiallyVisible(tmp2, scrollViewer);
+                if (!lastVisible) lastIdx--;
+                AppLogger.Debug($"ChannelListBox_ScrollChanged: {scrollViewer}, {e.VerticalOffset},{e.ViewportHeight},{lastVisible}");
+                for (int i = 0;i< ChannelListBox.Items.Count; i++)
+                {
+                    var isvisible = e.VerticalOffset <= i && i <= lastIdx;
+                    var viewmodel = ChannelListBox.Items[i] as EEGChannelViewModel;
+                    viewmodel.OptVisible(isvisible);
+                }
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error(ex.Message);
+            }
+        }
+
+        protected bool IsFullyOrPartiallyVisible(FrameworkElement child, FrameworkElement scrollViewer)
+        {
+            var childTransform = child.TransformToAncestor(scrollViewer);
+            var childRectangle = childTransform.TransformBounds(new Rect(new Point(0, 0), child.RenderSize));
+            var ownerRectangle = new Rect(new Point(0, 0), scrollViewer.RenderSize);
+            return ownerRectangle.IntersectsWith(childRectangle);
         }
     }
 }
