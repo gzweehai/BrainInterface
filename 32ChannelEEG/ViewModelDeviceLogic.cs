@@ -26,11 +26,11 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         private int _pakNum;
         private Dispatcher _uithread;
         private DevCommandSender _devCtl;
-        private List<(double[],float)> cache = new List<(double[],float)>();
         private FileResource currentFileResource;
 
         private readonly ActionCommand _impedanceCommand;
         private ImpedanceViewWin _impedanceView;
+        private int _updatingTag;
         private readonly List<(double[],float)> _emptyList=new List<(double[],float)>(0);
 
         public ICommand ImpedanceCommand
@@ -75,28 +75,13 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             ClientConfig.GetConfig();
         }
 
-        private int _updatingTag = CASHelper.LockFree;
         private void CheckUpdate(object sender, ElapsedEventArgs e)
         {
-            var tag=Interlocked.Exchange(ref _updatingTag, CASHelper.LockUsed);
-            if (tag == CASHelper.LockUsed) return;
-            var empty=new List<(double[],float)>();
-            var local = Interlocked.Exchange(ref cache, empty);
-            if (local.Count > 0)
-            {
-                for (var i = 0; i < local.Count; i++)
-                {
-                    var pair = local[i];
-                    var voltageArr = pair.Item1;
-                    UpdateChannelBuffer(voltageArr, pair.Item2);
-                    BrainDeviceManager.BufMgr.ReturnBuffer(voltageArr);
-                }
-                local.Clear();
-            }
-            Interlocked.Exchange(ref _updatingTag, CASHelper.LockFree);
-
             if (!IsRunning || _channelViewModels == null) return;
+            var tag = Interlocked.Exchange(ref _updatingTag, CASHelper.LockUsed);
+            if (tag == CASHelper.LockUsed) return;
             FlushAllChannels();
+            Interlocked.Exchange(ref _updatingTag, CASHelper.LockFree);
         }
 
         private void UpdateChannelBuffer(double[] voltageArr, float passTimes)
@@ -114,7 +99,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             for (var i = 0; i < _channelViewModels.Count; i++)
             {
                 var channel = _channelViewModels[i];
-                channel.FlushBuf();
+                channel.FlushBuf(SampleUnitTime);
                 _currentSize = channel.ChannelDataSeries.Count;
             }
         }
@@ -250,6 +235,8 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             }
         }
 
+        public float SampleUnitTime => BrainDevState.PassTimeMs(_currentState.SampleRate,1);
+
         private async Task<DevCommandSender> ConnectDevAsync()
         {
             try
@@ -266,28 +253,8 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                     _uithread.InvokeAsync(RefreshChannelParts);
                     AppLogger.Debug($"Brain Device State Changed Detected: {ss}");
                 }, () => { AppLogger.Debug("device stop detected"); });
-                BrainDeviceManager.SampleDataStream.Subscribe(tuple =>
-                {
-                    var (order, datas, arr) = tuple;
-                    var buf = datas.Array;
-                    if (buf != null)
-                    {
-                        var cfglocal = ClientConfig.GetConfig();
-                        var startIdx = datas.Offset;
-                        var voltageArr = BrainDeviceManager.BufMgr.TakeDoubleBuf(datas.Count);
-                        for (var i = 0; i < datas.Count; i++)
-                        {
-                            voltageArr[i] =
-                                BitDataConverter.Calculatevoltage(buf[startIdx + i], cfglocal.ReferenceVoltage, _currentState.Gain);
-                        }
-                        var localpak = Interlocked.Increment(ref _pakNum);
-                        var passTimes = BrainDevState.PassTimeMs(_currentState.SampleRate, localpak - 1);
-                        var item = (voltageArr, passTimes);
-                        var local = Interlocked.Exchange(ref cache, _emptyList);
-                        local.Add(item);
-                        Interlocked.Exchange(ref cache, local);
-                    }
-                }, () =>
+                BrainDeviceManager.SampleDataStream.Subscribe(PushSampleData,
+                    () =>
                 {
                     _devCtl = null;
                     _uithread.InvokeAsync(ResetDevCmd);
@@ -302,6 +269,8 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                     BrainDeviceManager.DisConnect();
                     return null;
                 }
+                cmdResult = await sender.SetSampleRate(SampleRateEnum.SPS_2k);
+                AppLogger.Debug("SetSampleRate result:" + cmdResult);
                 return sender;
             }
             catch (Exception)
@@ -315,6 +284,27 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             cmdResult = await sender.QueryParam();
             AppLogger.Debug("QueryParam result:"+cmdResult);
             */
+        }
+
+        private void PushSampleData((byte, ArraySegment<int>, ArraySegment<byte>) tuple)
+        {
+            var (order, datas, arr) = tuple;
+            var buf = datas.Array;
+            if (buf != null)
+            {
+                var localpak = Interlocked.Increment(ref _pakNum);
+                var passTimes = BrainDevState.PassTimeMs(_currentState.SampleRate, localpak - 1);
+                var cfglocal = ClientConfig.GetConfig();
+                var startIdx = datas.Offset;
+                var voltageArr = BrainDeviceManager.BufMgr.TakeDoubleBuf(datas.Count);
+                for (var i = 0; i < datas.Count; i++)
+                {
+                    voltageArr[i] =
+                        BitDataConverter.Calculatevoltage(buf[startIdx + i], cfglocal.ReferenceVoltage, _currentState.Gain);
+                }
+                UpdateChannelBuffer(voltageArr, passTimes);
+                BrainDeviceManager.BufMgr.ReturnBuffer(voltageArr);
+            }
         }
 
         private async Task<bool> StartSampleAsync(DevCommandSender sender)
