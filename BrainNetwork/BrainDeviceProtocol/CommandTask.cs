@@ -60,7 +60,7 @@ namespace BrainNetwork.BrainDeviceProtocol
             if (handler.DontCheckResponse)
             {
                 _clientFrameSender.OnNext(buf.AsDisposableValue());
-                handler.HandlerSuccess(cmdState);
+                handler.HandlerSuccessAsync(cmdState);
                 return CommandError.Success;
             }
 
@@ -73,7 +73,7 @@ namespace BrainNetwork.BrainDeviceProtocol
 
             var result = await _currentTaskCtl.Task;
             if (result == CommandError.Success)
-                handler.HandlerSuccess(cmdState);
+                handler.HandlerSuccessAsync(cmdState);
             return result;
         }
 

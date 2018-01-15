@@ -45,7 +45,7 @@ namespace BrainNetwork.BrainDeviceProtocol
                 return null;
             }
 
-            public void HandlerSuccess(object cmdCnt)
+            public void HandlerSuccessAsync(object cmdCnt)
             {
                 CommitStartStop(true);
             }
@@ -68,7 +68,7 @@ namespace BrainNetwork.BrainDeviceProtocol
                 return null;
             }
 
-            public async void HandlerSuccess(object cmdCnt)
+            public async void HandlerSuccessAsync(object cmdCnt)
             {//set stop tag
                 await Task.Delay(50);
                 CommitStartStop(false);
@@ -93,10 +93,12 @@ namespace BrainNetwork.BrainDeviceProtocol
                 return rate;
             }
 
-            public void HandlerSuccess(object cmdCnt)
+            public async void HandlerSuccessAsync(object cmdCnt)
             {
                 var rateB = (SampleRateEnum)cmdCnt;
                 CommitSampleRate(rateB);
+                await Task.Delay(50);
+                CommitStartStop(false);
             }
         }
 
@@ -131,7 +133,7 @@ namespace BrainNetwork.BrainDeviceProtocol
                 return trapOpt;
             }
 
-            public void HandlerSuccess(object cmdCnt)
+            public void HandlerSuccessAsync(object cmdCnt)
             {
                 var trapOpt = (TrapSettingEnum)cmdCnt;
                 CommitTrapOpt(trapOpt);
@@ -157,7 +159,7 @@ namespace BrainNetwork.BrainDeviceProtocol
                 return useFilter;
             }
 
-            public void HandlerSuccess(object cmdCnt)
+            public void HandlerSuccessAsync(object cmdCnt)
             {
                 var useFilter = (bool) cmdCnt;
                 CommitEnableFiler(useFilter);
@@ -183,7 +185,7 @@ namespace BrainNetwork.BrainDeviceProtocol
                 return selectedChannel;
             }
 
-            public void HandlerSuccess(object cmdCnt)
+            public void HandlerSuccessAsync(object cmdCnt)
             {
                 var selectedChannel = (byte) cmdCnt;
                 CommitSingleImpedanceChannel(selectedChannel);
@@ -209,7 +211,7 @@ namespace BrainNetwork.BrainDeviceProtocol
                 return args[0];
             }
 
-            public void HandlerSuccess(object cmdCnt)
+            public void HandlerSuccessAsync(object cmdCnt)
             {
                 //var channelCount = (byte) cmdCnt;
                 //CommitMultiImpedanceCount(channelCount);
@@ -271,7 +273,7 @@ namespace BrainNetwork.BrainDeviceProtocol
                 return null;
             }
 
-            public void HandlerSuccess(object cmdCnt)
+            public void HandlerSuccessAsync(object cmdCnt)
             {
             }
         }
@@ -291,7 +293,7 @@ namespace BrainNetwork.BrainDeviceProtocol
                 return null;
             }
 
-            public void HandlerSuccess(object cmdCnt)
+            public void HandlerSuccessAsync(object cmdCnt)
             {
             }
         }

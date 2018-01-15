@@ -28,7 +28,16 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         private readonly ActionCommand _impedanceCommand;
         private ImpedanceViewWin _impedanceView;
+        private ActionCommand _SettingCommand;
+
+        internal Task<CommandError> SetSampleRate(SampleRateEnum rate)
+        {
+            return _devCtl?.SetSampleRate(rate);
+        }
+
         private readonly List<(double[],float)> _emptyList=new List<(double[],float)>(0);
+
+        public ICommand SettingCommand => _SettingCommand;
 
         public ICommand ImpedanceCommand
         {
@@ -66,10 +75,18 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             _stopCommand = new ActionCommand(StopDevCmd, () => IsRunning);
             _resetCommand = new ActionCommand(ResetDevCmd, () => !IsRunning && !IsReset);
             _impedanceCommand = new ActionCommand(ShowImpedanceView, () => _impedanceView != null || _devCtl != null);
+            _SettingCommand = new ActionCommand(ShowSettingView, () => _devCtl != null);
 
             _uithread = Dispatcher.CurrentDispatcher;
             _currentState = default(BrainDevState);
             ClientConfig.GetConfig();
+        }
+
+        private void ShowSettingView()
+        {
+            var view = new SettingViewWin();
+            view.DataContext = this;
+            view.ShowDialog();
         }
 
         private void CheckUpdate(object sender, ElapsedEventArgs e)
@@ -143,17 +160,21 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             }
         }
 
-        private void UpdateRuningStates()
+        public void UpdateRuningStates()
         {
             IsReset = _isReset;
             IsRunning = _running;
             _impedanceCommand.RaiseCanExecuteChanged();
+            _SettingCommand.RaiseCanExecuteChanged();
             if (_running)
             {
-                _timer = new Timer(_timerInterval);
-                _timer.Elapsed += CheckUpdate;
-                _timer.AutoReset = true;
-                _timer.Start();
+                if (!(_timer != null && _timer.Enabled))
+                {
+                    _timer = new Timer(_timerInterval);
+                    _timer.Elapsed += CheckUpdate;
+                    _timer.AutoReset = true;
+                    _timer.Start();
+                }
             }
             else
             {

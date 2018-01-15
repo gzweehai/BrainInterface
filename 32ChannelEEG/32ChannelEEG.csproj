@@ -122,6 +122,9 @@
     <Compile Include="ImpedanceViewWin.xaml.cs">
       <DependentUpon>ImpedanceViewWin.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SettingViewWin.xaml.cs">
+      <DependentUpon>SettingViewWin.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModelDeviceLogic.cs" />
     <Page Include="ImpedanceViewWin.xaml">
       <SubType>Designer</SubType>
@@ -151,6 +154,10 @@
     <Page Include="EEGExampleView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SettingViewWin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
