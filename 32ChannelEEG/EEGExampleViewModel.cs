@@ -116,6 +116,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             get { return _isReset; }
             set
             {
+                if (_isReset == value) return;
                 _isReset = value;
 
                 _startCommand.RaiseCanExecuteChanged();
@@ -131,6 +132,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             get { return _running; }
             set
             {
+                if (_running == value) return;
                 _running = value;
 
                 _startCommand.RaiseCanExecuteChanged();

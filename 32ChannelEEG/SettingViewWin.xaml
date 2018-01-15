@@ -8,10 +8,10 @@
         Title="SettingViewWin" Height="300" Width="300">
     <Grid>
         <ListBox HorizontalAlignment="Right" Width="292">
-            <RadioButton Name="SmapleRate2kBtn" Content="2000Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SmapleRate2kBtn_Checked"/>
-            <RadioButton Name="SmapleRate1kBtn" Content="1000Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SmapleRate1kBtn_Checked"/>
-            <RadioButton Name="SmapleRate500Btn" Content="500Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SmapleRate500Btn_Checked"/>
-            <RadioButton Name="SmapleRate250Btn" Content="250Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SmapleRate250Btn_Checked"/>
+            <RadioButton Name="SampleRate2kBtn" Content="2000Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SampleRate2kBtn_Checked"/>
+            <RadioButton Name="SampleRate1kBtn" Content="1000Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SampleRate1kBtn_Checked"/>
+            <RadioButton Name="SampleRate500Btn" Content="500Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SampleRate500Btn_Checked"/>
+            <RadioButton Name="SampleRate250Btn" Content="250Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SampleRate250Btn_Checked"/>
         </ListBox>
     </Grid>
 </Window>

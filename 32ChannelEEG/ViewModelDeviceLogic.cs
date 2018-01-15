@@ -32,7 +32,11 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         internal Task<CommandError> SetSampleRate(SampleRateEnum rate)
         {
-            return _devCtl?.SetSampleRate(rate);
+            if (_devCtl != null && _currentState.SampleRate != rate)
+            {
+                return _devCtl.SetSampleRate(rate);
+            }
+            return null;
         }
 
         private readonly List<(double[],float)> _emptyList=new List<(double[],float)>(0);
@@ -84,7 +88,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         private void ShowSettingView()
         {
-            var view = new SettingViewWin();
+            var view = new SettingViewWin(this);
             view.DataContext = this;
             view.ShowDialog();
         }
@@ -164,8 +168,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         {
             IsReset = _isReset;
             IsRunning = _running;
-            _impedanceCommand.RaiseCanExecuteChanged();
-            _SettingCommand.RaiseCanExecuteChanged();
+            UpdateDevCtlDep();
             if (_running)
             {
                 if (!(_timer != null && _timer.Enabled))
@@ -180,6 +183,12 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             {
                 _timer?.Stop();
             }
+        }
+
+        private void UpdateDevCtlDep()
+        {
+            _impedanceCommand.RaiseCanExecuteChanged();
+            _SettingCommand.RaiseCanExecuteChanged();
         }
 
         private async void StopDevCmd()
@@ -226,7 +235,8 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         private void RefreshChannelParts()
         {
-            _impedanceCommand.RaiseCanExecuteChanged();
+            IsRunning = _running;
+            UpdateDevCtlDep();
 
             if (ChannelViewModels != null && ChannelViewModels.Count == ChannelCount)
             {
@@ -249,6 +259,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             }
         }
 
+        public SampleRateEnum CurrentSampleRate => _currentState.SampleRate;
         public float SampleUnitTime => BrainDevState.PassTimeMs(_currentState.SampleRate,1);
 
         private async Task<DevCommandSender> ConnectDevAsync()
@@ -264,8 +275,9 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 {
                     _currentState = ss;
                     ChannelCount = _currentState.ChannelCount;
+                    _running = _currentState.IsStart;
                     _uithread.InvokeAsync(RefreshChannelParts);
-                    AppLogger.Debug($"Brain Device State Changed Detected: {ss}");
+                    //AppLogger.Debug($"Brain Device State Changed Detected: {ss}");
                 }, () => {
                     _currentState.IsStart = false;
                     AppLogger.Debug("device stop detected");
