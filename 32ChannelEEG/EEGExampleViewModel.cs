@@ -31,7 +31,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         private int Size = 1000; // Size of each channel in points (FIFO Buffer)
         private int _size = 1000;
         private volatile int _currentSize = 0;
-        private uint _timerInterval = 20; // Interval of the timer to generate data in ms        
+        private uint _timerInterval = 10; // Interval of the timer to generate data in ms        
         private int _bufferSize = 15; // Number of points to append to each channel each timer tick
         private Timer _timer;
         private object _syncRoot = new object();
@@ -179,7 +179,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             ChannelViewModels = new ObservableCollection<EEGChannelViewModel>();
             for (int i = 0; i < ChannelCount; i++)
             {
-                var channelViewModel = new EEGChannelViewModel(Size, _colors[i % 16],0) {ChannelName = "Channel " + i};
+                var channelViewModel = new EEGChannelViewModel(Size, _colors[i % 16]) {ChannelName = "Channel " + i};
                 ChannelViewModels.Add(channelViewModel);
             }
 

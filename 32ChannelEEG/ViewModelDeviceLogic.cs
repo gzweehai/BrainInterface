@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -14,7 +13,6 @@ using BrainCommon;
 using BrainNetwork.BrainDeviceProtocol;
 using DataAccess;
 using SciChart.Charting.Common.Helpers;
-using SciChart.Charting.Visuals;
 using SciChart_50ChannelEEG;
 using Timer = System.Timers.Timer;
 
@@ -30,7 +28,6 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         private readonly ActionCommand _impedanceCommand;
         private ImpedanceViewWin _impedanceView;
-        private int _updatingTag;
         private readonly List<(double[],float)> _emptyList=new List<(double[],float)>(0);
 
         public ICommand ImpedanceCommand
@@ -78,10 +75,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         private void CheckUpdate(object sender, ElapsedEventArgs e)
         {
             if (!IsRunning || _channelViewModels == null) return;
-            var tag = Interlocked.Exchange(ref _updatingTag, CASHelper.LockUsed);
-            if (tag == CASHelper.LockUsed) return;
             FlushAllChannels();
-            Interlocked.Exchange(ref _updatingTag, CASHelper.LockFree);
         }
 
         private void UpdateChannelBuffer(double[] voltageArr, float passTimes)
@@ -99,7 +93,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             for (var i = 0; i < _channelViewModels.Count; i++)
             {
                 var channel = _channelViewModels[i];
-                channel.FlushBuf(SampleUnitTime);
+                channel.FlushBuf();
                 _currentSize = channel.ChannelDataSeries.Count;
             }
         }
@@ -113,6 +107,8 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         private void StartAsync()
         {
+            RefreshChannelParts();
+
             Task.Factory.StartNew(() =>
             {
                 StartDevCmd().Wait();
@@ -158,7 +154,6 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 _timer.Elapsed += CheckUpdate;
                 _timer.AutoReset = true;
                 _timer.Start();
-                //PauseChart(false);
             }
             else
             {
@@ -174,7 +169,6 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 _timer?.Stop();
                 if (_devCtl != null)
                     await _devCtl.Stop();
-                //PauseChart(true);
             }
         }
 
@@ -224,12 +218,11 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         private void CreateChannelPart()
         {
             var colorsCount = _colors.Count;
-            var count = BrainDevState.SampleCountPer20ms(_currentState.SampleRate);
             ChannelViewModels = new ObservableCollection<EEGChannelViewModel>();
             for (int i = 0; i < ChannelCount; i++)
             {
                 var channelViewModel =
-                    new EEGChannelViewModel(Size, _colors[i % colorsCount], count) { ChannelName = "Channel " + (i + 1) };
+                    new EEGChannelViewModel(Size, _colors[i % colorsCount]) { ChannelName = "Channel " + (i + 1) };
 
                 ChannelViewModels.Add(channelViewModel);
             }
@@ -252,7 +245,10 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                     ChannelCount = _currentState.ChannelCount;
                     _uithread.InvokeAsync(RefreshChannelParts);
                     AppLogger.Debug($"Brain Device State Changed Detected: {ss}");
-                }, () => { AppLogger.Debug("device stop detected"); });
+                }, () => {
+                    _currentState.IsStart = false;
+                    AppLogger.Debug("device stop detected");
+                });
                 BrainDeviceManager.SampleDataStream.Subscribe(PushSampleData,
                     () =>
                 {
@@ -269,8 +265,8 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                     BrainDeviceManager.DisConnect();
                     return null;
                 }
-                cmdResult = await sender.SetSampleRate(SampleRateEnum.SPS_2k);
-                AppLogger.Debug("SetSampleRate result:" + cmdResult);
+                /*cmdResult = await sender.SetSampleRate(SampleRateEnum.SPS_2k);
+                AppLogger.Debug("SetSampleRate result:" + cmdResult);*/
                 return sender;
             }
             catch (Exception)
@@ -355,7 +351,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             if (count <= 0) return;
             var lastIdx = (int) (e.VerticalOffset + e.ViewportHeight);
             lastIdx = lastIdx < count ? lastIdx : count - 1;
-            var itemGrid = (ChannelListBox.Items[lastIdx] as EEGChannelViewModel)?.ChannelDataSeries?.ParentSurface?.RootGrid as FrameworkElement;
+            var itemGrid = (ChannelListBox?.Items?[lastIdx] as EEGChannelViewModel)?.ChannelDataSeries?.ParentSurface?.RootGrid as FrameworkElement;
             var lastVisible = IsFullyOrPartiallyVisible(itemGrid, scrollViewer);
             if (!lastVisible) lastIdx--;
             //AppLogger.Debug($"ChannelListBox_ScrollChanged: {scrollViewer}, {e.VerticalOffset},{e.ViewportHeight},{lastVisible}");

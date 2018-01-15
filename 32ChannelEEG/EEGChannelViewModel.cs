@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Media;
 using BrainCommon;
-using BrainNetwork.BrainDeviceProtocol;
 using SciChart.Charting.Model.DataSeries;
 using SciChart.Core.Framework;
 using SciChart.Examples.ExternalDependencies.Common;
@@ -20,9 +18,10 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         private volatile bool _pause;
         private volatile bool _isvisible;
         private IUpdateSuspender _updateCtl;
+        private int _updatingTag;
         private readonly List<(double, double)> _emptyList = new List<(double, double)>(0);
 
-        public EEGChannelViewModel(int size, Color color, int count)
+        public EEGChannelViewModel(int size, Color color)
         {
             _size = size;
             Stroke = color;
@@ -35,17 +34,13 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             for (int i = 0; i < _size; i++)
                 ChannelDataSeries.Append(i, double.NaN);
 
-            if (count > 0)
-            {
-                xyBuffer = new List<(double, double)>(count);
-                //_channelDataSeries.AcceptsUnsortedData = true;
-            }
+            xyBuffer = new List<(double, double)>();
             SaveLastX();
         }
 
         private void SaveLastX()
         {
-            _lastX = _channelDataSeries.HasValues ? (double)_channelDataSeries.XMax+0.01 : 0;
+            _lastX = _channelDataSeries.HasValues ? (double)_channelDataSeries.XMax : 0;
         }
 
         public string ChannelName { get; set; }
@@ -72,12 +67,13 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         public void Reset()
         {
-            //TODO fill empty data to beatify Chart
-            _channelDataSeries.Clear();
             _pause = false;
-            _lastX = 0;
+            _channelDataSeries.Clear();
+            for (int i = 0; i < _size; i++)
+                ChannelDataSeries.Append(i, double.NaN);
             var empty = new List<(double, double)>();
             Interlocked.Exchange(ref xyBuffer, empty);
+            SaveLastX();
         }
 
         public void BufferChannelData(float passTimes, double voltage)
@@ -112,65 +108,53 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                     var tmp = _updateCtl;
                     _updateCtl = null;
                     tmp.Dispose();
+#if DEBUG
+                    AppLogger.Debug($"{ChannelName}: resume update UI");
+#endif
                 }
-                else
-                    AppLogger.Debug("_updateCtl is null");
             }
             else
             {
                 if (_updateCtl == null)
+                {
                     _updateCtl = _channelDataSeries.SuspendUpdates();
+#if DEBUG
+                    AppLogger.Debug($"{ChannelName}: pause update UI");
+#endif
+                }
             }
         }
 
-        public void FlushBuf(float sampleUnitTime)
+        public void FlushBuf()
         {
+            var tag = Interlocked.Exchange(ref _updatingTag, CASHelper.LockUsed);
+            if (tag == CASHelper.LockUsed) return;
+
             var empty = new List<(double, double)>();
-            var tryCount = 10;
             var local = Interlocked.Exchange(ref xyBuffer, empty);
 
-            while (local.Count <= 0 && tryCount>0)
+            if (local.Count > 0)
             {
-                tryCount--;
-                local = Interlocked.Exchange(ref xyBuffer, empty);
-            }
-            if (local.Count <= 0) return;
-
-            if (_isvisible)
-            {
-                using (_channelDataSeries.SuspendUpdates())
+                double[] x = new double[local.Count], y = new double[local.Count];
+                for (int i =0;i< local.Count; i++)
                 {
-                    UpdateSeriesData(local, sampleUnitTime);
+                    x[i] = local[i].Item1;
+                    y[i] = local[i].Item2;
                 }
-            }
-            else
-            {
-                UpdateSeriesData(local, sampleUnitTime);
-            }
-            local.Clear();
-        }
-
-        private void UpdateSeriesData(List<(double, double)> local, float sampleUnitTime)
-        {
-            var count = local.Count;
-            for (var i = 0; i < count; i++)
-            {
-                var xy = local[i];
-                var xMax = (double)_channelDataSeries.XMax;
-                if (xMax >= xy.Item1)
+                if (_isvisible)
                 {
-                    AppLogger.Error($"{ChannelName} skip data: {xMax} >= {xy.Item1},{(double)_channelDataSeries.YMax},{xy.Item2}");
-                    /*
-                    var index = _channelDataSeries.FindIndex(xy.Item1 - sampleUnitTime);
-                    if (index >= 0)
+                    using (_channelDataSeries.SuspendUpdates())
                     {
-                        _channelDataSeries.Insert(index+1, xy.Item1, xy.Item2);//FIFO series does not allow insert
+                        _channelDataSeries.Append(x, y);
                     }
-                    */
-                    continue;
                 }
-                _channelDataSeries.Append(xy.Item1, xy.Item2);
+                else
+                {
+                    _channelDataSeries.Append(x, y);
+                }
             }
+            Interlocked.Exchange(ref _updatingTag, CASHelper.LockFree);
+            local.Clear();
         }
     }
 }
