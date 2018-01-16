@@ -126,6 +126,7 @@
       <DependentUpon>SettingViewWin.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModelDeviceLogic.cs" />
+    <Compile Include="ViewWinUtils.cs" />
     <Page Include="ImpedanceViewWin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

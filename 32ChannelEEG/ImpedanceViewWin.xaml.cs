@@ -1,17 +1,10 @@
-﻿using BrainNetwork.BrainDeviceProtocol;
+﻿using BrainCommon;
+using BrainNetwork.BrainDeviceProtocol;
+using SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace SciChart_50ChannelEEG
@@ -32,29 +25,67 @@ namespace SciChart_50ChannelEEG
             _currentState = state;
             for (int i = 0; i < _currentState.ChannelCount; i++)
             {
-                ListBoxItem item = new ListViewItem();
                 var code = _currentState.GetChannelImpedance(i);
-                item.Content = $"Channel {i+1}: {code}";
+                ListBoxItem item = new ListViewItem
+                {
+                    Content = $"Channel {i + 1}: {code}",
+                    TabIndex = i + 1
+                };
                 ImpedanceListBox.Items.Add(item);
+                item.Selected += OnItemSelected;
+                
             }
             _uithread = Dispatcher.CurrentDispatcher;
 
-            _unsubscriber = BrainDeviceManager.BrainDeviceState.Subscribe(OnStateChanged, () =>
+            _unsubscriber = BrainDeviceManager.BrainDeviceState.Subscribe(OnDevStateChanged, () =>
             {
                 _uithread.InvokeAsync(OnDisconnect);
             });
+        }
+
+        private void OnItemSelected(object sender, RoutedEventArgs e)
+        {
+            var item = sender as ListViewItem;
+            if (item == null) return;
+            AppLogger.Debug($"{item.Content},{item.TabIndex}");
+            var viewmodel = DataContext as EEGExampleViewModel;
+            if (viewmodel == null) return;
+            var aresult = viewmodel.TestSingleImpedance(item.TabIndex);
+
+            aresult?.ContinueWith(ar => {
+                item.IsSelected = false;
+                if (!ar.IsFaulted)
+                {
+                    var single = _currentState.LastSelectedSingleImpedanceChannel;
+                    if (1 <= single && single <= _currentState.ChannelCount)
+                    {
+                        var ritem = ImpedanceListBox.Items[single - 1] as ListBoxItem;
+                        if (ritem != null)
+                        {
+                            ritem.Content = $"Channel {single}: {_currentState.LastSingleImpedanceCode}";
+                        }
+                    }
+                    var tmp = ViewWinUtils.CreateDefaultDialog($"Test Single Channel Impedance #{single}: {_currentState.LastSingleImpedanceCode}");
+                    tmp.ShowDialog();
+                }
+                else
+                {
+                    var tmp = ViewWinUtils.CreateDefaultDialog(ar.Exception);
+                    tmp.ShowDialog();
+                }
+            }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         private void OnReconnect()
         {
             _unsubscriber?.Dispose();
-            _unsubscriber = BrainDeviceManager.BrainDeviceState.Subscribe(OnStateChanged, () =>
+            _unsubscriber = BrainDeviceManager.BrainDeviceState.Subscribe(OnDevStateChanged, () =>
             {
                 _uithread.InvokeAsync(OnDisconnect);
             });
         }
 
-        private void OnStateChanged(BrainDevState ss)
+        private void OnDevStateChanged(BrainDevState ss)
         {
             _currentState = ss;
             _uithread.InvokeAsync(RefreshImpedanceCodes);

@@ -58,6 +58,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             if (_impedanceView == null)
             {
                 _impedanceView = new ImpedanceViewWin(_currentState);
+                _impedanceView.DataContext = this;
                 _impedanceView.Closing += OnImpedanceViewClosing;
             }
             else
@@ -66,6 +67,11 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             }
             _devCtl.TestMultiImpedance(_currentState.ChannelCount);
             _impedanceView.Show();
+        }
+
+        internal Task<CommandError> TestSingleImpedance(int tabIndex)
+        {
+            return _devCtl?.TestSingleImpedance((byte)tabIndex);
         }
 
         private void OnImpedanceViewClosing(object sender, CancelEventArgs e)
@@ -79,7 +85,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             _stopCommand = new ActionCommand(StopDevCmd, () => IsRunning);
             _resetCommand = new ActionCommand(ResetDevCmd, () => !IsRunning && !IsReset);
             _impedanceCommand = new ActionCommand(ShowImpedanceView, () => _impedanceView != null || _devCtl != null);
-            _SettingCommand = new ActionCommand(ShowSettingView, () => _devCtl != null);
+            _SettingCommand = new ActionCommand(ShowSettingView, () => true /*_devCtl != null*/);
 
             _uithread = Dispatcher.CurrentDispatcher;
             _currentState = default(BrainDevState);
@@ -88,7 +94,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         private void ShowSettingView()
         {
-            var view = new SettingViewWin(this);
+            var view = new SettingViewWin(this._currentState);
             view.DataContext = this;
             view.ShowDialog();
         }
@@ -235,8 +241,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         private void RefreshChannelParts()
         {
-            IsRunning = _running;
-            UpdateDevCtlDep();
+            UpdateRuningStates();
 
             if (ChannelViewModels != null && ChannelViewModels.Count == ChannelCount)
             {

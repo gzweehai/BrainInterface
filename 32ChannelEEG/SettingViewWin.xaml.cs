@@ -1,8 +1,10 @@
 ﻿using BrainNetwork.BrainDeviceProtocol;
 using SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
+using System;
+using System.Threading.Tasks;
+using BrainCommon;
 
 namespace SciChart_50ChannelEEG
 {
@@ -11,15 +13,45 @@ namespace SciChart_50ChannelEEG
     /// </summary>
     public partial class SettingViewWin : Window
     {
-        public SettingViewWin(EEGExampleViewModel eEGExampleViewModel)
+        private bool _requesting;
+        private readonly Dispatcher _uithread;
+        private IDisposable _unsubscriber;
+        private BrainDevState _currentState;
+
+        public SettingViewWin(BrainDevState state)
         {
+            BrainDeviceManager.OnConnected += OnReconnect;
             InitializeComponent();
             _uithread = Dispatcher.CurrentDispatcher;
-            if (eEGExampleViewModel == null)
+            _unsubscriber = BrainDeviceManager.BrainDeviceState.Subscribe(OnDevStateChanged, () =>
             {
-                return;
-            }
-            switch (eEGExampleViewModel.CurrentSampleRate)
+                _uithread.InvokeAsync(OnDisconnect);
+            });
+            OnDevStateChanged(state);
+            var cfglocal = ClientConfig.GetConfig();
+            IpTextBox.Text = cfglocal.Ip;
+            PortTextBox.Text = cfglocal.Port.ToString();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            _unsubscriber?.Dispose();
+            BrainDeviceManager.OnConnected -= OnReconnect;
+            var cfglocal = ClientConfig.GetConfig();
+            cfglocal.Ip = IpTextBox.Text;
+            cfglocal.Port = PortTextBox.Text.ToInt();
+            base.OnClosed(e);
+        }
+
+        private void OnDevStateChanged(BrainDevState ss)
+        {
+            _currentState = ss;
+            _uithread.InvokeAsync(RefreshDevStateUI);
+        }
+
+        private void RefreshDevStateUI()
+        {
+            switch (_currentState.SampleRate)
             {
                 case SampleRateEnum.SPS_2k:
                     SampleRate2kBtn.IsChecked = true;
@@ -34,6 +66,21 @@ namespace SciChart_50ChannelEEG
                     SampleRate250Btn.IsChecked = true;
                     break;
             }
+        }
+
+        private void OnDisconnect()
+        {
+            _unsubscriber?.Dispose();
+            _unsubscriber = null;
+        }
+
+        private void OnReconnect()
+        {
+            _unsubscriber?.Dispose();
+            _unsubscriber = BrainDeviceManager.BrainDeviceState.Subscribe(OnDevStateChanged, () =>
+            {
+                _uithread.InvokeAsync(OnDisconnect);
+            });
         }
 
         private void SetSampleRate(SampleRateEnum rate)
@@ -55,32 +102,19 @@ namespace SciChart_50ChannelEEG
             }
             aresult.ContinueWith(result =>
             {
-                _uithread.InvokeAsync(() =>
-                {
-                    _requesting = false;
-                    ShowSetSampleResult(result.Result, rate);
-                });
-            });
+                _requesting = false;
+                ShowSetSampleResult(result.Result, rate);
+            }, TaskScheduler.FromCurrentSynchronizationContext());
         }
-
-        private bool _requesting;
-        private readonly Dispatcher _uithread;
 
         private void ShowSetSampleResult(CommandError result, SampleRateEnum rate)
         {
             var r = result;
             if (r != CommandError.Success)
             {
-                Window tmp = new Window()
-                {
-                    WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                };
-                tmp.Content = $"Set Sample Rate {rate} failed: {r}";
+                var tmp = ViewWinUtils.CreateDefaultDialog($"Set Sample Rate {rate} failed: {r}");
                 tmp.ShowDialog();
             }
-            var eEGExampleViewModel = this.DataContext as EEGExampleViewModel;
-            if (eEGExampleViewModel == null) return;
-            eEGExampleViewModel.UpdateRuningStates();
         }
 
         private void SampleRate2kBtn_Checked(object sender, RoutedEventArgs e)

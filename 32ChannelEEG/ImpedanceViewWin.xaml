@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="ImpedanceViewWin" Height="300" Width="300">
     <Grid>
-        <ListBox x:Name="ImpedanceListBox" HorizontalAlignment="Left" Height="270" VerticalAlignment="Top" Width="292"/>
+        <ListBox x:Name="ImpedanceListBox"/>
 
     </Grid>
 </Window>

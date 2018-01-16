@@ -88,6 +88,10 @@ namespace BrainNetwork.BrainDeviceProtocol
             {
                 changed = true;
                 _devState.LastSelectedSingleImpedanceChannel = impedanceChannel;
+                if (_devState.LastMultiImpedanceCodes!=null && _devState.LastMultiImpedanceCodes.Count> impedanceChannel)
+                {
+                    _devState.LastMultiImpedanceCodes[impedanceChannel-1] = _devState.LastSingleImpedanceCode;
+                }
             }
             //free lock
             Interlocked.CompareExchange(ref _stateLock, CASHelper.LockFree, CASHelper.LockUsed);

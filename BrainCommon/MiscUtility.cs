@@ -6,6 +6,13 @@ namespace BrainCommon
 {
     public static class Utility
     {
+        public static int ToInt(this string str)
+        {
+            var r = 0;
+            int.TryParse(str, out r);
+            return r;
+        }
+        
         public static int[] CopyToArray(this ArraySegment<int> seg)
         {
             if (seg.Array == null) return null;

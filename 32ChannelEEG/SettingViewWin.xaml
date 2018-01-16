@@ -7,11 +7,37 @@
         mc:Ignorable="d"
         Title="SettingViewWin" Height="300" Width="300">
     <Grid>
-        <ListBox HorizontalAlignment="Right" Width="292">
-            <RadioButton Name="SampleRate2kBtn" Content="2000Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SampleRate2kBtn_Checked"/>
-            <RadioButton Name="SampleRate1kBtn" Content="1000Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SampleRate1kBtn_Checked"/>
-            <RadioButton Name="SampleRate500Btn" Content="500Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SampleRate500Btn_Checked"/>
-            <RadioButton Name="SampleRate250Btn" Content="250Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SampleRate250Btn_Checked"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Border 
+                BorderBrush="#323539"
+                BorderThickness="0,0,2,0" Grid.Row="0">
+        <WrapPanel Orientation="Horizontal">
+            <TextBlock TextWrapping="Wrap" Height="18" Width="29"><Run Text="IP:"/></TextBlock>
+            <TextBox x:Name="IpTextBox" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.741,-1.068" UseLayoutRounding="True" Padding="3" Margin="0,5"/>
+        </WrapPanel>
+        </Border>
+        <Border 
+                BorderBrush="#323539"
+                BorderThickness="0,0,2,0" Grid.Row="1">
+            <WrapPanel RenderTransformOrigin="0.489,2.018"  Orientation="Horizontal">
+            <TextBlock TextWrapping="Wrap" Height="18" Width="29"><Run Text="Port:"/></TextBlock>
+            <TextBox x:Name="PortTextBox" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" BorderThickness="0,1,1,1" Padding="3" Margin="0,5"/>
+        </WrapPanel>
+        </Border>
+        <Border Background="#FF232426"
+                BorderBrush="#323539"
+                BorderThickness="0,0,2,0" Grid.Row="2">
+            <ListBox >
+            <TextBlock TextWrapping="Wrap" Text="Sample Rate:"/>
+            <RadioButton x:Name="SampleRate2kBtn" Content="2000Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SampleRate2kBtn_Checked"/>
+            <RadioButton x:Name="SampleRate1kBtn" Content="1000Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SampleRate1kBtn_Checked"/>
+            <RadioButton x:Name="SampleRate500Btn" Content="500Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SampleRate500Btn_Checked"/>
+            <RadioButton x:Name="SampleRate250Btn" Content="250Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SampleRate250Btn_Checked"/>
         </ListBox>
+        </Border>
     </Grid>
 </Window>

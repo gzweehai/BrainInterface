@@ -43,6 +43,7 @@ namespace BrainNetwork.BrainDeviceProtocol
             DisConnect();
         }
 
+        //TODO use rx instead!
         public static event Action OnConnected;
         
         public static async Task<DevCommandSender> Connnect(string ip, int port)

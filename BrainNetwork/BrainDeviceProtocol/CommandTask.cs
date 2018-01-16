@@ -70,11 +70,19 @@ namespace BrainNetwork.BrainDeviceProtocol
 #if !DisableDevTimeout
             ScheduleTimeout();
 #endif
-
-            var result = await _currentTaskCtl.Task;
-            if (result == CommandError.Success)
-                handler.HandlerSuccessAsync(cmdState);
-            return result;
+            try
+            {
+                var waitingTask = _currentTaskCtl.Task;
+                var result = await waitingTask;
+                if (result == CommandError.Success)
+                    handler.HandlerSuccessAsync(cmdState);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Error(ex.Message);
+                return CommandError.Failed;
+            }
         }
 
         private async void ScheduleTimeout()
