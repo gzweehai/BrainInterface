@@ -15,14 +15,13 @@ namespace BrainSimulator
     internal static class ServerStub
     {
         private static Random _r = new Random();
-        private static BufferManager bmgr = BufferManager.CreateBufferManager(64, 1024);
+        private static SyncBufManager bmgr = SyncBufManager.Create(2 << 16, 1024, 1024);
         private static ArraySegment<byte> _frameHeader = new ArraySegment<byte>(new byte[] {0xA0});
         private static ArraySegment<byte> _frameTail = new ArraySegment<byte>(new byte[] {0XC0});
 
         public static void Main(string[] args)
         {
             var endpoint = ProgramArgs.Parse(args, new[] { "127.0.0.1:9211" }).EndPoint;
-            var bufferManager = SyncBufManager.Create(2 << 16, 1024,1024);
             var decoder = new DynamicFrameDecoder(0xA0, 0XC0);
 
             var cts = new CancellationTokenSource();
@@ -32,7 +31,7 @@ namespace BrainSimulator
                 .Subscribe(
                     client =>
                         //client.ToClientObservable(1024, SocketFlags.None)
-                            client.ToDynamicFrameObservable(bufferManager, decoder)
+                            client.ToDynamicFrameObservable(bmgr, decoder)
                                 .Subscribe(async buf => await OnReceived(client, buf, cts.Token),
                                     SocketReceiveError,
                                     ClientSocketClose, cts.Token),
@@ -309,7 +308,7 @@ namespace BrainSimulator
                 lenByte,
                 new ArraySegment<byte>(buf,0,bufSize),
                 _frameTail,
-            }, SocketFlags.None, ctsToken);
+            }, SocketFlags.None, ctsToken, bmgr);
             //AppLogger.Debug($"sent,{sent},len:{buf.Length},{buf.Show()}");
         }
 

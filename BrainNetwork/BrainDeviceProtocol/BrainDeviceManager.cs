@@ -50,7 +50,7 @@ namespace BrainNetwork.BrainDeviceProtocol
         {
             DisConnect();
             var endPoint = new IPEndPoint(IPAddress.Parse(ip), port);
-            socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            socket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             await socket.ConnectAsync(endPoint);
             cts = new CancellationTokenSource();
 
