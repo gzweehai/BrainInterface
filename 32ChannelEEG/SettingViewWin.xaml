@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SciChart_50ChannelEEG"
         mc:Ignorable="d"
-        Title="SettingViewWin" Height="300" Width="300">
+        Title="SettingViewWin" Height="300" Width="400">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -28,9 +29,22 @@
             <TextBox x:Name="PortTextBox" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" BorderThickness="0,1,1,1" Padding="3" Margin="0,5"/>
         </WrapPanel>
         </Border>
-        <Border Background="#FF232426"
+        <Border 
                 BorderBrush="#323539"
                 BorderThickness="0,0,2,0" Grid.Row="2">
+            <WrapPanel RenderTransformOrigin="0.489,2.018"  Orientation="Horizontal">
+                <ListBox>
+                    <CheckBox Name="EnableTimeoutCheckBox" Height="18" Content="Enable Command Timeout" HorizontalAlignment="Left"/>
+                    <WrapPanel Orientation="Horizontal">
+                        <TextBlock TextWrapping="Wrap" Height="18" HorizontalAlignment="Left"><Run Text="Timeout:"/></TextBlock>
+                        <TextBox x:Name="TimeoutTextBox" HorizontalAlignment="Right" Height="23" TextWrapping="Wrap" Width="120" BorderThickness="0,1,1,1" Padding="3" Margin="0,5"/>
+                    </WrapPanel>
+                </ListBox>
+            </WrapPanel>
+        </Border>
+        <Border Background="#FF232426"
+                BorderBrush="#323539"
+                BorderThickness="0,0,2,0" Grid.Row="3">
             <ListBox >
             <TextBlock TextWrapping="Wrap" Text="Sample Rate:"/>
             <RadioButton x:Name="SampleRate2kBtn" Content="2000Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SampleRate2kBtn_Checked"/>

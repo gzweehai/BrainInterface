@@ -29,6 +29,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         private readonly ActionCommand _impedanceCommand;
         private ImpedanceViewWin _impedanceView;
         private ActionCommand _SettingCommand;
+        private ActionCommand _ViewLoadCommand;
 
         internal Task<CommandError> SetSampleRate(SampleRateEnum rate)
         {
@@ -40,6 +41,8 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         }
 
         private readonly List<(double[],float)> _emptyList=new List<(double[],float)>(0);
+
+        public ICommand ViewLoadCommand => _ViewLoadCommand;
 
         public ICommand SettingCommand => _SettingCommand;
 
@@ -86,6 +89,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             _resetCommand = new ActionCommand(ResetDevCmd, () => !IsRunning && !IsReset);
             _impedanceCommand = new ActionCommand(ShowImpedanceView, () => _impedanceView != null || _devCtl != null);
             _SettingCommand = new ActionCommand(ShowSettingView, () => true /*_devCtl != null*/);
+            _ViewLoadCommand = new ActionCommand(StartAsync, () => ClientConfig.GetConfig().IsAutoStart);
 
             _uithread = Dispatcher.CurrentDispatcher;
             _currentState = default(BrainDevState);
@@ -232,6 +236,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         private void ResetChannelParts()
         {
+            if (_channelViewModels == null) return;
             for (var i = 0; i < _channelViewModels.Count; i++)
             {
                 var channel = _channelViewModels[i];
@@ -334,7 +339,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 for (var i = 0; i < datas.Count; i++)
                 {
                     voltageArr[i] =
-                        BitDataConverter.Calculatevoltage(buf[startIdx + i], cfglocal.ReferenceVoltage, _currentState.Gain);
+                        BitDataConverter.Calculatevoltage(buf[startIdx + i], cfglocal.ReferenceVoltage, _currentState.Gain)*1000000;//uV
                 }
                 UpdateChannelBuffer(voltageArr, passTimes);
                 BrainDeviceManager.BufMgr.ReturnBuffer(voltageArr);

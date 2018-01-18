@@ -55,7 +55,7 @@ namespace BrainNetwork.BrainDeviceProtocol
                 CommiteState();
         }
 
-        private static void CommitEnableFiler(bool enalbeFilter)
+        private static void CommitEnableFilter(bool enalbeFilter)
         {
             var changed = false;
             //spin lock

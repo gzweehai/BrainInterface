@@ -196,7 +196,7 @@ namespace BrainProtocolTester
                                         cts.Cancel();
                                     });
 
-                        var cmdSender = new DevCommandSender(frameClientSubject, bufferManager);
+                        var cmdSender = new DevCommandSender(frameClientSubject, bufferManager, null);
 
                         Console.In.ToLineObservable("exit")
                             .Subscribe(

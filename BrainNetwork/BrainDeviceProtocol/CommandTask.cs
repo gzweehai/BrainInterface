@@ -68,7 +68,8 @@ namespace BrainNetwork.BrainDeviceProtocol
             _clientFrameSender.OnNext(buf.AsDisposableValue());
 
 #if !DisableDevTimeout
-            ScheduleTimeout();
+            if (_enableTimeout)
+                ScheduleTimeout();
 #endif
             try
             {
@@ -89,7 +90,7 @@ namespace BrainNetwork.BrainDeviceProtocol
         {
             try
             {
-                await Task.Delay(100,_cts.Token);
+                await Task.Delay(TimeSpan.FromMilliseconds(_sendTimeout), _cts.Token);
             }
             catch (TaskCanceledException)
             {

@@ -28,14 +28,14 @@ namespace BrainNetwork.BrainDeviceProtocol
             bufferManager = SyncBufManager.Create(2 << 16, 128, 32);
             encoder = new ClientFrameEncoder(0xA0, 0XC0);
             decoder = new FixedLenFrameDecoder(0xA0, 0XC0);
+            _dataStream = new Subject<(byte, ArraySegment<int>, ArraySegment<byte>)>();
+            _stateStream = new Subject<BrainDevState>();
+            AppDomain.CurrentDomain.ProcessExit += ProcessExit;
         }
 
         public static void Init()
         {
-            _dataStream = new Subject<(byte, ArraySegment<int>, ArraySegment<byte>)>();
-            _stateStream = new Subject<BrainDevState>();
             //_stateStream.OnNext(_devState);
-            AppDomain.CurrentDomain.ProcessExit += ProcessExit;
         }
 
         private static void ProcessExit(object sender, EventArgs e)
@@ -79,7 +79,7 @@ namespace BrainNetwork.BrainDeviceProtocol
                             DisConnect();
                         });
 
-            var cmdSender = new DevCommandSender(frameClientSubject, bufferManager);
+            var cmdSender = new DevCommandSender(frameClientSubject, bufferManager,ClientConfig.ChangingConfig);
             ReceivedDataProcessor.Instance.Sender = cmdSender;
             OnConnected?.Invoke();
             return cmdSender;
@@ -89,7 +89,7 @@ namespace BrainNetwork.BrainDeviceProtocol
         {
             var tmpCts=Interlocked.Exchange(ref cts, null);
             if (tmpCts == null) return;
-            CommitEnableFiler(false);
+            CommitStartStop(false);
             tmpCts.Cancel();
             var tmpObs=Interlocked.Exchange(ref observerDisposable, null);
             tmpObs?.Dispose();

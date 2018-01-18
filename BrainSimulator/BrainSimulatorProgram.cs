@@ -278,6 +278,7 @@ namespace BrainSimulator
 
             await SendWithHeadTail(socket, buf, 3,ctsToken);
             bmgr.ReturnBuffer(buf);
+            _brainState.Reset();
         }
 
         private static async Task TestMultiImpedance(Socket socket, ArraySegment<byte> buffer, CancellationToken ctsToken)
@@ -294,6 +295,7 @@ namespace BrainSimulator
 
             await SendWithHeadTail(socket, buf, bufferSize,ctsToken);
             bmgr.ReturnBuffer(buf);
+            _brainState.Reset();
         }
 
         private static async Task SendWithHeadTail(Socket socket, byte[] buf, byte bufSize, CancellationToken ctsToken)

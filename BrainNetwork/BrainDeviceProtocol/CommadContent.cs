@@ -137,6 +137,7 @@ namespace BrainNetwork.BrainDeviceProtocol
             {
                 var trapOpt = (TrapSettingEnum)cmdCnt;
                 CommitTrapOpt(trapOpt);
+                CommitStartStop(false);
             }
         }
 
@@ -162,7 +163,8 @@ namespace BrainNetwork.BrainDeviceProtocol
             public void HandlerSuccessAsync(object cmdCnt)
             {
                 var useFilter = (bool) cmdCnt;
-                CommitEnableFiler(useFilter);
+                CommitEnableFilter(useFilter);
+                CommitStartStop(false);
             }
         }
 
@@ -189,6 +191,7 @@ namespace BrainNetwork.BrainDeviceProtocol
             {
                 var selectedChannel = (byte) cmdCnt;
                 CommitSingleImpedanceChannel(selectedChannel);
+                CommitStartStop(false);
             }
         }
 
@@ -215,6 +218,7 @@ namespace BrainNetwork.BrainDeviceProtocol
             {
                 //var channelCount = (byte) cmdCnt;
                 //CommitMultiImpedanceCount(channelCount);
+                CommitStartStop(false);
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reactive.Subjects;
 using JsonC = Newtonsoft.Json.JsonConvert;
 
 namespace BrainCommon
@@ -10,6 +11,9 @@ namespace BrainCommon
         public int Port=8088;
         public float ReferenceVoltage=4.5f;
         public uint DeviceId=19831980;
+        public bool IsAutoStart;
+        public bool EnableCommandTimeout;
+        public uint TimeoutMilliseconds=100;
 
         private ClientConfig()
         {
@@ -60,13 +64,46 @@ namespace BrainCommon
                 return new ClientConfig();
             }
         }
+        
+        public static void ChangeTimeout(bool enalbedTimeout, uint timeoutMilliseconds)
+        {
+            var tmp = GetConfig();
+            var changed = false;
+            if (tmp.EnableCommandTimeout != enalbedTimeout)
+            {
+                changed = true;
+                tmp.EnableCommandTimeout = enalbedTimeout;
+            }
+            if (tmp.TimeoutMilliseconds != timeoutMilliseconds)
+            {
+                changed = true;
+                tmp.TimeoutMilliseconds = timeoutMilliseconds;
+            }
+            if (changed)
+                _changineConfig.OnNext((enalbedTimeout, timeoutMilliseconds));
+        }
+
+        private static readonly Subject<(bool, uint)> _changineConfig = new Subject<(bool, uint)>();
+        public static IObservable<(bool, uint)> ChangingConfig => _changineConfig;
 
         private static ClientConfig _instance;
+
         public static ClientConfig GetConfig()
         {
             if (_instance == null)
                 _instance = LoadFromFile("BrainInterfaceClientConfig.json");
             return _instance;
+        }
+
+        public static void ChangeTimeout(bool? enalbedTimeout, string timeoutMilliseconds)
+        {
+            var tmp = GetConfig();
+            if (!uint.TryParse(timeoutMilliseconds, out var tm))
+            {
+                tm = tmp.TimeoutMilliseconds;
+            }
+            var en = enalbedTimeout ?? tmp.EnableCommandTimeout;
+            ChangeTimeout(en, tm);
         }
     }
 }

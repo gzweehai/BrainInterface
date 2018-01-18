@@ -12,7 +12,7 @@
 
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding StartCommand}" />
+            <i:InvokeCommandAction Command="{Binding ViewLoadCommand}" />
         </i:EventTrigger>
 
         <i:EventTrigger EventName="Unloaded">

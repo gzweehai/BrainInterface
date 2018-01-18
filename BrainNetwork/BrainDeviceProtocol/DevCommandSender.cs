@@ -1,9 +1,8 @@
 ﻿using System;
+using System.Reactive.Linq;
 using System.Collections.Generic;
-using System.ServiceModel.Channels;
 using System.Threading;
 using BrainCommon;
-using BrainNetwork.RxSocket.Common;
 
 namespace BrainNetwork.BrainDeviceProtocol
 {
@@ -23,8 +22,11 @@ namespace BrainNetwork.BrainDeviceProtocol
         private readonly IObserver<DisposableValue<ArraySegment<byte>>> _clientFrameSender;
         private readonly SyncBufManager _bufMgr;
         private readonly Dictionary<DevCommandEnum, ICommandContent> _cmdhandler;
+        private volatile bool _enableTimeout;
+        private volatile uint _sendTimeout=100;
 
-        public DevCommandSender(IObserver<DisposableValue<ArraySegment<byte>>> clientFrameSender, SyncBufManager bufMgr)
+        public DevCommandSender(IObserver<DisposableValue<ArraySegment<byte>>> clientFrameSender,
+            SyncBufManager bufMgr, IObservable<(bool,uint)> enableTimeoutConfig)
         {
             _cmdhandler = new Dictionary<DevCommandEnum, ICommandContent>();
             foreach (var cmdcnt in ReflectionHelper.GetAllInterfaceImpl<ICommandContent>())
@@ -35,6 +37,7 @@ namespace BrainNetwork.BrainDeviceProtocol
             _clientFrameSender = clientFrameSender;
             _bufMgr = bufMgr;
             _cts = new CancellationTokenSource();
+            enableTimeoutConfig?.Subscribe(pair => (_enableTimeout, _sendTimeout) = pair);
         }
 
         public void AddCommand(ICommandContent cnt)
