@@ -6,6 +6,6 @@
         xmlns:local="clr-namespace:SciChart_50ChannelEEG"
         xmlns:ecgMonitor="clr-namespace:SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor"
         mc:Ignorable="d"
-        Title="SingleChannelWin" Height="300" Width="300">
+        Title="SingleChannelWin" Width="600" Height="400">
     <ecgMonitor:ECGMonitorView x:Name="SingleChannelView"/>
 </Window>
