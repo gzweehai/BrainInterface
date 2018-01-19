@@ -39,6 +39,12 @@ namespace BrainCommon
             }
             Logqueue = new ConcurrentQueue<Tuple<string, string>>();
             AppDomain.CurrentDomain.ProcessExit += ProcessExit;
+            AppDomain.CurrentDomain.UnhandledException += LogUnhandledException;
+        }
+
+        private static void LogUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Error(e.ExceptionObject.ToString());
         }
 
         public static void ProcessExit(object sender, EventArgs e)

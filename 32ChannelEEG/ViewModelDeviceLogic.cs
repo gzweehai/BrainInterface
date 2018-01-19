@@ -64,13 +64,14 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 _singleChannelWin = new SingleChannelWin(_singleChannelViewData, _signleChannelViewState);
                 _singleChannelWin.DataContext = this;
                 _singleChannelWin.Closing += OnSingleChannleWinClosing;
+                _singleChannelWin.Show();
             }
             else
             {
                 _singleChannelWin.Activate();
             }
+            _singleChannelWin.Title = ChannelViewModels[_selectedChannel].ChannelName;
             _signleChannelViewState.OnNext((ChannelViewState.Running, _selectedChannel));
-            _singleChannelWin.Show();
         }
 
         private void OnSingleChannleWinClosing(object sender, CancelEventArgs e)
@@ -95,13 +96,13 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 _impedanceView = new ImpedanceViewWin(_currentState);
                 _impedanceView.DataContext = this;
                 _impedanceView.Closing += OnImpedanceViewClosing;
+                _impedanceView.Show();
             }
             else
             {
                 _impedanceView.Activate();
             }
             _devCtl.TestMultiImpedance(_currentState.ChannelCount);
-            _impedanceView.Show();
         }
 
         internal Task<CommandError> TestSingleImpedance(int tabIndex)
@@ -435,12 +436,14 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
     {
         private void ChannelListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var selected = (sender as ListBox).SelectedItem as EEGChannelViewModel;
+            var channelList = sender as ListBox;
+            var selected = channelList?.SelectedItem as EEGChannelViewModel;
             //AppLogger.Debug(selected);
             if (selected == null) return;
             var eegExampleViewModel = (DataContext as EEGExampleViewModel);
             if (eegExampleViewModel == null) return;
             eegExampleViewModel.ShowSingleChannelWin(selected.Index);
+            channelList.SelectedValue = null;
         }
 
         private void ChannelListBox_ScrollChanged(object sender, ScrollChangedEventArgs e)

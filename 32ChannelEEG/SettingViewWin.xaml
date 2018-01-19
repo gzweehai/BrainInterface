@@ -11,6 +11,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Border 
@@ -42,9 +43,16 @@
                 </ListBox>
             </WrapPanel>
         </Border>
-        <Border Background="#FF232426"
+        <Border 
                 BorderBrush="#323539"
                 BorderThickness="0,0,2,0" Grid.Row="3">
+            <WrapPanel RenderTransformOrigin="0.489,2.018"  Orientation="Horizontal">
+                <CheckBox Name="AutoStartCheckBox" Height="18" Content="Auto Connect and Start Sampling when Open Main Window" HorizontalAlignment="Left"/>
+            </WrapPanel>
+        </Border>
+        <Border Background="#FF232426"
+                BorderBrush="#323539"
+                BorderThickness="0,0,2,0" Grid.Row="4">
             <ListBox >
             <TextBlock TextWrapping="Wrap" Text="Sample Rate:"/>
             <RadioButton x:Name="SampleRate2kBtn" Content="2000Hz" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="SampleRate2kBtn_Checked"/>

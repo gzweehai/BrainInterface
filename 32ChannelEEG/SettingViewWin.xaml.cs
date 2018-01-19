@@ -33,6 +33,7 @@ namespace SciChart_50ChannelEEG
             PortTextBox.Text = cfglocal.Port.ToString();
             EnableTimeoutCheckBox.IsChecked = cfglocal.EnableCommandTimeout;
             TimeoutTextBox.Text = cfglocal.TimeoutMilliseconds.ToString();
+            AutoStartCheckBox.IsChecked = cfglocal.IsAutoStart;
         }
 
         protected override void OnClosed(EventArgs e)
@@ -42,6 +43,7 @@ namespace SciChart_50ChannelEEG
             var cfglocal = ClientConfig.GetConfig();
             cfglocal.Ip = IpTextBox.Text;
             cfglocal.Port = PortTextBox.Text.ToInt();
+            cfglocal.IsAutoStart = AutoStartCheckBox.IsChecked ?? cfglocal.IsAutoStart;
             ClientConfig.ChangeTimeout(EnableTimeoutCheckBox.IsChecked,TimeoutTextBox.Text);
             base.OnClosed(e);
         }
