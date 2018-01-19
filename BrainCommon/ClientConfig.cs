@@ -7,8 +7,8 @@ namespace BrainCommon
 {
     public class ClientConfig
     {
-        public string Ip="192.168.0.101";
-        public int Port=8088;
+        public string Ip= "127.0.0.1";
+        public int Port= 9211;
         public float ReferenceVoltage=4.5f;
         public uint DeviceId=19831980;
         public bool IsAutoStart;
@@ -98,7 +98,7 @@ namespace BrainCommon
         public static void ChangeTimeout(bool? enalbedTimeout, string timeoutMilliseconds)
         {
             var tmp = GetConfig();
-            if (!uint.TryParse(timeoutMilliseconds, out var tm))
+            if (!uint.TryParse(timeoutMilliseconds, out var tm) || tm<=0)
             {
                 tm = tmp.TimeoutMilliseconds;
             }

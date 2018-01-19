@@ -119,14 +119,27 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BeatToScaleConverter.cs" />
+    <Compile Include="ECGMonitorView.xaml.cs">
+      <DependentUpon>ECGMonitorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ECGMonitorViewModel.cs" />
     <Compile Include="ImpedanceViewWin.xaml.cs">
       <DependentUpon>ImpedanceViewWin.xaml</DependentUpon>
     </Compile>
     <Compile Include="SettingViewWin.xaml.cs">
       <DependentUpon>SettingViewWin.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SingleChannelViewLogic.cs" />
+    <Compile Include="SingleChannelWin.xaml.cs">
+      <DependentUpon>SingleChannelWin.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModelDeviceLogic.cs" />
     <Compile Include="ViewWinUtils.cs" />
+    <Page Include="ECGMonitorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ImpedanceViewWin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -157,6 +170,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="SettingViewWin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SingleChannelWin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

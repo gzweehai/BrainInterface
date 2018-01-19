@@ -33,7 +33,6 @@ namespace SciChart_50ChannelEEG
                 };
                 ImpedanceListBox.Items.Add(item);
                 item.Selected += OnItemSelected;
-                
             }
             _uithread = Dispatcher.CurrentDispatcher;
 

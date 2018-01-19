@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -49,6 +50,37 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         public ICommand ImpedanceCommand
         {
             get { return _impedanceCommand; }
+        }
+
+        internal void ShowSingleChannelWin(int index)
+        {
+            _selectedChannel = index;
+            if (_singleChannelWin == null)
+            {
+                if (_singleChannelViewData == null)
+                    _singleChannelViewData = new Subject<(double, float)>();
+                if (_signleChannelViewState == null)
+                    _signleChannelViewState = new Subject<(ChannelViewState, int)>();
+                _singleChannelWin = new SingleChannelWin(_singleChannelViewData, _signleChannelViewState);
+                _singleChannelWin.DataContext = this;
+                _singleChannelWin.Closing += OnSingleChannleWinClosing;
+            }
+            else
+            {
+                _singleChannelWin.Activate();
+            }
+            _signleChannelViewState.OnNext((ChannelViewState.Running, _selectedChannel));
+            _singleChannelWin.Show();
+        }
+
+        private void OnSingleChannleWinClosing(object sender, CancelEventArgs e)
+        {
+            _selectedChannel = 0;
+            _singleChannelWin = null;
+            _singleChannelViewData.OnCompleted();
+            _singleChannelViewData = null;
+            _signleChannelViewState.OnCompleted();
+            _signleChannelViewState = null;
         }
 
         private void ShowImpedanceView()
@@ -109,6 +141,17 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             FlushAllChannels();
         }
 
+        public enum ChannelViewState
+        {
+            Pause,
+            Reset,
+            Running,
+        }
+        private Subject<(double, float)> _singleChannelViewData;
+        private Subject<(ChannelViewState, int)> _signleChannelViewState;
+        private int _selectedChannel;
+        private SingleChannelWin _singleChannelWin;
+
         private void UpdateChannelBuffer(double[] voltageArr, float passTimes)
         {
             if (_channelViewModels == null) return;
@@ -117,6 +160,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 var channel = _channelViewModels[i];
                 channel.BufferChannelData(passTimes, voltageArr[i]);
             }
+            _singleChannelViewData?.OnNext((voltageArr[_selectedChannel], passTimes));
         }
 
         private void FlushAllChannels()
@@ -212,13 +256,15 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             }
         }
 
-        private void PauseChart(bool isCont)
+        private void PauseChart(bool isPause)
         {
+            _signleChannelViewState?.OnNext((isPause ? ChannelViewState.Pause: ChannelViewState.Running, _selectedChannel));
+
             if (_channelViewModels == null) return;
             for (var i = 0; i < _channelViewModels.Count; i++)
             {
                 var channel = _channelViewModels[i];
-                if (isCont)
+                if (isPause)
                     channel.PauseX();
                 else
                     channel.Resume();
@@ -227,6 +273,8 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         private void ResetDevCmd()
         {
+            _signleChannelViewState?.OnNext((ChannelViewState.Reset, _selectedChannel));
+
             IsReset = true;
             StopDevCmd();
             Disconnect();
@@ -263,9 +311,10 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             for (int i = 0; i < ChannelCount; i++)
             {
                 var channelViewModel =
-                    new EEGChannelViewModel(Size, _colors[i % colorsCount]) { ChannelName = "Channel " + (i + 1) };
+                    new EEGChannelViewModel(Size, _colors[i % colorsCount], i) { ChannelName = "Channel " + (i + 1) };
 
                 ChannelViewModels.Add(channelViewModel);
+                
             }
         }
 
@@ -378,11 +427,21 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         public void OnClosing(CancelEventArgs cancelEventArgs)
         {
             _impedanceView?.Close();
+            _singleChannelWin?.Close();
         }
     }
 
     public partial class EEGExampleView
     {
+        private void ChannelListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selected = (sender as ListBox).SelectedItem as EEGChannelViewModel;
+            //AppLogger.Debug(selected);
+            if (selected == null) return;
+            var eegExampleViewModel = (DataContext as EEGExampleViewModel);
+            if (eegExampleViewModel == null) return;
+            eegExampleViewModel.ShowSingleChannelWin(selected.Index);
+        }
 
         private void ChannelListBox_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {

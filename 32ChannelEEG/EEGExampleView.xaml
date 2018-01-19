@@ -324,7 +324,9 @@
                  ItemsSource="{Binding ChannelViewModels}"
                  Grid.IsSharedSizeScope="True"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"  Grid.RowSpan="1" 
-                 ScrollViewer.ScrollChanged="ChannelListBox_ScrollChanged"/>
+                 ScrollViewer.ScrollChanged="ChannelListBox_ScrollChanged"
+                 SelectionChanged="ChannelListBox_SelectionChanged"
+                 />
 
 
         <StatusBar Grid.Row="2" Background="#1c1c1e" Foreground="White" >test</StatusBar>

@@ -20,9 +20,11 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         private IUpdateSuspender _updateCtl;
         private int _updatingTag;
         private readonly List<(double, double)> _emptyList = new List<(double, double)>(0);
+        public readonly int Index;
 
-        public EEGChannelViewModel(int size, Color color)
+        public EEGChannelViewModel(int size, Color color,int index)
         {
+            Index = index;
             _size = size;
             Stroke = color;
             // Add an empty First In First Out series. When the data reaches capacity (int size) then old samples
@@ -71,8 +73,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             _channelDataSeries.Clear();
             for (int i = 0; i < _size; i++)
                 ChannelDataSeries.Append(i, double.NaN);
-            var empty = new List<(double, double)>();
-            Interlocked.Exchange(ref xyBuffer, empty);
+            Interlocked.Exchange(ref xyBuffer, new List<(double, double)>());
             SaveLastX();
         }
 
@@ -89,8 +90,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         {
             _pause = true;
             SaveLastX();
-            var empty = new List<(double, double)>();
-            Interlocked.Exchange(ref xyBuffer, empty);
+            Interlocked.Exchange(ref xyBuffer, new List<(double, double)>());
         }
 
         public void Resume()
@@ -130,8 +130,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             var tag = Interlocked.Exchange(ref _updatingTag, CASHelper.LockUsed);
             if (tag == CASHelper.LockUsed) return;
 
-            var empty = new List<(double, double)>();
-            var local = Interlocked.Exchange(ref xyBuffer, empty);
+            var local = Interlocked.Exchange(ref xyBuffer, new List<(double, double)>());
 
             if (local.Count > 0)
             {

@@ -179,7 +179,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             ChannelViewModels = new ObservableCollection<EEGChannelViewModel>();
             for (int i = 0; i < ChannelCount; i++)
             {
-                var channelViewModel = new EEGChannelViewModel(Size, _colors[i % 16]) {ChannelName = "Channel " + i};
+                var channelViewModel = new EEGChannelViewModel(Size, _colors[i % 16],i) {ChannelName = "Channel " + i};
                 ChannelViewModels.Add(channelViewModel);
             }
 
