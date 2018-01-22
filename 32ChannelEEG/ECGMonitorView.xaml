@@ -43,7 +43,7 @@
         <s:SciChartSurface Grid.Column="1" 
                                      HorizontalAlignment="Stretch"
                                      Padding="0"
-                                     RenderPriority="Low">
+                                     RenderPriority="Low" VerticalAlignment="Top">
 
             <!--  Declare RenderableSeries, which are mapped to DataSet Series 1:1 and in order  -->
             <s:SciChartSurface.RenderableSeries>
@@ -100,6 +100,67 @@
         </s:SciChartSurface>
 
         <!--  Create UI for the heatbeat and BPM overlay  -->
+        <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <TextBlock TextWrapping="Wrap" Height="18"><Run Text="Low Pass Filter Rate:"/></TextBlock>
+            <TextBox x:Name="LowPassRateTextBox" Text="100" TextChanged="LowPassRateTextBox_TextChanged" TextInput="LowPassRateTextBox_TextInput" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.741,-1.068" UseLayoutRounding="True" Padding="3" Margin="0,5"/>
+        </WrapPanel>
+        <s:SciChartSurface Grid.Column="1" 
+                                     HorizontalAlignment="Stretch"
+                                     Padding="0"
+                                     RenderPriority="Low" VerticalAlignment="Bottom">
 
+            <!--  Declare RenderableSeries, which are mapped to DataSet Series 1:1 and in order  -->
+            <s:SciChartSurface.RenderableSeries>
+                <s:FastLineRenderableSeries AntiAliasing="False"
+                                                  DataSeries="{Binding SingleFilterDataSeries}"
+                                                  ResamplingMode="None"
+                                                  >
+                    <s:FastLineRenderableSeries.RolloverMarkerTemplate>
+                        <ControlTemplate>
+                            <Ellipse Width="7"
+                                     Height="7"
+                                     Fill="White" />
+                        </ControlTemplate>
+                    </s:FastLineRenderableSeries.RolloverMarkerTemplate>
+                </s:FastLineRenderableSeries>
+            </s:SciChartSurface.RenderableSeries>
+
+            <!--  Axes are created implicitly when a dataset is created, but we override them here so we can style them  -->
+            <s:SciChartSurface.XAxis>
+                <s:NumericAxis AutoRange="Always"
+                                     DrawMajorGridLines="False"
+                                     DrawMinorGridLines="False"
+                                     DrawMajorBands="False"
+                                     Visibility="Visible">
+                </s:NumericAxis>
+            </s:SciChartSurface.XAxis>
+
+            <s:SciChartSurface.YAxis>
+                <s:NumericAxis  AutoRange="Always"
+                                      DrawMajorGridLines="False"
+                                     DrawMinorGridLines="False"
+                                     DrawMajorBands="False"
+                                     Visibility="Visible" />
+            </s:SciChartSurface.YAxis>
+            <s:SciChartSurface.ChartModifier>
+                <s:ModifierGroup>
+
+                    <!-- Allow Dragging YAxis to Scale -->
+                    <s:YAxisDragModifier DragMode="Scale"/>
+                    <!-- Allow Dragging XAxis to Pan -->
+                    <s:XAxisDragModifier DragMode="Scale"/>
+                    <!-- Allow Mousewheel Zoom -->
+                    <s:MouseWheelZoomModifier/>
+                    <!-- Allow Zoom to Extents on double click -->
+                    <s:ZoomExtentsModifier ExecuteOn="MouseDoubleClick" />
+                    <!-- NEW CODE HERE -->
+
+
+                    <s:CursorModifier IsEnabled="True" ShowTooltip="True" ShowTooltipOn="MouseOver"
+                            ShowAxisLabels="True" SourceMode="AllSeries"/>
+
+                </s:ModifierGroup>
+            </s:SciChartSurface.ChartModifier>
+        </s:SciChartSurface>
     </Grid>
 </UserControl>

@@ -65,6 +65,7 @@ namespace BrainNetwork.BrainDeviceProtocol
             }
 
             _currentTaskCtl = new TaskCompletionSource<CommandError>();
+            var loclCtl = _currentTaskCtl;
             _clientFrameSender.OnNext(buf.AsDisposableValue());
 
 #if !DisableDevTimeout
@@ -73,7 +74,7 @@ namespace BrainNetwork.BrainDeviceProtocol
 #endif
             try
             {
-                var waitingTask = _currentTaskCtl.Task;
+                var waitingTask = loclCtl.Task;
                 var result = await waitingTask;
                 if (result == CommandError.Success)
                     handler.HandlerSuccessAsync(cmdState);

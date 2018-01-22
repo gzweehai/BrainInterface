@@ -9,6 +9,7 @@ using System.Windows.Input;
 using SciChart.Charting.Model.DataSeries;
 using SciChart.Data.Model;
 using SciChart.Examples.ExternalDependencies.Common;
+using SciChart_50ChannelEEG;
 
 namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
 {
@@ -18,6 +19,7 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
         private IXyDataSeries<double, double> _series0;
         private double[] _sourceData;
         private int _currentIndex;
+
         private int _totalIndex;
         private DoubleRange _xVisibleRange;
         private DoubleRange _yVisibleRange;

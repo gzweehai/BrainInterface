@@ -40,6 +40,12 @@
     <Reference Include="MahApps.Metro, Version=1.3.0.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.3.0\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
+    <Reference Include="MathNet.Filtering, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Filtering.0.4.0\lib\net40\MathNet.Filtering.dll</HintPath>
+    </Reference>
+    <Reference Include="MathNet.Numerics, Version=3.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.3.8.0\lib\net40\MathNet.Numerics.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
     </Reference>
@@ -63,6 +69,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Reactive.Core, Version=2.2.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Rx-Core.2.2.5\lib\net45\System.Reactive.Core.dll</HintPath>
     </Reference>
@@ -120,6 +127,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BeatToScaleConverter.cs" />
+    <Compile Include="DataSeriesSimpleBatchUpdator.cs" />
     <Compile Include="ECGMonitorView.xaml.cs">
       <DependentUpon>ECGMonitorView.xaml</DependentUpon>
     </Compile>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows;
+using BrainNetwork.BrainDeviceProtocol;
 using SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor;
 using static SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo.EEGExampleViewModel;
 
@@ -12,10 +13,10 @@ namespace SciChart_50ChannelEEG
     public partial class SingleChannelWin : Window
     {
         public SingleChannelWin(IObservable<(double, float)> ds, 
-            IObservable<(ChannelViewState, int)> ss)
+            IObservable<(ChannelViewState, int)> ss, IObservable<BrainDevState> devs)
         {
             InitializeComponent();
-            SingleChannelView.DataContext = new ECGMonitorViewModel(ds, ss);
+            SingleChannelView.DataContext = new ECGMonitorViewModel(ds, ss,devs);
         }
 
         protected override void OnClosing(CancelEventArgs e)

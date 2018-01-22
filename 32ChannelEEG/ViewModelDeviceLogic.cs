@@ -61,7 +61,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                     _singleChannelViewData = new Subject<(double, float)>();
                 if (_signleChannelViewState == null)
                     _signleChannelViewState = new Subject<(ChannelViewState, int)>();
-                _singleChannelWin = new SingleChannelWin(_singleChannelViewData, _signleChannelViewState);
+                _singleChannelWin = new SingleChannelWin(_singleChannelViewData, _signleChannelViewState,_devStateStream);
                 _singleChannelWin.DataContext = this;
                 _singleChannelWin.Closing += OnSingleChannleWinClosing;
                 _singleChannelWin.Show();
@@ -72,6 +72,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             }
             _singleChannelWin.Title = ChannelViewModels[_selectedChannel].ChannelName;
             _signleChannelViewState.OnNext((ChannelViewState.Running, _selectedChannel));
+            _devStateStream.OnNext(_currentState);
         }
 
         private void OnSingleChannleWinClosing(object sender, CancelEventArgs e)
@@ -152,6 +153,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         private Subject<(ChannelViewState, int)> _signleChannelViewState;
         private int _selectedChannel;
         private SingleChannelWin _singleChannelWin;
+        private Subject<BrainDevState> _devStateStream = new Subject<BrainDevState>();
 
         private void UpdateChannelBuffer(double[] voltageArr, float passTimes)
         {
@@ -336,6 +338,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                     _currentState = ss;
                     ChannelCount = _currentState.ChannelCount;
                     _running = _currentState.IsStart;
+                    _devStateStream.OnNext(ss);
                     _uithread.InvokeAsync(RefreshChannelParts);
                     //AppLogger.Debug($"Brain Device State Changed Detected: {ss}");
                 }, () => {
