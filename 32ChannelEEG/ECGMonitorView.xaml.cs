@@ -13,23 +13,13 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
             InitializeComponent();
         }
 
-        private void LowPassRateTextBox_TextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
-        {
-            //var viewModle = DataContext as ECGMonitorViewModel;
-            //if (viewModle == null) return;
-            //LowPassRateTextBox.Text;
-            //viewModle.SetLowPassFilterRate(10);
-        }
-
-        private void LowPassRateTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void ApplyFilterBtn_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             var viewModle = DataContext as ECGMonitorViewModel;
             if (viewModle == null) return;
-            var rateBox = sender as TextBox;
-            if (rateBox == null) return;
-            var nRate = rateBox.Text.ToInt();
-            if (nRate == 0) return;
-            //viewModle.SetLowPassFilterRate(10);
+            var lowRate = LowPassRateTextBox.IntNum;
+            var highRate = HighPassRateTextBox.IntNum;
+            viewModle.SetBandwith(lowRate, highRate);
         }
     }
 }

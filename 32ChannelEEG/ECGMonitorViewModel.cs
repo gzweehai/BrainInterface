@@ -32,6 +32,7 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
         private ICommand _stopCommand;
 
         private const double WindowSize = 5.0;
+
         private const int TimerInterval = 20;
 
         public ICommand StartCommand { get { return _startCommand; } }

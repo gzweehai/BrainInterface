@@ -25,13 +25,15 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
         private OnlineFirFilter _filter;
         private List<(double, double)> filterBuffer;
         private SampleRateEnum _sampleRate = (SampleRateEnum )(-1);
-        private int _cutoff = 100;
+        private int _cutoffLow = 5;
+        private int _cutoffHigh = 100;
         private readonly List<(double, double)> _emptyList = new List<(double, double)>(0);
 
         private void SaveLastX()
         {
             _lastX = _series0.HasValues ? (double)_series0.XMax : 0;
         }
+
         public IXyDataSeries<double, double> SingleFilterDataSeries
         {
             get { return _filterSeries; }
@@ -54,12 +56,19 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
             _unsubscriber += stateStream.Subscribe(UpdateDevState);
         }
 
-        internal void SetLowPassFilterRate(int v)
+        internal void SetBandwith(int lowRate, int highRate)
         {
-            if (_cutoff == v) return;
-            _cutoff = v;
+            if (_cutoffLow == lowRate && _cutoffHigh == highRate) return;
+            if (lowRate > highRate)
+            {
+                ViewWinUtils.CreateDefaultDialog("Low Rate is greater than High Rate!");
+                return;
+            }
+            _cutoffLow = lowRate;
+            _cutoffHigh = highRate;
             CreateFilter();
         }
+
 
         public void OnClosing()
         {
@@ -76,8 +85,18 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
         private void CreateFilter()
         {
             var rate = BrainDevState.PassTimeMs(_sampleRate, 1);
-            var _firCoef = FirCoefficients.LowPass(rate, _cutoff);
-            _filter = new OnlineFirFilter(_firCoef);
+            var firCoef = _cutoffLow <= 0
+                ? FirCoefficients.LowPass(rate, _cutoffHigh)
+                : FirCoefficients.BandPass(rate, _cutoffLow, _cutoffHigh);
+            var local = new OnlineFirFilter(firCoef);
+            if (_series0.HasValues)
+            {
+                var yValues = _series0.YValues;
+                var copyY = new double[yValues.Count];
+                yValues.CopyTo(copyY, 0);
+                var samples = local.ProcessSamples(copyY);
+            }
+            _filter = local;
         }
 
         private void UpdateChannelData((double,float) data)

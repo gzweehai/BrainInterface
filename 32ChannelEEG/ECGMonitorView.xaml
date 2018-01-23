@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:s="http://schemas.abtsoftware.co.uk/scichart"
+             xmlns:customControls="clr-namespace:System.Windows.Controls"
              d:DesignHeight="400"
              d:DesignWidth="600"
              mc:Ignorable="d">
@@ -38,12 +39,16 @@
     </UserControl.Resources>
 
     <Grid>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
         <!-- Declare the SciChartSurface. We use RenderPriority=Low to put rendering below mouse input and keep the app responsive -->
-        <s:SciChartSurface Grid.Column="1" 
+        <s:SciChartSurface 
                                      HorizontalAlignment="Stretch"
                                      Padding="0"
-                                     RenderPriority="Low" VerticalAlignment="Top">
+                                     RenderPriority="Low">
 
             <!--  Declare RenderableSeries, which are mapped to DataSet Series 1:1 and in order  -->
             <s:SciChartSurface.RenderableSeries>
@@ -100,14 +105,17 @@
         </s:SciChartSurface>
 
         <!--  Create UI for the heatbeat and BPM overlay  -->
-        <WrapPanel Orientation="Horizontal" VerticalAlignment="Center">
-            <TextBlock TextWrapping="Wrap" Height="18"><Run Text="Low Pass Filter Rate:"/></TextBlock>
-            <TextBox x:Name="LowPassRateTextBox" Text="100" TextChanged="LowPassRateTextBox_TextChanged" TextInput="LowPassRateTextBox_TextInput" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" RenderTransformOrigin="0.741,-1.068" UseLayoutRounding="True" Padding="3" Margin="0,5"/>
+        <WrapPanel Orientation="Horizontal" Grid.Row="1">
+            <TextBlock TextWrapping="Wrap" Height="18"><Run Text="Impluse Filter Rate Bwtween: "/></TextBlock>
+            <customControls:DigitBox x:Name="LowPassRateTextBox" Text="5" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" UseLayoutRounding="True" Padding="3" Margin="0,5"/>
+            <TextBlock TextWrapping="Wrap" Height="18"><Run Text=" and "/></TextBlock>
+            <customControls:DigitBox x:Name="HighPassRateTextBox" Text="100" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" UseLayoutRounding="True" Padding="3" Margin="0,5"/>
+            <Button Name="ApplyFilterBtn" Click="ApplyFilterBtn_Click" Content="Apply" Margin="3" Width="75"/>
         </WrapPanel>
-        <s:SciChartSurface Grid.Column="1" 
+        <s:SciChartSurface 
                                      HorizontalAlignment="Stretch"
                                      Padding="0"
-                                     RenderPriority="Low" VerticalAlignment="Bottom">
+                                     RenderPriority="Low" Grid.Row="2">
 
             <!--  Declare RenderableSeries, which are mapped to DataSet Series 1:1 and in order  -->
             <s:SciChartSurface.RenderableSeries>

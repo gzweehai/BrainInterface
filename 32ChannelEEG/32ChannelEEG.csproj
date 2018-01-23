@@ -128,6 +128,7 @@
     </ApplicationDefinition>
     <Compile Include="BeatToScaleConverter.cs" />
     <Compile Include="DataSeriesSimpleBatchUpdator.cs" />
+    <Compile Include="DigitBox.cs" />
     <Compile Include="ECGMonitorView.xaml.cs">
       <DependentUpon>ECGMonitorView.xaml</DependentUpon>
     </Compile>
