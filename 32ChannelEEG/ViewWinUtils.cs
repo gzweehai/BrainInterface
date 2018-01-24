@@ -14,15 +14,27 @@ namespace SciChart_50ChannelEEG
             };
         }
 
-        public static Window CreateDefaultDialog(object content)
+        public static Window CreateDefaultDialog(object cnt)
         {
             return new Window()
             {
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 Height = 300,
                 Width = 300,
-                Content = content
+                Content = cnt
             };
+        }
+
+        public static void ShowDefaultDialog(object cnt)
+        {
+            var result = new Window()
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                Height = 300,
+                Width = 300,
+                Content = cnt
+            };
+            result.ShowDialog();
         }
     }
 }

@@ -107,9 +107,9 @@
         <!--  Create UI for the heatbeat and BPM overlay  -->
         <WrapPanel Orientation="Horizontal" Grid.Row="1">
             <TextBlock TextWrapping="Wrap" Height="18"><Run Text="Impluse Filter Rate Bwtween: "/></TextBlock>
-            <customControls:DigitBox x:Name="LowPassRateTextBox" Text="5" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" UseLayoutRounding="True" Padding="3" Margin="0,5"/>
+            <customControls:DigitBox x:Name="LowPassRateTextBox" Text="5" MaxLength="5"  HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" UseLayoutRounding="True" Padding="3" Margin="0,5"/>
             <TextBlock TextWrapping="Wrap" Height="18"><Run Text=" and "/></TextBlock>
-            <customControls:DigitBox x:Name="HighPassRateTextBox" Text="100" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" UseLayoutRounding="True" Padding="3" Margin="0,5"/>
+            <customControls:DigitBox x:Name="HighPassRateTextBox" Text="100" MaxLength="5" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" UseLayoutRounding="True" Padding="3" Margin="0,5"/>
             <Button Name="ApplyFilterBtn" Click="ApplyFilterBtn_Click" Content="Apply" Margin="3" Width="75"/>
         </WrapPanel>
         <s:SciChartSurface 

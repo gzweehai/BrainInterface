@@ -14,6 +14,7 @@ using BrainCommon;
 using BrainNetwork.BrainDeviceProtocol;
 using DataAccess;
 using SciChart.Charting.Common.Helpers;
+using SciChart.Charting.Model.DataSeries;
 using SciChart_50ChannelEEG;
 using Timer = System.Timers.Timer;
 
@@ -60,7 +61,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 if (_singleChannelViewData == null)
                     _singleChannelViewData = new Subject<(double, float)>();
                 if (_signleChannelViewState == null)
-                    _signleChannelViewState = new Subject<(ChannelViewState, int)>();
+                    _signleChannelViewState = new Subject<(ChannelViewState, int, IXyDataSeries<double, double>)>();
                 _singleChannelWin = new SingleChannelWin(_singleChannelViewData, _signleChannelViewState,_devStateStream);
                 _singleChannelWin.DataContext = this;
                 _singleChannelWin.Closing += OnSingleChannleWinClosing;
@@ -71,7 +72,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 _singleChannelWin.Activate();
             }
             _singleChannelWin.Title = ChannelViewModels[_selectedChannel].ChannelName;
-            _signleChannelViewState.OnNext((ChannelViewState.Running, _selectedChannel));
+            _signleChannelViewState.OnNext((ChannelViewState.Running, _selectedChannel, ChannelViewModels[_selectedChannel].ChannelDataSeries));
             _devStateStream.OnNext(_currentState);
         }
 
@@ -150,7 +151,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             Running,
         }
         private Subject<(double, float)> _singleChannelViewData;
-        private Subject<(ChannelViewState, int)> _signleChannelViewState;
+        private Subject<(ChannelViewState, int, IXyDataSeries<double, double>)> _signleChannelViewState;
         private int _selectedChannel;
         private SingleChannelWin _singleChannelWin;
         private Subject<BrainDevState> _devStateStream = new Subject<BrainDevState>();
@@ -261,7 +262,14 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         private void PauseChart(bool isPause)
         {
-            _signleChannelViewState?.OnNext((isPause ? ChannelViewState.Pause: ChannelViewState.Running, _selectedChannel));
+            if (isPause)
+            {
+                _signleChannelViewState?.OnNext((ChannelViewState.Pause, _selectedChannel,null));
+            }
+            else
+            {
+                _signleChannelViewState?.OnNext((ChannelViewState.Running, _selectedChannel, ChannelViewModels[_selectedChannel].ChannelDataSeries));
+            }
 
             if (_channelViewModels == null) return;
             for (var i = 0; i < _channelViewModels.Count; i++)
@@ -276,7 +284,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         private void ResetDevCmd()
         {
-            _signleChannelViewState?.OnNext((ChannelViewState.Reset, _selectedChannel));
+            _signleChannelViewState?.OnNext((ChannelViewState.Reset, _selectedChannel,null));
 
             IsReset = true;
             StopDevCmd();
@@ -441,7 +449,6 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
         {
             var channelList = sender as ListBox;
             var selected = channelList?.SelectedItem as EEGChannelViewModel;
-            //AppLogger.Debug(selected);
             if (selected == null) return;
             var eegExampleViewModel = (DataContext as EEGExampleViewModel);
             if (eegExampleViewModel == null) return;
@@ -462,7 +469,6 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             var itemGrid = (ChannelListBox?.Items?[lastIdx] as EEGChannelViewModel)?.ChannelDataSeries?.ParentSurface?.RootGrid as FrameworkElement;
             var lastVisible = IsFullyOrPartiallyVisible(itemGrid, scrollViewer);
             if (!lastVisible) lastIdx--;
-            //AppLogger.Debug($"ChannelListBox_ScrollChanged: {scrollViewer}, {e.VerticalOffset},{e.ViewportHeight},{lastVisible}");
             for (var i = 0;i< ChannelListBox.Items.Count; i++)
             {
                 var isvisible = e.VerticalOffset <= i && i <= lastIdx;

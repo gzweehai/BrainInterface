@@ -64,13 +64,11 @@ namespace SciChart_50ChannelEEG
                             ritem.Content = $"Channel {single}: {_currentState.LastSingleImpedanceCode}";
                         }
                     }
-                    var tmp = ViewWinUtils.CreateDefaultDialog($"Test Single Channel Impedance #{single}: {_currentState.LastSingleImpedanceCode}");
-                    tmp.ShowDialog();
+                    ViewWinUtils.ShowDefaultDialog($"Test Single Channel Impedance #{single}: {_currentState.LastSingleImpedanceCode}");
                 }
                 else
                 {
-                    var tmp = ViewWinUtils.CreateDefaultDialog(ar.Exception);
-                    tmp.ShowDialog();
+                    ViewWinUtils.ShowDefaultDialog(ar.Exception);
                 }
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }

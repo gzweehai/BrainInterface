@@ -117,8 +117,7 @@ namespace SciChart_50ChannelEEG
             var r = result;
             if (r != CommandError.Success)
             {
-                var tmp = ViewWinUtils.CreateDefaultDialog($"Set Sample Rate {rate} failed: {r}");
-                tmp.ShowDialog();
+                ViewWinUtils.ShowDefaultDialog($"Set Sample Rate {rate} failed: {r}");
             }
         }
 

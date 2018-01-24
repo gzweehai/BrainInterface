@@ -19,7 +19,7 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
         private List<(double, double)> xyBuffer;
         private double _lastX;
         private volatile bool _pause;
-        private int _selectedChannelIndex;
+        private int _selectedChannelIndex=-1;
         private double _timerInterval=10;
         private int _updatingTag = CASHelper.LockFree;
         private OnlineFirFilter _filter;
@@ -45,12 +45,16 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
         }
 
         public ECGMonitorViewModel(IObservable<(double, float)> channelDataStream,
-            IObservable<(ChannelViewState, int)> channelStateStream,IObservable<BrainDevState> stateStream)
+            IObservable<(ChannelViewState, int, IXyDataSeries<double, double>)> channelStateStream,
+            IObservable<BrainDevState> stateStream)
         {
-            _series0 = new XyDataSeries<double, double>() { FifoCapacity = 5000 };
-            _filterSeries = new XyDataSeries<double, double>() { FifoCapacity = 5000 };
+            _series0 = new XyDataSeries<double, double>() { FifoCapacity = 1000 };
+            _filterSeries = new XyDataSeries<double, double>() { FifoCapacity = 1000 };
             xyBuffer = new List<(double, double)>();
             filterBuffer = new List<(double, double)>();
+            var cfg = ClientConfig.GetConfig();
+            _cutoffLow = cfg.LowRate;
+            _cutoffHigh = cfg.HighRate;
             _unsubscriber += channelDataStream.Subscribe(UpdateChannelData);
             _unsubscriber += channelStateStream.Subscribe(UpdateChannelViewState);
             _unsubscriber += stateStream.Subscribe(UpdateDevState);
@@ -61,11 +65,12 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
             if (_cutoffLow == lowRate && _cutoffHigh == highRate) return;
             if (lowRate > highRate)
             {
-                ViewWinUtils.CreateDefaultDialog("Low Rate is greater than High Rate!");
+                ViewWinUtils.ShowDefaultDialog("Low Rate is greater than High Rate!");
                 return;
             }
-            _cutoffLow = lowRate;
-            _cutoffHigh = highRate;
+            var cfg = ClientConfig.GetConfig();
+            _cutoffLow = cfg.LowRate = lowRate;
+            _cutoffHigh = cfg.HighRate = highRate;
             CreateFilter();
         }
 
@@ -118,22 +123,60 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
             Interlocked.Exchange(ref xyBuffer, local);
         }
 
-        private void UpdateChannelViewState((ChannelViewState, int) vstate)
+        private void UpdateChannelViewState((ChannelViewState, int, IXyDataSeries<double, double>) vstate)
         {
-            ChannelViewState vs;
-            (vs, _selectedChannelIndex) = vstate;
+            var (vs, index,channelDataSeries) = vstate;
+            var channelChanged = false;
+            if (index != _selectedChannelIndex)
+            {
+                _selectedChannelIndex = index;
+                channelChanged = true;
+            }
             switch (vs)
             {
                 case ChannelViewState.Pause:
                     Pause();
+                    CopyChannelData(channelChanged, channelDataSeries);
                     break;
                 case ChannelViewState.Reset:
                     Reset();
                     break;
                 case ChannelViewState.Running:
                     Resume();
+                    CopyChannelData(channelChanged, channelDataSeries);
                     break;
             }
+        }
+
+        private void CopyChannelData(bool channelChanged, IXyDataSeries<double, double> channelDataSeries)
+        {
+            if (!channelChanged) return;
+
+            /* although I can copy the data from original data series, the effect is not good,
+             * because original data series might contain less data since delay update timing
+             * instead I just clear the series views
+            if (channelDataSeries != null)
+            {
+                Reset();
+                Pause();
+                var xvalues = channelDataSeries.XValues;
+                var xcopy = new double[xvalues.Count];
+                var ycopy = new double[xvalues.Count];
+                xvalues.CopyTo(xcopy, 0);
+                channelDataSeries.YValues.CopyTo(ycopy, 0);
+                _series0.Clear();
+                _series0.Append(xcopy, ycopy);
+                SaveLastX();
+                Resume();
+            }
+            else
+            {
+                _series0.Clear();
+            }
+            */
+
+            _series0.Clear();
+            _filterSeries.Clear();
         }
 
         private void Reset()

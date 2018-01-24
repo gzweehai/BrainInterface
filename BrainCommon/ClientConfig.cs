@@ -14,6 +14,8 @@ namespace BrainCommon
         public bool IsAutoStart;
         public bool EnableCommandTimeout;
         public uint TimeoutMilliseconds=100;
+        public int LowRate=5;
+        public int HighRate=100;
 
         private ClientConfig()
         {

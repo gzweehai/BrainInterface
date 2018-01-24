@@ -11,6 +11,9 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
         public ECGMonitorView()
         {
             InitializeComponent();
+            var cfg = ClientConfig.GetConfig();
+            LowPassRateTextBox.Text = cfg.LowRate.ToString();
+            HighPassRateTextBox.Text = cfg.HighRate.ToString();
         }
 
         private void ApplyFilterBtn_Click(object sender, System.Windows.RoutedEventArgs e)
