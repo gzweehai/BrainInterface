@@ -27,6 +27,7 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
         private SampleRateEnum _sampleRate = (SampleRateEnum )(-1);
         private int _cutoffLow = 5;
         private int _cutoffHigh = 100;
+        private int _filterHalfOrder = 2;
         private readonly List<(double, double)> _emptyList = new List<(double, double)>(0);
 
         private void SaveLastX()
@@ -55,14 +56,15 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
             var cfg = ClientConfig.GetConfig();
             _cutoffLow = cfg.LowRate;
             _cutoffHigh = cfg.HighRate;
+            _filterHalfOrder = cfg.FilterHalfOrder;
             _unsubscriber += channelDataStream.Subscribe(UpdateChannelData);
             _unsubscriber += channelStateStream.Subscribe(UpdateChannelViewState);
             _unsubscriber += stateStream.Subscribe(UpdateDevState);
         }
 
-        internal void SetBandwith(int lowRate, int highRate)
+        internal void SetBandwith(int lowRate, int highRate,int filterHalfOrder)
         {
-            if (_cutoffLow == lowRate && _cutoffHigh == highRate) return;
+            if (_cutoffLow == lowRate && _cutoffHigh == highRate && _filterHalfOrder == filterHalfOrder) return;
             if (lowRate > highRate)
             {
                 ViewWinUtils.ShowDefaultDialog("Low Rate is greater than High Rate!");
@@ -71,6 +73,7 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
             var cfg = ClientConfig.GetConfig();
             _cutoffLow = cfg.LowRate = lowRate;
             _cutoffHigh = cfg.HighRate = highRate;
+            _filterHalfOrder = cfg.FilterHalfOrder = filterHalfOrder;
             CreateFilter();
         }
 
@@ -82,6 +85,7 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
 
         private void UpdateDevState(BrainDevState st)
         {
+            //if (st.ChannelCount)
             if (_sampleRate == st.SampleRate) return;
             _sampleRate = st.SampleRate;
             CreateFilter();
@@ -89,10 +93,10 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
 
         private void CreateFilter()
         {
-            var rate = BrainDevState.PassTimeMs(_sampleRate, 1);
+            var rate = BrainDevState.SampleCountPer1Sec(_sampleRate);
             var firCoef = _cutoffLow <= 0
-                ? FirCoefficients.LowPass(rate, _cutoffHigh)
-                : FirCoefficients.BandPass(rate, _cutoffLow, _cutoffHigh);
+                ? FirCoefficients.LowPass(rate, _cutoffHigh, _filterHalfOrder)
+                : FirCoefficients.BandPass(rate, _cutoffLow, _cutoffHigh, _filterHalfOrder);
             var local = new OnlineFirFilter(firCoef);
             if (_series0.HasValues)
             {

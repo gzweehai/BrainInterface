@@ -17,17 +17,42 @@ namespace BrainNetwork.BrainDeviceProtocol
         public byte LastSelectedSingleImpedanceChannel;
         public int LastSingleImpedanceCode;
         public List<int> LastMultiImpedanceCodes;
-        
-        
-        public const int SampleCount_250 = 20 * 250 / 1000;
-        public const int SampleCount_500 = 20 * 500 / 1000;
-        public const int SampleCount_1k = 20 * 1000 / 1000;
-        public const int SampleCount_2k = 20 * 2000 / 1000;
+
+        public const int SampleCountRate250 = 250;
+        public const int SampleCountRate500 = 500;
+        public const int SampleCountRate1k = 1000;
+        public const int SampleCountRate2k = 2000;
+
+        public const int SampleCount_250 = SampleCountRate250 * 20 / 1000;
+        public const int SampleCount_500 = SampleCountRate500 * 20 / 1000;
+        public const int SampleCount_1k = SampleCountRate1k * 20 / 1000;
+        public const int SampleCount_2k = SampleCountRate2k * 20 / 1000;
 
         public const float SmapleDeltaTime_250 = 1000f / 250;
         public const float SmapleDeltaTime_500 = 1000f / 500;
         public const float SmapleDeltaTime_1k = 1000f / 1000;
         public const float SmapleDeltaTime_2k = 1000f / 2000;
+
+        public static int SampleCountPer1Sec(SampleRateEnum sampleRate)
+        {
+            var count = 1;
+            switch (sampleRate)
+            {
+                case SampleRateEnum.SPS_250: 
+                    count = BrainDevState.SampleCountRate250;
+                    break;
+                case SampleRateEnum.SPS_500:
+                    count = BrainDevState.SampleCountRate500;
+                    break;
+                case SampleRateEnum.SPS_1k:
+                    count = BrainDevState.SampleCountRate1k;
+                    break;
+                case SampleRateEnum.SPS_2k:
+                    count = BrainDevState.SampleCountRate2k;
+                    break;
+            }
+            return count;
+        }
 
         public static int SampleCountPer20ms(SampleRateEnum sampleRate)
         {

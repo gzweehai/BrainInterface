@@ -16,6 +16,7 @@ namespace BrainCommon
         public uint TimeoutMilliseconds=100;
         public int LowRate=5;
         public int HighRate=100;
+        public int FilterHalfOrder = 5;
 
         private ClientConfig()
         {

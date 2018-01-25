@@ -41,7 +41,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="60"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <!-- Declare the SciChartSurface. We use RenderPriority=Low to put rendering below mouse input and keep the app responsive -->
@@ -110,7 +110,11 @@
             <customControls:DigitBox x:Name="LowPassRateTextBox" Text="5" MaxLength="5"  HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" UseLayoutRounding="True" Padding="3" Margin="0,5"/>
             <TextBlock TextWrapping="Wrap" Height="18"><Run Text=" and "/></TextBlock>
             <customControls:DigitBox x:Name="HighPassRateTextBox" Text="100" MaxLength="5" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" UseLayoutRounding="True" Padding="3" Margin="0,5"/>
+            <TextBlock TextWrapping="Wrap" Height="18"><Run Text=" Filter Half Order "/></TextBlock>
+            <customControls:DigitBox x:Name="FilterHalfOrderTextBox" Text="5" MaxLength="5" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" UseLayoutRounding="True" Padding="3" Margin="0,5"/>
             <Button Name="ApplyFilterBtn" Click="ApplyFilterBtn_Click" Content="Apply" Margin="3" Width="75"/>
+<!--            <TextBlock TextWrapping="Wrap" Height="18">Selecte Channel </TextBlock>-->
+<!--            <ComboBox Name="ChannelComboBox" SelectionChanged="ChannelComboBox_SelectionChanged"></ComboBox>-->
         </WrapPanel>
         <s:SciChartSurface 
                                      HorizontalAlignment="Stretch"

@@ -12,8 +12,9 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
         {
             InitializeComponent();
             var cfg = ClientConfig.GetConfig();
-            LowPassRateTextBox.Text = cfg.LowRate.ToString();
-            HighPassRateTextBox.Text = cfg.HighRate.ToString();
+            LowPassRateTextBox.IntNum = cfg.LowRate;
+            HighPassRateTextBox.IntNum = cfg.HighRate;
+            FilterHalfOrderTextBox.IntNum = cfg.FilterHalfOrder;
         }
 
         private void ApplyFilterBtn_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -22,7 +23,13 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
             if (viewModle == null) return;
             var lowRate = LowPassRateTextBox.IntNum;
             var highRate = HighPassRateTextBox.IntNum;
-            viewModle.SetBandwith(lowRate, highRate);
+            var filterHalfOrder = FilterHalfOrderTextBox.IntNum;
+            viewModle.SetBandwith(lowRate, highRate, filterHalfOrder);
+        }
+
+        private void ChannelComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

@@ -25,9 +25,17 @@ namespace System.Windows.Controls
             }
         }
 
-        public int IntNum => int.Parse(base.Text);
+        public int IntNum
+        {
+            get => int.Parse(base.Text);
+            set => base.Text = value.ToString();
+        }
 
-        public long LongNum => long.Parse(base.Text);
+        public long LongNum
+        {
+            get => long.Parse(base.Text);
+            set => base.Text = value.ToString();
+        }
         #endregion
 
         #region Functions
