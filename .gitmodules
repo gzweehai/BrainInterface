@@ -1,0 +1,3 @@
+[submodule "mathnet-filtering"]
+	path = mathnet-filtering
+	url = https://github.com/DragonLi/mathnet-filtering

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2003
+VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreatBrainClient", "GreatBrainClient\GreatBrainClient.csproj", "{F6163624-FC4E-4333-ADDF-10CFBEFBD20B}"
 EndProject
@@ -20,6 +20,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "32ChannelEEG", "32ChannelEEG\32ChannelEEG.csproj", "{984E36A0-D1F4-4ECC-9415-0A3BE0EBF9D6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EEGExample", "EEGExample\EEGExample.csproj", "{1544B864-EB5B-464C-B392-BAA01FC581A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filtering", "mathnet-filtering\src\Filtering\Filtering.csproj", "{5B1D0091-5B3B-4F66-A296-3BCF431FCF15}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{1544B864-EB5B-464C-B392-BAA01FC581A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1544B864-EB5B-464C-B392-BAA01FC581A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1544B864-EB5B-464C-B392-BAA01FC581A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B1D0091-5B3B-4F66-A296-3BCF431FCF15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B1D0091-5B3B-4F66-A296-3BCF431FCF15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B1D0091-5B3B-4F66-A296-3BCF431FCF15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B1D0091-5B3B-4F66-A296-3BCF431FCF15}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
