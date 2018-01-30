@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BrainCommon</RootNamespace>
     <AssemblyName>BrainCommon</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -57,6 +57,7 @@
     <Compile Include="ClientConfig.cs" />
     <Compile Include="DisposableCollector.cs" />
     <Compile Include="DisposableValue.cs" />
+    <Compile Include="FilterTypeList.cs" />
     <Compile Include="LengthBitConverter.cs" />
     <Compile Include="MiscUtility.cs" />
     <Compile Include="ProgramArgExt.cs" />
@@ -69,6 +70,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\mathnet-filtering\src\Filtering\Filtering.csproj">
+      <Project>{5B1D0091-5B3B-4F66-A296-3BCF431FCF15}</Project>
+      <Name>Filtering</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

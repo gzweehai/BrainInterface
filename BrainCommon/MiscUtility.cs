@@ -8,9 +8,20 @@ namespace BrainCommon
     {
         public static int ToInt(this string str)
         {
-            var r = 0;
-            int.TryParse(str, out r);
+            int.TryParse(str, out var r);
             return r;
+        }
+
+        public static double ToDouble(this string str)
+        {
+            double.TryParse(str, out var r);
+            return r;
+        }
+
+        public static void Update<T, V>(this Dictionary<T, V> dict, T key, V val)
+        {
+            dict.Remove(key);
+            dict[key] = val;
         }
         
         public static int[] CopyToArray(this ArraySegment<int> seg)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -11,8 +12,10 @@ using BrainNetwork.BrainDeviceProtocol;
 using BrainNetwork.RxSocket.Common;
 using BrainNetwork.RxSocket.Protocol;
 using DataAccess;
+using MathNet.Filtering;
 using MathNet.Filtering.FIR;
 using MathNet.Filtering.Median;
+using FilterType = BrainCommon.FilterType;
 
 namespace BrainProtocolTester
 {
@@ -53,6 +56,23 @@ namespace BrainProtocolTester
 
         private static async Task TestBrainDeviceManager()
         {
+            var cfg = ClientConfig.GetConfig();
+            var lowFilter = new LowPassFilter() {LowPassRate = 10};
+            var highFilter = new HighPassFilter() {HighPassRate = 10000};
+            var bPassFilter = new BandPassFilter() {LowCutoffRate = 20, HighCutoffRate = 30};
+            var bStopFilter = new BandStopFilter() {LowPassRate = 35, HighPassRate = 38};
+            var mFilter = new MedianFilter() {HalfMedianWindowSize = 7};
+            var bandFilter = new BandPassStopFilter
+            {
+                BandFilterList = new List<BandFilter> {lowFilter, highFilter, bPassFilter, bStopFilter}
+            };
+            var allFilter = new FilterTypeList() {Filters = new List<FilterType> {mFilter, bandFilter}};
+            var filterParameters = new Dictionary<string, string>
+            {
+                {FilterTypeList.FIRhalfOrderOptionName, 10.ToString()}
+            };
+            IOnlineFilter filter = null;
+
             BrainDeviceManager.Init();
             var sender = await BrainDeviceManager.Connnect("127.0.0.1", 9211);
             BrainDevState currentState = default(BrainDevState);
@@ -60,6 +80,10 @@ namespace BrainProtocolTester
             BrainDeviceManager.BrainDeviceState.Subscribe(ss =>
             {
                 currentState = ss;
+                filterParameters.Update(
+                    FilterTypeList.SampleRateOptionName,
+                    BrainDevState.SampleCountPer1Sec(ss.SampleRate).ToString()
+                    );
                 //AppLogger.Debug($"Brain Device State Changed Detected: {ss}");
             }, () =>
             {
@@ -81,7 +105,10 @@ namespace BrainProtocolTester
                 var m1=medianFilter.ProcessSample(voltage);
                 var m2 = fastMedianFilter.ProcessSample(voltage);
                 AppLogger.Debug($"passTimes:{passTimes},val:{val},voltage:{voltage},median filter:{m1},fast:{m2},{m1==m2}");
-
+                if (filter == null)
+                    filter=allFilter.CreateFilter(filterParameters);
+                
+                AppLogger.Debug($"filter processed:{filter.ProcessSample(voltage)}");
                 //AppLogger.Debug($"order:{order}");
                 //AppLogger.Debug($"converted values:{datas.Show()}");
                 //AppLogger.Debug($"original datas:{arr.Show()}");
