@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EEGExample", "EEGExample\EE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Filtering", "mathnet-filtering\src\Filtering\Filtering.csproj", "{5B1D0091-5B3B-4F66-A296-3BCF431FCF15}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaveletStudio", "waveletstudio\trunk\src\WaveletStudio\WaveletStudio.csproj", "{003D0672-355F-416B-9E88-DC95F0762329}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{5B1D0091-5B3B-4F66-A296-3BCF431FCF15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5B1D0091-5B3B-4F66-A296-3BCF431FCF15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5B1D0091-5B3B-4F66-A296-3BCF431FCF15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{003D0672-355F-416B-9E88-DC95F0762329}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{003D0672-355F-416B-9E88-DC95F0762329}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{003D0672-355F-416B-9E88-DC95F0762329}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{003D0672-355F-416B-9E88-DC95F0762329}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
