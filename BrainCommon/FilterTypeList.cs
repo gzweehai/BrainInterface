@@ -4,11 +4,14 @@ using MathNet.Filtering;
 using MathNet.Filtering.FIR;
 using MathNet.Filtering.FIR.FilterRangeOp;
 using MathNet.Filtering.Median;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace BrainCommon
 {
     public class FilterTypeList
     {
+        [JsonProperty(ItemTypeNameHandling = TypeNameHandling.All)]
         public List<FilterType> Filters;
         public const string SampleRateOptionName = "SampleRate";
         public const string FIRhalfOrderOptionName = "FIRhalfOrder";
@@ -29,13 +32,10 @@ namespace BrainCommon
             return new SeqCombinedOnlineFilter(tmp);
         }
     }
-
-    public class FilterType
+    
+    public abstract class FilterType
     {
-        public virtual IOnlineFilter CreateFilter(Dictionary<string, string> parameters)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract IOnlineFilter CreateFilter(Dictionary<string, string> parameters);
     }
 
     public class MedianFilter:FilterType
@@ -49,6 +49,7 @@ namespace BrainCommon
 
     public class BandPassStopFilter : FilterType
     {
+        [JsonProperty(ItemTypeNameHandling = TypeNameHandling.All)]
         public List<BandFilter> BandFilterList;
 
         public override IOnlineFilter CreateFilter(Dictionary<string, string> parameters)
@@ -68,12 +69,9 @@ namespace BrainCommon
         }
     }
 
-    public class BandFilter : FilterType
+    public abstract class BandFilter
     {
-        public virtual PrimitiveFilterRange CreatePrimitiveBandFilter()
-        {
-            throw new NotImplementedException();
-        }        
+        public abstract PrimitiveFilterRange CreatePrimitiveBandFilter();
     }
 
     public class LowPassFilter : BandFilter

@@ -31,6 +31,12 @@ namespace BrainCommon
                 .ToArray();
         }
 
+        public static object CreateInstance(string typeName)
+        {
+            var c = SearchType(typeName);
+            return c.GetConstructor(EmptyGenericTypeList)?.Invoke(EmptyConstructorArgumentList);
+        }
+
         public static T CallCtr<T>(Type c)
             where T : class
         {

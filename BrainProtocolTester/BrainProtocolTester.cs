@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -71,6 +70,7 @@ namespace BrainProtocolTester
             {
                 {FilterTypeList.FIRhalfOrderOptionName, 10.ToString()}
             };
+            cfg.FilterLst = allFilter;
             IOnlineFilter filter = null;
 
             BrainDeviceManager.Init();
