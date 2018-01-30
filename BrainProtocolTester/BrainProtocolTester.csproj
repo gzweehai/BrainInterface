@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>BrainProtocolTester</RootNamespace>
     <AssemblyName>BrainProtocolTester</AssemblyName>
-    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <LangVersion>latest</LangVersion>
@@ -72,6 +72,10 @@
     <ProjectReference Include="..\DataAccess\DataAccess.csproj">
       <Project>{7713a1bd-a789-4f71-b713-d05dfe6a21c1}</Project>
       <Name>DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\mathnet-filtering\src\Filtering\Filtering.csproj">
+      <Project>{5b1d0091-5b3b-4f66-a296-3bcf431fcf15}</Project>
+      <Name>Filtering</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

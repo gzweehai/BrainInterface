@@ -11,6 +11,8 @@ using BrainNetwork.BrainDeviceProtocol;
 using BrainNetwork.RxSocket.Common;
 using BrainNetwork.RxSocket.Protocol;
 using DataAccess;
+using MathNet.Filtering.FIR;
+using MathNet.Filtering.Median;
 
 namespace BrainProtocolTester
 {
@@ -64,6 +66,9 @@ namespace BrainProtocolTester
                 AppLogger.Debug("device stop detected");
             });
             int totalReceived = 0;
+            var medianFilter = OnlineFirFilter.CreateDenoise(7);
+            var fastMedianFilter = new OnlineFastMedianFilter(3);
+            
             BrainDeviceManager.SampleDataStream.Subscribe(tuple =>
             {
                 var (order, datas, arr) = tuple;
@@ -73,7 +78,9 @@ namespace BrainProtocolTester
                 var val = intArr[0];
                 var voltage = BitDataConverter.Calculatevoltage(val,4.5f, currentState.Gain);
                 totalReceived++;
-                AppLogger.Debug($"passTimes:{passTimes},val:{val},voltage:{voltage}");
+                var m1=medianFilter.ProcessSample(voltage);
+                var m2 = fastMedianFilter.ProcessSample(voltage);
+                AppLogger.Debug($"passTimes:{passTimes},val:{val},voltage:{voltage},median filter:{m1},fast:{m2},{m1==m2}");
 
                 //AppLogger.Debug($"order:{order}");
                 //AppLogger.Debug($"converted values:{datas.Show()}");
