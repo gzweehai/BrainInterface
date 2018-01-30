@@ -1,3 +1,6 @@
 [submodule "mathnet-filtering"]
 	path = mathnet-filtering
 	url = https://github.com/DragonLi/mathnet-filtering
+[submodule "waveletstudio"]
+	path = waveletstudio
+	url = https://github.com/DragonLi/waveletstudio.git
