@@ -4,7 +4,7 @@ using System.Threading;
 using System.Timers;
 using BrainCommon;
 using BrainNetwork.BrainDeviceProtocol;
-using MathNet.Filtering.FIR;
+using MathNet.Filtering;
 using SciChart.Charting.Model.DataSeries;
 using SciChart_50ChannelEEG;
 using static SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo.EEGExampleViewModel;
@@ -22,7 +22,7 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
         private int _selectedChannelIndex=-1;
         private double _timerInterval=10;
         private int _updatingTag = CASHelper.LockFree;
-        private OnlineFirFilter _filter;
+        private IOnlineFilter _filter;
         private List<(double, double)> filterBuffer;
         private SampleRateEnum _sampleRate = (SampleRateEnum )(-1);
         private int _cutoffLow = 5;
@@ -85,7 +85,6 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
 
         private void UpdateDevState(BrainDevState st)
         {
-            //if (st.ChannelCount)
             if (_sampleRate == st.SampleRate) return;
             _sampleRate = st.SampleRate;
             CreateFilter();
@@ -94,10 +93,31 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
         private void CreateFilter()
         {
             var rate = BrainDevState.SampleCountPer1Sec(_sampleRate);
-            var firCoef = _cutoffLow <= 0
-                ? FirCoefficients.LowPass(rate, _cutoffHigh, _filterHalfOrder)
-                : FirCoefficients.BandPass(rate, _cutoffLow, _cutoffHigh, _filterHalfOrder);
-            var local = new OnlineFirFilter(firCoef);
+            var filterParameters = new Dictionary<string, string>
+            {
+                {FilterTypeList.FIRhalfOrderOptionName, 10.ToString()},
+                {FilterTypeList.SampleRateOptionName, rate.ToString()}
+            };
+            var cfg = ClientConfig.GetConfig();
+            
+            IOnlineFilter local = null;
+            try
+            {
+                var tmp = cfg.FilterLst?.CreateFilter(filterParameters);
+                if (tmp == null)
+                {
+                    ViewWinUtils.ShowDefaultDialog("No Filter Settings!");
+                    return;
+                }
+                local = tmp;
+            }
+            catch (Exception e)
+            {
+                AppLogger.Error(e.Message);
+                ViewWinUtils.ShowDefaultDialog(e.Message);
+                return;
+            }
+            
             if (_series0.HasValues)
             {
                 var yValues = _series0.YValues;
