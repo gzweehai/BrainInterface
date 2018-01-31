@@ -10,6 +10,10 @@ using System.IO.Compression;
 
 namespace BrainCommon
 {
+    /// <summary>
+    /// 日志管理器，第一次使用自动使用日期创建日志文件，
+    /// release模式编译支持压缩存储日志
+    /// </summary>
     public static class AppLogger
     {
         private static readonly StreamWriter LogFile;

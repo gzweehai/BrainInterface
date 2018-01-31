@@ -1,5 +1,9 @@
 ﻿namespace BrainCommon
 {
+    /// <summary>
+    /// 缓存管理器，支持byte数组，int数组以及double数组，
+    /// 支持多线程并发访问
+    /// </summary>
     public class SyncBufManager
     {
         private readonly IAbsBufManager<int> _intBufMgr;

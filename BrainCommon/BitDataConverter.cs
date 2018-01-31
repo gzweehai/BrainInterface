@@ -4,6 +4,12 @@ namespace BrainCommon
 {
     public static class BitDataConverter
     {
+        /// <summary>
+        /// 阻抗计算
+        /// </summary>
+        /// <param name="f0"></param>
+        /// <param name="f1"></param>
+        /// <returns></returns>
         public static int ImpedanceCode(byte f0, byte f1)
         {
             return (f0 << 8) + f1;
@@ -70,6 +76,12 @@ namespace BrainCommon
             return new ArraySegment<int>(result,0,count / 3);
         }
         
+        /// <summary>
+        /// 把ADS1299的24位采样数据转换为电压值，电压单位伏特
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="mgr"></param>
+        /// <returns></returns>
         public static ArraySegment<int> ConvertFromPlatform(ArraySegment<byte> data, SyncBufManager mgr)
         {
             if (Environment.OSVersion.Platform == PlatformID.Unix)
@@ -85,9 +97,6 @@ namespace BrainCommon
         
         /// <summary>
         /// convert 24 bit data from ADS1299, to sample value 
-        /// TODO use unsafe to improve
-        /// Mac int four byte order: b2 b1 b0 (fill zero byte)
-        /// TODO windows byte order:
         /// </summary>
         /// <param name="b0">high byte</param>
         /// <param name="b1">mid byte</param>

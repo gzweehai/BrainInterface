@@ -98,6 +98,11 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             _pause = false;
         }
 
+        /// <summary>
+        /// 当某个通道超出主窗口显示区域的时候，暂停该通道的数据更新，
+        /// 减轻UI线程的负担
+        /// </summary>
+        /// <param name="isVisible"></param>
         public void OptVisible(bool isVisible)
         {
             _isvisible = isVisible;
@@ -127,6 +132,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
         public void FlushBuf()
         {
+            //通过CAS指令保证更新的线程安全
             var tag = Interlocked.Exchange(ref _updatingTag, CASHelper.LockUsed);
             if (tag == CASHelper.LockUsed) return;
 

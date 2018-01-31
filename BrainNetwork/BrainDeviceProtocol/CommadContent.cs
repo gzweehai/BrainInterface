@@ -2,6 +2,9 @@
 
 namespace BrainNetwork.BrainDeviceProtocol
 {
+    /// <summary>
+    /// 每个命令对应一个枚举值
+    /// </summary>
     public enum DevCommandEnum
     {
         Start,
@@ -15,6 +18,11 @@ namespace BrainNetwork.BrainDeviceProtocol
         TestMultiImpedance,
     }
 
+    /// <summary>
+    /// 每个命令对应协议中的Function ID字段的值，
+    /// 注意有可能两个不同的命令使用同一个Function ID，
+    /// 例如Start Stop两个命令
+    /// </summary>
     public enum DevCommandFuncId
     {
         StartStop=1,
@@ -27,6 +35,10 @@ namespace BrainNetwork.BrainDeviceProtocol
         TestMultiImpedance=0x32,
     }
 
+    /// <summary>
+    /// 每个命令按照协议发送时需要填写的内容，
+    /// 放在partial class内部是为了访问BrainDeviceManager的私有成员
+    /// </summary>
     public static partial class BrainDeviceManager
     {
         #region Start Command

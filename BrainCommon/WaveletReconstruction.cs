@@ -7,6 +7,12 @@ using WaveletStudio.Wavelet;
 
 namespace BrainCommon
 {
+    /// <summary>
+    /// 使用小波变换进行分析过滤，
+    /// 应该优先于其他滤波算法执行，
+    /// 通过对WindowSize大小的数据流进行Level层级的分解，
+    /// 然后对Approximate部分求均值进行基线漂移过滤
+    /// </summary>
     public class WaveletReconstruction
     {
         private int _windowSize;

@@ -18,6 +18,10 @@ namespace SciChart_50ChannelEEG
         private IDisposable _unsubscriber;
         private BrainDevState _currentState;
 
+        /// <summary>
+        /// 显示/修改基本设置
+        /// </summary>
+        /// <param name="state"></param>
         public SettingViewWin(BrainDevState state)
         {
             BrainDeviceManager.OnConnected += OnReconnect;

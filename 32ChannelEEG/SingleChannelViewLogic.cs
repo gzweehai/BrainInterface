@@ -45,6 +45,12 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
             }
         }
 
+        /// <summary>
+        /// 显示单通道采样数据和对应滤波波形
+        /// </summary>
+        /// <param name="channelDataStream"></param>
+        /// <param name="channelStateStream"></param>
+        /// <param name="stateStream"></param>
         public ECGMonitorViewModel(IObservable<(double, float)> channelDataStream,
             IObservable<(ChannelViewState, int, IXyDataSeries<double, double>)> channelStateStream,
             IObservable<BrainDevState> stateStream)
@@ -57,6 +63,7 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
             _cutoffLow = cfg.LowRate;
             _cutoffHigh = cfg.HighRate;
             _filterHalfOrder = cfg.FilterHalfOrder;
+            //监听采样数据流，设备状态数据流和用户在主窗口点击通道的状态数据流
             _unsubscriber += channelDataStream.Subscribe(UpdateChannelData);
             _unsubscriber += channelStateStream.Subscribe(UpdateChannelViewState);
             _unsubscriber += stateStream.Subscribe(UpdateDevState);
@@ -80,6 +87,7 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
 
         public void OnClosing()
         {
+            //取消监听，避免内存泄漏
             _unsubscriber.Dispose();
         }
 
@@ -239,6 +247,7 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
 
         private void FlushData(object sender, ElapsedEventArgs e)
         {
+            //使用CAS指令保证更新的线程安全
             var tag = Interlocked.Exchange(ref _updatingTag, CASHelper.LockUsed);
             if (tag == CASHelper.LockUsed) return;
 

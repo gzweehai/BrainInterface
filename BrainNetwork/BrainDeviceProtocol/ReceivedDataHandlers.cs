@@ -6,6 +6,9 @@ using BrainCommon;
 
 namespace BrainNetwork.BrainDeviceProtocol
 {
+    /// <summary>
+    /// 放大器回应数据的处理器，放在partial class内部是为了访问BrainDeviceManager的私有成员
+    /// </summary>
     public static partial class BrainDeviceManager
     {
         //sample data stream

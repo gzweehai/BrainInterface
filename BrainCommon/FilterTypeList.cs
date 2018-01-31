@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using MathNet.Filtering;
 using MathNet.Filtering.FIR;
 using MathNet.Filtering.FIR.FilterRangeOp;
 using MathNet.Filtering.Median;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace BrainCommon
 {
+    /// <summary>
+    /// 滤波设置，按照顺序创建对应的滤波器，
+    /// 支持中值滤波，低通滤波，高通滤波，带通滤波，带阻滤波，以及混合多个滤波器
+    /// </summary>
     public class FilterTypeList
     {
         [JsonProperty(ItemTypeNameHandling = TypeNameHandling.All)]

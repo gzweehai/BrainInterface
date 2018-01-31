@@ -4,12 +4,19 @@ using BrainCommon;
 
 namespace BrainNetwork.BrainDeviceProtocol
 {
+    /// <summary>
+    /// 对应某个FunctionID的回应处理器
+    /// </summary>
     public interface IReceivedDataProcessor
     {
         byte FuncId { get; }
         void Process(ArraySegment<byte> data);
     }
 
+    /// <summary>
+    /// 接收数据的处理器，对于采样数据，因为放大器是连续不断的发送包的，需要特殊处理，
+    /// 其余数据包对应某个命令的回应，执行注册的处理器
+    /// </summary>
     public sealed class ReceivedDataProcessor
     {
         public static readonly ReceivedDataProcessor Instance = new ReceivedDataProcessor();

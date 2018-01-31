@@ -8,6 +8,9 @@ using BrainNetwork.BrainDeviceProtocol;
 
 namespace DataAccess
 {
+    /// <summary>
+    /// 读取采样文件数据并进行回放的类
+    /// </summary>
     public class FileSampleData : IDisposable
     {
         private string _filename;

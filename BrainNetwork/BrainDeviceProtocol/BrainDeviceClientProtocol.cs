@@ -6,6 +6,9 @@ using BrainNetwork.RxSocket.Protocol;
 
 namespace BrainNetwork.BrainDeviceProtocol
 {
+    /// <summary>
+    /// 这个类对放大器的回应进行解包操作
+    /// </summary>
     public class FixedLenFrameDecoder : IFixedLenFrameDecoder
     {
         public FixedLenFrameDecoder(byte header, byte tail)
@@ -20,6 +23,9 @@ namespace BrainNetwork.BrainDeviceProtocol
         public byte LenByteCount => 1;
     }
 
+    /// <summary>
+    /// 发送协议数据到放大器，这个类对数据进行打包操作
+    /// </summary>
     public class ClientFrameEncoder : ISimpleFrameEncoder
     {
         private readonly byte FrameHeader;

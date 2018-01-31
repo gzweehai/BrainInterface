@@ -18,6 +18,10 @@ namespace SciChart_50ChannelEEG
         private Dispatcher _uithread;
         private IDisposable _unsubscriber;
 
+        /// <summary>
+        /// 显示/测试采样通道的阻抗值
+        /// </summary>
+        /// <param name="state"></param>
         public ImpedanceViewWin(BrainDevState state)
         {
             BrainDeviceManager.OnConnected += OnReconnect;

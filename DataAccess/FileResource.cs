@@ -22,6 +22,15 @@ namespace DataAccess
 
         public string ResourceId => _rid;
 
+        /// <summary>
+        /// 按照时间、设备状态等数据创建放大器采样数据文件，
+        /// 写入文件头（格式定义在SampleDataFileFormat），
+        /// 关闭时写入MD5校验值
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="devId"></param>
+        /// <param name="version"></param>
+        /// <param name="bufferManager"></param>
         public FileResource(BrainDevState state, uint devId, byte version, SyncBufManager bufferManager)
         {
             _state = state;

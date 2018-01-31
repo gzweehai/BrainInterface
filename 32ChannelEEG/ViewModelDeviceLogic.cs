@@ -399,8 +399,8 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
                 var voltageArr = BrainDeviceManager.BufMgr.TakeDoubleBuf(datas.Count);
                 for (var i = 0; i < datas.Count; i++)
                 {
-                    voltageArr[i] =
-                        BitDataConverter.Calculatevoltage(buf[startIdx + i], cfglocal.ReferenceVoltage, _currentState.Gain)*1000000;//uV
+                    voltageArr[i] = BitDataConverter.Calculatevoltage(
+                                        buf[startIdx + i], cfglocal.ReferenceVoltage, _currentState.Gain)*1000000;//uV
                 }
                 UpdateChannelBuffer(voltageArr, passTimes);
                 BrainDeviceManager.BufMgr.ReturnBuffer(voltageArr);
@@ -412,6 +412,7 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             FileResource fs = null;
             try
             {
+                //开始采样前，先初始化采样数据收集类，即使有异常也保证数据能够写入
                 if (currentFileResource == null)
                 {
                     var cfg = ClientConfig.GetConfig();
@@ -445,6 +446,11 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
 
     public partial class EEGExampleView
     {
+        /// <summary>
+        /// 响应用户点击某个通道
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ChannelListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var channelList = sender as ListBox;
@@ -456,6 +462,11 @@ namespace SciChart.Examples.Examples.CreateRealtimeChart.EEGChannelsDemo
             channelList.SelectedValue = null;
         }
 
+        /// <summary>
+        /// 检测某个通道是否在显示区域内
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ChannelListBox_ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             //e.VerticalOffset: In the current view, index of the element which is first in the list view

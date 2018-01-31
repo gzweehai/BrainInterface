@@ -20,6 +20,10 @@ namespace SciChart_50ChannelEEG
             SingleChannelView.DataContext = new ECGMonitorViewModel(ds, ss,devs);
         }
 
+        /// <summary>
+        /// 关闭窗口的回调，保证数据逻辑模块执行清理操作
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnClosing(CancelEventArgs e)
         {
             var model = SingleChannelView.DataContext as ECGMonitorViewModel;

@@ -6,7 +6,13 @@ using BrainNetwork.BrainDeviceProtocol;
 namespace DataAccess
 {
     /// <summary>
-    /// format version 1
+    /// format version 1，
+    /// 格式按照顺序包含：
+    /// 版本号，
+    /// 设备号，
+    /// 开始采样的时间（C#的DateTime类型内部计数器的值，long类型），
+    /// 设备参数，
+    /// MD5校验值
     /// </summary>
     public static class SampleDataFileFormat
     {

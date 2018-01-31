@@ -6,6 +6,12 @@ using JsonC = Newtonsoft.Json.JsonConvert;
 
 namespace BrainCommon
 {
+    /// <summary>
+    /// 配置文件默认存放在BrainInterfaceClientConfig.json
+    /// GetConfig自动读取，关闭程序自动保存
+    /// 如果客户端运行过程中其他程序修改了配置文件，这个类不会检测修改，
+    /// 关闭时保存的依然是客户端内部的配置数据
+    /// </summary>
     public class ClientConfig
     {
         public string Ip= "127.0.0.1";
@@ -15,8 +21,8 @@ namespace BrainCommon
         public bool IsAutoStart;
         public bool EnableCommandTimeout;
         public uint TimeoutMilliseconds=100;
-        public FilterTypeList FilterLst;
         public WaveletReconstructionConfig WaveletRecCfg;
+        public FilterTypeList FilterLst;
         
         //TODO to be replaced by FilterLst
         public int LowRate=5;
