@@ -14,6 +14,7 @@ namespace BrainCommon
     /// </summary>
     public class WaveletReconstructionConfig
     {
+        public bool DisableWavelet;
         [JsonConverter(typeof(StringEnumConverter))]
         public ConvolutionModeEnum ConvolutionMode;
         [JsonConverter(typeof(StringEnumConverter))]

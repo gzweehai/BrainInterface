@@ -29,6 +29,7 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
         private int _cutoffHigh = 100;
         private int _filterHalfOrder = 2;
         private readonly List<(double, double)> _emptyList = new List<(double, double)>(0);
+        private WaveletReconstruction _wavelet;
 
         private void SaveLastX()
         {
@@ -64,7 +65,15 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
             _cutoffHigh = cfg.HighRate;
             _filterHalfOrder = cfg.FilterHalfOrder;
             //监听采样数据流，设备状态数据流和用户在主窗口点击通道的状态数据流
-            _unsubscriber += channelDataStream.Subscribe(UpdateChannelData);
+            if (cfg.EnableWavelet())
+            {
+                _unsubscriber += channelDataStream.Subscribe(UpdateWavelet);
+            }
+            else
+            {
+                _unsubscriber += channelDataStream.Subscribe(UpdateChannelData);
+            }
+            
             _unsubscriber += channelStateStream.Subscribe(UpdateChannelViewState);
             _unsubscriber += stateStream.Subscribe(UpdateDevState);
         }
@@ -95,6 +104,13 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
         {
             if (_sampleRate == st.SampleRate) return;
             _sampleRate = st.SampleRate;
+            var cfg = ClientConfig.GetConfig();
+            if (_wavelet ==null&&cfg.EnableWavelet())
+            {
+                var rate = BrainDevState.SampleCountPer1Sec(_sampleRate);
+                _wavelet = cfg.WaveletRecCfg.Create(rate);
+                _unsubscriber += _wavelet.ReconstructionStream.Subscribe(UpdateChannelData);
+            }
             CreateFilter();
         }
 
@@ -136,6 +152,12 @@ namespace SciChart.Examples.Examples.SeeFeaturedApplication.ECGMonitor
             _filter = local;
         }
 
+        private void UpdateWavelet((double, float) data)
+        {
+            if (_pause) return;
+            _wavelet?.BufferData(data);
+        }
+        
         private void UpdateChannelData((double,float) data)
         {
             if (_pause) return;

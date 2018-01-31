@@ -6,6 +6,15 @@
   "IsAutoStart": false,
   "EnableCommandTimeout": false,
   "TimeoutMilliseconds": 100,
+  "WaveletRecCfg": {
+    "DisableWavelet": true,
+    "ConvolutionMode": "Normal",
+    "ExtensionMode": "SymmetricHalfPoint",
+    "MotherWaveletName": "db5",
+    "Level": 8,
+    "WindowSize": 15,
+    "AvgLevel": 8
+  },
   "FilterLst": {
     "Filters": [
       {
@@ -14,6 +23,7 @@
       },
       {
         "$type": "BrainCommon.BandPassStopFilter, BrainCommon",
+        "HalfOrder": 5,
         "BandFilterList": [
           {
             "$type": "BrainCommon.LowPassFilter, BrainCommon",
@@ -33,18 +43,9 @@
             "LowPassRate": 35,
             "HighPassRate": 38
           }
-        ],
-        "HalfOrder": 5
+        ]
       }
     ]
-  },
-  "WaveletRecCfg": {
-    "ConvolutionMode": "Normal",
-    "ExtensionMode": "SymmetricHalfPoint",
-    "MotherWaveletName": "db5",
-    "Level": 8,
-    "WindowSize": 15,
-    "AvgLevel": 8
   },
   "LowRate": 5,
   "HighRate": 100,

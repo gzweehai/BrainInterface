@@ -29,6 +29,8 @@ namespace BrainCommon
         public int HighRate=100;
         public int FilterHalfOrder = 5;//replace by BandPassStopFilter.HalfOrder
 
+        public bool EnableWavelet() => WaveletRecCfg != null && !WaveletRecCfg.DisableWavelet;
+
         private ClientConfig()
         {
             AppDomain.CurrentDomain.ProcessExit += ProcessExit;
