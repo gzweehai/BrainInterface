@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reactive.Subjects;
+using Newtonsoft.Json;
 using JsonC = Newtonsoft.Json.JsonConvert;
 
 namespace BrainCommon
@@ -15,10 +16,12 @@ namespace BrainCommon
         public bool EnableCommandTimeout;
         public uint TimeoutMilliseconds=100;
         public FilterTypeList FilterLst;
+        public WaveletReconstructionConfig WaveletRecCfg;
+        
         //TODO to be replaced by FilterLst
         public int LowRate=5;
         public int HighRate=100;
-        public int FilterHalfOrder = 5;
+        public int FilterHalfOrder = 5;//replace by BandPassStopFilter.HalfOrder
 
         private ClientConfig()
         {
@@ -32,7 +35,7 @@ namespace BrainCommon
 
         public string ToJson()
         {
-            return JsonC.SerializeObject(this);
+            return JsonC.SerializeObject(this,Formatting.Indented);
         }
 
         public static ClientConfig FromJson(string str)

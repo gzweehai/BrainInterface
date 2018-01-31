@@ -1,1 +1,52 @@
-{"Ip":"127.0.0.1","Port":9211,"ReferenceVoltage":4.5,"DeviceId":19831980,"IsAutoStart":false,"EnableCommandTimeout":false,"TimeoutMilliseconds":100,"FilterLst":{"Filters":[{"$type":"BrainCommon.MedianFilter, BrainCommon","HalfMedianWindowSize":7},{"$type":"BrainCommon.BandPassStopFilter, BrainCommon","BandFilterList":[{"$type":"BrainCommon.LowPassFilter, BrainCommon","LowPassRate":10},{"$type":"BrainCommon.HighPassFilter, BrainCommon","HighPassRate":10000},{"$type":"BrainCommon.BandPassFilter, BrainCommon","LowCutoffRate":20,"HighCutoffRate":30},{"$type":"BrainCommon.BandStopFilter, BrainCommon","LowPassRate":35,"HighPassRate":38}]}]},"LowRate":5,"HighRate":100,"FilterHalfOrder":5}
+{
+  "Ip": "127.0.0.1",
+  "Port": 9211,
+  "ReferenceVoltage": 4.5,
+  "DeviceId": 19831980,
+  "IsAutoStart": false,
+  "EnableCommandTimeout": false,
+  "TimeoutMilliseconds": 100,
+  "FilterLst": {
+    "Filters": [
+      {
+        "$type": "BrainCommon.MedianFilter, BrainCommon",
+        "HalfMedianWindowSize": 7
+      },
+      {
+        "$type": "BrainCommon.BandPassStopFilter, BrainCommon",
+        "BandFilterList": [
+          {
+            "$type": "BrainCommon.LowPassFilter, BrainCommon",
+            "LowPassRate": 10
+          },
+          {
+            "$type": "BrainCommon.HighPassFilter, BrainCommon",
+            "HighPassRate": 10000
+          },
+          {
+            "$type": "BrainCommon.BandPassFilter, BrainCommon",
+            "LowCutoffRate": 20,
+            "HighCutoffRate": 30
+          },
+          {
+            "$type": "BrainCommon.BandStopFilter, BrainCommon",
+            "LowPassRate": 35,
+            "HighPassRate": 38
+          }
+        ],
+        "HalfOrder": 5
+      }
+    ]
+  },
+  "WaveletRecCfg": {
+    "ConvolutionMode": "Normal",
+    "ExtensionMode": "SymmetricHalfPoint",
+    "MotherWaveletName": "db5",
+    "Level": 8,
+    "WindowSize": 15,
+    "AvgLevel": 8
+  },
+  "LowRate": 5,
+  "HighRate": 100,
+  "FilterHalfOrder": 5
+}

@@ -49,6 +49,8 @@ namespace BrainCommon
 
     public class BandPassStopFilter : FilterType
     {
+        public int HalfOrder = 5;
+
         [JsonProperty(ItemTypeNameHandling = TypeNameHandling.All)]
         public List<BandFilter> BandFilterList;
 

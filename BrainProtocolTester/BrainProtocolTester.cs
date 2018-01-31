@@ -14,6 +14,8 @@ using DataAccess;
 using MathNet.Filtering;
 using MathNet.Filtering.FIR;
 using MathNet.Filtering.Median;
+using WaveletStudio;
+using WaveletStudio.Functions;
 using FilterType = BrainCommon.FilterType;
 
 namespace BrainProtocolTester
@@ -72,7 +74,19 @@ namespace BrainProtocolTester
             };
             cfg.FilterLst = allFilter;
             IOnlineFilter filter = null;
+            WaveletReconstruction waveletRec = null;
 
+            cfg.WaveletRecCfg = new WaveletReconstructionConfig
+            {
+                AvgLevel = 8,
+                ConvolutionMode = ConvolutionModeEnum.Normal,
+                ExtensionMode = SignalExtension.ExtensionMode.SymmetricHalfPoint,
+                Level = 8,
+                MotherWaveletName = "db5",
+                WindowSize = 15
+            };
+            
+            
             BrainDeviceManager.Init();
             var sender = await BrainDeviceManager.Connnect("127.0.0.1", 9211);
             BrainDevState currentState = default(BrainDevState);
@@ -106,8 +120,17 @@ namespace BrainProtocolTester
                 var m2 = fastMedianFilter.ProcessSample(voltage);
                 AppLogger.Debug($"passTimes:{passTimes},val:{val},voltage:{voltage},median filter:{m1},fast:{m2},{m1==m2}");
                 if (filter == null)
+                {
                     filter=allFilter.CreateFilter(filterParameters);
-                
+                    waveletRec = cfg.WaveletRecCfg.Create(
+                        BrainDevState.SampleCountPer1Sec(currentState.SampleRate));
+                    waveletRec.ReconstructionStream.Subscribe(reconstruct =>
+                    {
+                        var (vol, tim) = reconstruct;
+                        AppLogger.Debug($"wavelet reconstruction:{vol} at {tim}");
+                    });
+                }
+                waveletRec?.BufferData((voltage,passTimes));
                 AppLogger.Debug($"filter processed:{filter.ProcessSample(voltage)}");
                 //AppLogger.Debug($"order:{order}");
                 //AppLogger.Debug($"converted values:{datas.Show()}");

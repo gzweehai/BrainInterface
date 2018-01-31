@@ -77,6 +77,10 @@
       <Project>{5b1d0091-5b3b-4f66-a296-3bcf431fcf15}</Project>
       <Name>Filtering</Name>
     </ProjectReference>
+    <ProjectReference Include="..\waveletstudio\trunk\src\WaveletStudio\WaveletStudio.csproj">
+      <Project>{003D0672-355F-416B-9E88-DC95F0762329}</Project>
+      <Name>WaveletStudio</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

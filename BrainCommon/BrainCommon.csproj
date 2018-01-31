@@ -67,6 +67,8 @@
     <Compile Include="SyncBufManager.cs" />
     <Compile Include="SyncBufMgrWraper.cs" />
     <Compile Include="TextReaderExt.cs" />
+    <Compile Include="WaveletReconstruction.cs" />
+    <Compile Include="WaveletReconstructionConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -75,6 +77,10 @@
     <ProjectReference Include="..\mathnet-filtering\src\Filtering\Filtering.csproj">
       <Project>{5B1D0091-5B3B-4F66-A296-3BCF431FCF15}</Project>
       <Name>Filtering</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\waveletstudio\trunk\src\WaveletStudio\WaveletStudio.csproj">
+      <Project>{003d0672-355f-416b-9e88-dc95f0762329}</Project>
+      <Name>WaveletStudio</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
