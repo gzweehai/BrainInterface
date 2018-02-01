@@ -14,6 +14,7 @@ namespace BrainCommon
     /// </summary>
     public class ClientConfig
     {
+        public const string DefaultConfigFileName = "BrainInterfaceClientConfig.json";
         public string Ip= "127.0.0.1";
         public int Port= 9211;
         public float ReferenceVoltage=4.5f;
@@ -38,7 +39,7 @@ namespace BrainCommon
 
         private void ProcessExit(object sender, EventArgs e)
         {
-            _instance?.WriteToFile("BrainInterfaceClientConfig.json");
+            _instance?.WriteToFile(DefaultConfigFileName);
         }
 
         public string ToJson()
@@ -107,7 +108,7 @@ namespace BrainCommon
         public static ClientConfig GetConfig()
         {
             if (_instance == null)
-                _instance = LoadFromFile("BrainInterfaceClientConfig.json");
+                _instance = LoadFromFile(DefaultConfigFileName);
             return _instance;
         }
 

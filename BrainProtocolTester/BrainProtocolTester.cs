@@ -67,7 +67,8 @@ namespace BrainProtocolTester
             {
                 BandFilterList = new List<BandFilter> {lowFilter, highFilter, bPassFilter, bStopFilter}
             };
-            var allFilter = new FilterTypeList() {Filters = new List<FilterType> {mFilter, bandFilter}};
+            bandFilter.Disable = true;
+            var allFilter = new FilterTypeList() {Filters = new List<FilterType> {bandFilter,mFilter}};
             var filterParameters = new Dictionary<string, string>
             {
                 {FilterTypeList.FIRhalfOrderOptionName, 10.ToString()}
@@ -85,6 +86,7 @@ namespace BrainProtocolTester
                 MotherWaveletName = "db5",
                 WindowSize = 15
             };
+            cfg.WriteToFile(ClientConfig.DefaultConfigFileName);
             
             
             BrainDeviceManager.Init();

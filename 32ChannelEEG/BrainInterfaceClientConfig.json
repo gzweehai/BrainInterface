@@ -7,7 +7,7 @@
   "EnableCommandTimeout": false,
   "TimeoutMilliseconds": 100,
   "WaveletRecCfg": {
-    "DisableWavelet": true,
+    "DisableWavelet": false,
     "ConvolutionMode": "Normal",
     "ExtensionMode": "SymmetricHalfPoint",
     "MotherWaveletName": "db5",
@@ -18,32 +18,38 @@
   "FilterLst": {
     "Filters": [
       {
-        "$type": "BrainCommon.MedianFilter, BrainCommon",
-        "HalfMedianWindowSize": 7
-      },
-      {
         "$type": "BrainCommon.BandPassStopFilter, BrainCommon",
         "HalfOrder": 5,
         "BandFilterList": [
           {
             "$type": "BrainCommon.LowPassFilter, BrainCommon",
-            "LowPassRate": 10
+            "LowPassRate": 10,
+            "Disable": false
           },
           {
             "$type": "BrainCommon.HighPassFilter, BrainCommon",
-            "HighPassRate": 10000
+            "HighPassRate": 10000,
+            "Disable": false
           },
           {
             "$type": "BrainCommon.BandPassFilter, BrainCommon",
             "LowCutoffRate": 20,
-            "HighCutoffRate": 30
+            "HighCutoffRate": 30,
+            "Disable": false
           },
           {
             "$type": "BrainCommon.BandStopFilter, BrainCommon",
             "LowPassRate": 35,
-            "HighPassRate": 38
+            "HighPassRate": 38,
+            "Disable": false
           }
-        ]
+        ],
+        "Disable": true
+      },
+      {
+        "$type": "BrainCommon.MedianFilter, BrainCommon",
+        "HalfMedianWindowSize": 7,
+        "Disable": false
       }
     ]
   },

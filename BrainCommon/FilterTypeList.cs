@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿﻿using System.Collections.Generic;
 using MathNet.Filtering;
 using MathNet.Filtering.FIR;
 using MathNet.Filtering.FIR.FilterRangeOp;
@@ -25,18 +25,25 @@ namespace BrainCommon
         /// <returns></returns>
         public IOnlineFilter CreateFilter(Dictionary<string, string> parameters)
         {
-            var tmp = new IOnlineFilter[Filters.Count];
+            var tmp = new List<IOnlineFilter>(Filters.Count);
             for (var i = 0; i < Filters.Count; i++)
             {
-                tmp[i] = Filters[i].CreateFilter(parameters);
+                if (Filters[i].Disable) continue;
+                tmp.Add(Filters[i].CreateFilter(parameters));
             }
 
-            return new SeqCombinedOnlineFilter(tmp);
+            if (tmp.Count <= 0)
+                return EmptyFilter.Instance;
+            if (tmp.Count == 1)
+                return tmp[0];
+
+            return new SeqCombinedOnlineFilter(tmp.ToArray());
         }
     }
     
     public abstract class FilterType
     {
+        public bool Disable;
         public abstract IOnlineFilter CreateFilter(Dictionary<string, string> parameters);
     }
 
@@ -64,10 +71,12 @@ namespace BrainCommon
             for (var i = 0; i < BandFilterList.Count; i++)
             {
                 var filterParam = BandFilterList[i];
+                if (filterParam.Disable) continue;
                 var pri=filterParam.CreatePrimitiveBandFilter();
                 tmp = tmp == null ? pri : tmp.Add(pri);
             }
 
+            if (tmp == null) return null;
             var cof = tmp.GetFirCoefficients(sampleRate, halfOrder);
             return new OnlineFirFilter(cof);
         }
@@ -75,6 +84,7 @@ namespace BrainCommon
 
     public abstract class BandFilter
     {
+        public bool Disable;
         public abstract PrimitiveFilterRange CreatePrimitiveBandFilter();
     }
 

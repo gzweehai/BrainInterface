@@ -57,6 +57,7 @@
     <Compile Include="ClientConfig.cs" />
     <Compile Include="DisposableCollector.cs" />
     <Compile Include="DisposableValue.cs" />
+    <Compile Include="EmptyFilter.cs" />
     <Compile Include="FilterTypeList.cs" />
     <Compile Include="LengthBitConverter.cs" />
     <Compile Include="MiscUtility.cs" />
